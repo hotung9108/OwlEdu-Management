@@ -21,3 +21,7 @@
     --warning: #FBBF24;
     --info: #60A5FA;
 }
+
+.btn:focus {
+    box-shadow: none;
+}

@@ -6,16 +6,34 @@
         </div>
 
         <nav class="sidebar-menu">
-            <a href="#" class="sidebar-item">
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Thông tin
+                </legend>
+            </fieldset>
+            <a href="#" class="sidebar-item" hx-get="/Student/Notification" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-bell"></i>    Thông báo</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Góc học tập
+                </legend>
+            </fieldset>
+            <a href="#" class="sidebar-item" hx-get="/Student/Enrollment" hx-trigger="click" hx-target="#main-panel">
+                <span class="label"><i class="fa-solid fa-book"></i>    Đăng ký khóa học</span>
+            </a>
+            <a href="#" class="sidebar-item" hx-get="/Student/Course" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-book"></i>    Khóa học</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Student/Class" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-school"></i>  Lớp học</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Tài chính
+                </legend>
+            </fieldset>
+            <a href="#" class="sidebar-item" hx-get="/Student/Payment" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-money-bill"></i>  Học phí</span>
             </a>
         </nav>
@@ -31,13 +49,13 @@
                 <div class="user-menu">
                     <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
                     <div class="dropdown">
-                        <a href="#"><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        <a href="#" hx-get="/Student/Profile" hx-trigger="click" hx-target="#main-panel"><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
                         <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
                     </div>
                 </div>
             </div>
         </header>
-        <main class="main">
+        <main id="main-panel" class="main">
             Student
         </main>
     </div>
@@ -77,6 +95,7 @@
     height: fit-content;
     gap: 15px;
     position: sticky;
+    z-index: 100;
 }
 
 .header-right {
@@ -227,6 +246,21 @@
     background: #466be5;
     color: var(--text-reverse);
 }
+
+.sidebar-catalog {
+    border: none;
+    border-top: 1px solid var(--border);
+    padding: 5px 0;
+}
+
+.sidebar-catalog legend {
+    float: none;
+    margin: 0 10px;
+    width: auto;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
 </style>
 
 

@@ -8,5 +8,33 @@ namespace OwlEdu_Manager.Controllers
         {
             return View();
         }
+        public IActionResult Profile()
+        {
+            return PartialView("_StudentProfile");
+        }
+
+        public IActionResult Notification()
+        {
+            return PartialView();
+        }
+        public IActionResult Enrollment()
+        {
+            return PartialView("_StudentEnrollment");
+        }
+
+        public IActionResult Course()
+        {
+            return PartialView("_StudentCourse");
+        }
+
+        public IActionResult Class()
+        {
+            return PartialView();
+        }
+
+        public IActionResult Payment()
+        {
+            return PartialView();
+        }
     }
 }

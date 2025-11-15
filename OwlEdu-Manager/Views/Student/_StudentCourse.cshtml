@@ -1,0 +1,94 @@
+﻿<div class="card">
+    <div class="title row align-items-center g-2">
+        <div class="col-12 col-md-6">
+            <p class="m-0">Danh sách khóa học</p>
+        </div>
+
+        <div class="col-12 col-md-6 text-md-end">
+            <input type="text" id="search-box" class="form-control"
+                placeholder="Tìm kiếm..." />
+        </div>
+    </div>
+
+    <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "TestDatagrid"}' hx-trigger="revealed" data-on-load="onLoadDatagrid"></div>
+
+    <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "TestPag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+</div>
+
+<style>
+.card {
+    padding: 16px;
+    border-radius: 8px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    margin: 10px;
+}
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+</style>
+
+<script>
+    function Test(currentPage) {
+        ActiveModal('modal', 'Thông báo', 'Trang hiện tại là: ' + currentPage);
+    }
+
+    function onLoadPag() {
+        renderPagination("TestPag", 21, "Test");
+    }
+
+    function onLoadDatagrid() {
+        const headers = [
+            "ID",
+            "Tên khóa học",
+            "Mô tả",
+            "Số buổi học",
+            "Học phí"
+        ];
+        renderDatagridHeader("TestDatagrid", headers, true);
+
+        const data = [
+            [1, "IELTS", "Khóa học tiếng anh", 100, "100.000.000đ"],
+            [2, "TOEFL", "Khóa học chuẩn bị TOEFL", 80, "80.000.000đ"],
+            [3, "Tiếng Nhật N5", "Khóa học cơ bản", 60, "50.000.000đ"]
+        ];
+
+        fillDatagrid("TestDatagrid", data, true);
+
+        fillDatagridAction("TestDatagrid", [
+            { 
+                text: "Chi tiết", 
+                iconClass: "fa-solid fa-info", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Đăng ký", 
+                iconClass: "fa-solid fa-arrow-right-to-bracket", 
+                onClick: function() { alert("Clicked Đăng ký"); } 
+            }
+        ]);
+    }
+
+</script>

@@ -6,18 +6,22 @@
         </div>
 
         <nav class="sidebar-menu">
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Thông tin
+                </legend>
+            </fieldset>
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-bell"></i>    Thông báo</span>
             </a>
             <a href="#" class="sidebar-item">
-                <span class="label"><i class="fa-solid fa-book"></i>    Khóa học</span>
-            </a>
-            <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-chart-column"></i>  Báo cáo thống kê</span>
             </a>
-            <a href="#" class="sidebar-item">
-                <span class="label"><i class="fa-solid fa-file-signature"></i>  Quản lý đăng ký học</span>
-            </a>
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Quản lý người dùng
+                </legend>
+            </fieldset>
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-users"></i>  Quản lý tài khoản</span>
             </a>
@@ -27,12 +31,25 @@
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-chalkboard-user"></i>  Quản lý giáo viên</span>
             </a>
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Quản lý trung tâm   
+                </legend>
+            </fieldset>
+            <a href="#" class="sidebar-item">
+                <span class="label"><i class="fa-solid fa-file-signature"></i>  Quản lý đăng ký học</span>
+            </a>
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-school"></i>  Quản lý lớp học</span>
             </a>
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-book"></i>   Quản lý khóa học</span>
             </a>
+            <fieldset class="sidebar-catalog">
+                <legend>
+                    Quản lý tài chính
+                </legend>
+            </fieldset>
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-money-bill"></i>  Quản lý học phí</span>
             </a>
@@ -244,6 +261,19 @@
 .sidebar-item.active {
     background: #466be5;
     color: var(--text-reverse);
+}
+.sidebar-catalog {
+    border: none;
+    border-top: 1px groove var(--text-muted);
+    padding: 5px 0;
+}
+
+.sidebar-catalog legend {
+    float: none;
+    margin: 0 10px;
+    width: auto;
+    font-size: 16px;
+    color: var(--text-muted);
 }
 </style>
 

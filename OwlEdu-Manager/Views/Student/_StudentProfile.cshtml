@@ -1,0 +1,228 @@
+﻿<div class="container py-4">
+
+    <div class="row g-4">
+
+        <!-- LEFT: AVATAR + UPLOAD -->
+        <div class="col-lg-4">
+            <div class="btl-card shadow-sm">
+
+                <h5 class="btl-card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">Tài khoản</h5>
+
+                <div class="text-center mt-3">
+                    <img id="btl-avatar" src="https://i.pravatar.cc/200"
+                         class="btl-avatar-preview rounded-circle" style="width:120px;height:120px;object-fit:cover;">
+
+                    <div class="mt-2">
+                        <a href="#" id="btl-delete-avatar" class="text-danger me-3">Xóa ảnh</a>
+                        <a href="#" id="btl-update-avatar" class="text-primary">Cập nhật ảnh</a>
+                    </div>
+
+                    <!-- Upload area -->
+                    <div id="btl-upload-area" class="btl-upload-box mt-4">
+                        <i class="fa-solid fa-upload btl-upload-icon"></i>
+                        <p class="m-0 fw-bold text-primary">Nhấn để tải ảnh lên</p>
+                        <p class="text-muted small">hoặc kéo thả ảnh vào đây</p>
+                        <p class="text-muted small">JPG hoặc PNG</p>
+
+                        <input type="file" id="btl-file-input" class="d-none" accept="image/*">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RIGHT: PROFILE FORM -->
+        <div class="col-lg-8">
+
+            <!-- Section: Thông tin tài khoản -->
+            <div class="btl-card shadow-sm" data-section="account">
+
+                <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                    <h5 class="btl-card-title">Thông tin tài khoản</h5>
+                    <div>
+                        <button class="btn btn-primary btn-sm btn-edit">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                        </button>
+                        <div class="d-inline-block btn-save-cancel d-none">
+                            <button class="btn btn-success btn-sm btn-save">
+                                <i class="fa-solid fa-check"></i> Lưu
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-cancel">
+                                <i class="fa-solid fa-xmark"></i> Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3 g-3">
+                    <div class="col-md-12">
+                        <label class="btl-label">Tên tài khoản</label>
+                        <p class="btl-view">student01</p>
+                        <input class="form-control btl-edit d-none" value="student01">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Email</label>
+                        <p class="btl-view">student@gmail.com</p>
+                        <input type="email" class="form-control btl-edit d-none" value="student@gmail.com">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mật khẩu</label>
+                        <p class="btl-view">********</p>
+                        <input type="password" class="form-control btl-edit d-none" value="0987654321">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Section: Thông tin cá nhân -->
+            <div class="btl-card shadow-sm mt-4" data-section="personal">
+
+                <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                    <h5 class="btl-card-title">Thông tin cá nhân</h5>
+                    <div>
+                        <button class="btn btn-primary btn-sm btn-edit">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                        </button>
+                        <div class="d-inline-block btn-save-cancel d-none">
+                            <button class="btn btn-success btn-sm btn-save">
+                                <i class="fa-solid fa-check"></i> Lưu
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-cancel">
+                                <i class="fa-solid fa-xmark"></i> Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3 g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Họ và tên</label>
+                        <p class="btl-view">Nguyen</p>
+                        <input class="form-control btl-edit d-none" value="Nguyen">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày sinh</label>
+                        <p class="btl-view">21/01/2005</p>
+                        <input type="date" class="form-control btl-edit d-none" value="">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Số điện thoại</label>
+                        <p class="btl-view">0987654321</p>
+                        <input type="text" class="form-control btl-edit d-none" value="0987654321">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Giới tính</label>
+                        <p class="btl-view">Nam</p>
+                        <select class="form-control btl-edit d-none">
+                            <option>Nam</option>
+                            <option>Nữ</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="btl-label">Địa chỉ</label>
+                        <p class="btl-view">ABC</p>
+                        <input class="form-control btl-edit d-none" value="ABC">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+
+body {
+    background: var(--bg);
+    color: var(--text-main);
+}
+
+.btl-card {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.btl-card-title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.btl-label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btl-view {
+    padding: 8px 0;
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.btl-avatar-preview {
+    width: 140px;
+    height: 140px;
+    border-radius: 100px;
+    object-fit: cover;
+}
+
+.btl-upload-box {
+    border: 2px dashed var(--border);
+    padding: 25px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.btl-upload-box:hover {
+    border-color: var(--primary);
+    background: #4e46e547;
+}
+
+.btl-upload-icon {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+</style>
+
+<script>
+    $(document).ready(function(){
+        $('.btn-edit').click(function(){
+            const $section = $(this).closest('[data-section]');
+            $section.find('.btl-view').addClass('d-none');
+            $section.find('.btl-edit').removeClass('d-none');
+            $(this).addClass('d-none');
+            $section.find('.btn-save-cancel').removeClass('d-none');
+        });
+
+        $('.btn-cancel').click(function(){
+            const $section = $(this).closest('[data-section]');
+            $section.find('.btl-edit').addClass('d-none');
+            $section.find('.btl-view').removeClass('d-none');
+            $section.find('.btn-save-cancel').addClass('d-none');
+            $section.find('.btn-edit').removeClass('d-none');
+        });
+
+        $('.btn-save').click(function(){
+            const $section = $(this).closest('[data-section]');
+            // Lưu dữ liệu: cập nhật view từ input
+            $section.find('.btl-edit').each(function(){
+                const val = $(this).val();
+                $(this).siblings('.btl-view').text(val);
+            });
+
+            $section.find('.btl-edit').addClass('d-none');
+            $section.find('.btl-view').removeClass('d-none');
+            $section.find('.btn-save-cancel').addClass('d-none');
+            $section.find('.btn-edit').removeClass('d-none');
+        });
+    });
+</script>
