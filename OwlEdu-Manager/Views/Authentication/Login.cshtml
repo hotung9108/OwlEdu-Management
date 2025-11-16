@@ -34,7 +34,6 @@
         <div class="text-center mt-3">
             <a href="#" class="text-muted" onClick="toggleTheme()">Quên mật khẩu?</a>
         </div>
-
     </div>
 </div>
 
@@ -121,7 +120,9 @@
 </style>
 
 <script type="module">
-import AuthService from "../../js/API/AuthService.js";
+    import AuthService from "../../js/API/AuthService.js";
+    import AccountService from "../../js/API/AccountService.js";
+    import { getAuthToken, getUserID, getUserRole, getStudentID, getTeacherID } from "../../js/Utils/getCookies.js";
 $(document).ready(function () {
 
     $("#togglePass").click(function(){
@@ -150,8 +151,6 @@ $(document).ready(function () {
             username,
             password,
             function (response) {
-                // console.log("Đăng nhập thành công:", response);
-
                 if (response.role === "admin") {
                     window.location.href = "/Admin/Index"; 
                 } else if (response.role === "student") {
@@ -170,6 +169,7 @@ $(document).ready(function () {
                 }
             }
         );
+        y
         // === AJAX LOGIN ===
         // $.ajax({
         //     url: "http:localhost:5284/auth/login",
@@ -212,3 +212,8 @@ $(document).ready(function () {
     }
 });
 </script>
+
+@* <script>
+    import CourseService from "../../js/API/AuthService.js";
+
+</script> *@

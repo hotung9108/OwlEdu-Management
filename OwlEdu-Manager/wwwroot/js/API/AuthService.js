@@ -15,10 +15,32 @@ const AuthService = {
             data: data,
             headers: { "Content-Type": "application/json" },
             successCallback: function (response) {
-                document.cookie = `authToken=${response.token}; path=/; max-age=86400; secure; HttpOnly`;
+                document.cookie = `authToken=${response.token}; path=/; max-age=86400; secure`;
+
                 document.cookie = `userId=${response.id}; path=/; max-age=86400; secure`;
                 document.cookie = `userRole=${response.role}; path=/; max-age=86400; secure`;
-                if (successCallback) successCallback(response);
+                if (response.role === "student" || response.role === "teacher") {
+                    const accountUrl = `${api_url}/api/Account/${response.id}`;
+                    callApi({
+                        url: accountUrl,
+                        method: "GET",
+                        headers: { "Authorization": `Bearer ${response.token}` },
+                        successCallback: function (accountDetails) {
+                            if (response.role === "student" && accountDetails.student) {
+                                document.cookie = `studentId=${accountDetails.student.id}; path=/; max-age=86400; secure`;
+                            } else if (response.role === "teacher" && accountDetails.teacher) {
+                                document.cookie = `teacherId=${accountDetails.teacher.id}; path=/; max-age=86400; secure`;
+                            }
+                            if (successCallback) successCallback(response);
+                        },
+                        errorCallback: function () {
+                            console.error("Không thể lấy thông tin tài khoản chi tiết.");
+                            if (successCallback) successCallback(response); 
+                        }
+                    });
+                } else {
+                    if (successCallback) successCallback(response);
+                }
             },
             errorCallback: errorCallback
         });

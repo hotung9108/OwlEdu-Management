@@ -45,57 +45,66 @@
 }
 </style>
 
-<script>
+<script type="module">
+    import CourseService from "../../js/API/CourseService.js";
+
     function Test(currentPage) {
         ActiveModal('modal', 'Thông báo', 'Trang hiện tại là: ' + currentPage);
+        console.log("Tét");
     }
+    window.Test = Test;
 
     function onLoadCoursePagination() {
         renderPagination("pagDgCourse", 21, "Test");
+        console.log("onLoadCoursePagination");
     }
 
     function onLoadDgCourse() {
+        console.log("onloadDgCourse");
         const headers = [
             "ID",
             "Tên khóa học",
             "Mô tả",
+            "Trạng thái",
             "Số buổi học",
             "Học phí"
         ];
 
         renderDatagridHeader("dgCourse", headers, true);
 
-        var data = [
-            {
-                ID: "1",
-                "Tên khóa học": "IELTS Foundation",
-                "Mô tả": "Mô tả",
-                "Số buổi học": 10,
-                "Học phí": 1000000
-            },
-            {
-                ID: "2",
-                "Tên khóa học": "TOEIC Intensive",
-                "Mô tả": "Mô tả",
-                "Số buổi học": 10,
-                "Học phí": 1000000
-            }
-        ];
+        try {
+            const response = await CourseService.getAllCourses("", 1, 10);
+            console.log("Response from API:", response);
 
-        fillDatagrid("dgCourse", data, true);
+            const data = response.map(course => ({
+                ID: course.id,
+                "Tên khóa học": course.name,
+                "Mô tả": course.description,
+                "Trạng thái": course.status ? "Hoạt động" : "Không hoạt động",
+                "Số buổi học": course.numberOfLessons,
+                "Học phí": course.fee
+            }));
 
-        fillDatagridAction("dgCourse", [
-            { 
-                text: "Chi tiết", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
-            },
-            { 
-                text: "Đăng ký", 
-                iconClass: "fa-solid fa-arrow-right-to-bracket", 
-                onClick: function() { alert("Clicked Đăng ký"); } 
-            }
-        ]);
+            fillDatagrid("dgCourse", data, true);
+
+            fillDatagridAction("dgCourse", [
+                {
+                    text: "Chi tiết",
+                    iconClass: "fa-solid fa-info",
+                    onClick: function () { alert("Clicked Chi tiết"); }
+                },
+                {
+                    text: "Đăng ký",
+                    iconClass: "fa-solid fa-arrow-right-to-bracket",
+                    onClick: function () { alert("Clicked Đăng ký"); }
+                }
+            ]);
+        } catch (error) {
+            console.error("Error fetching courses:", error);
+        }
     }
 
+    window.onLoadDgCourse = onLoadDgCourse;
+    window.onLoadCoursePagination = onLoadCoursePagination;
+    window.Test = Test;
 </script>
