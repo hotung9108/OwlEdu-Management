@@ -11,7 +11,7 @@
             </div>
         </div>
 
-        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgCourse"}' hx-trigger="revealed" data-on-load="onLoadDgCourse"></div>
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgCourse"}' hx-trigger="revealed" data-on-load="initialize"></div>
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgCourse"}' hx-trigger="revealed" data-on-load="onLoadCoursePagination"></div>
     </div>
@@ -44,37 +44,45 @@
     color: #FFFFFF;
 }
 </style>
-
 <script type="module">
     import CourseService from "../../js/API/CourseService.js";
-
-    // $(document).ready(function () {
-    //     onLoadDgCourse();
-    //     onLoadCoursePagination();
-
-    //     $('#search-box').on('input', function () {
-    //         const keyword = $(this).val().trim();
-    //         onLoadDgCourse(keyword);
-    //     });
-    // });
-    async function onLoadDgCourse(keyword = "") {
-        // console.log("Loading courses with keyword:", keyword);
-
-        const headers = [
+    import EnrollmentService from "../../js/API/EnrollmentService.js";
+    import { getStudentID } from "../../js/Utils/getCookies.js";
+    let currentPage = 1;
+    const pageSize = 10;
+    let totalPages = 0;
+    let currentKeyword = "";
+     async function calculateTotalPages(keyword = "") {
+        try {
+            const response = await CourseService.getAllCourses(keyword, -1, pageSize);
+            const totalCourses = response.length;
+            totalPages = Math.ceil(totalCourses / pageSize);
+            renderPagination("pagDgCourse", totalPages, "onPageChange");
+        } catch (error) {
+            console.error("Error calculating total pages:", error);
+        }
+    }
+    async function onSearch() {
+        const searchBox = document.getElementById("search-box");
+        currentKeyword = searchBox.value.trim();
+        currentPage = 1;
+        await calculateTotalPages(currentKeyword);
+        await onLoadDgCourse(currentKeyword, currentPage);
+    }
+    function renderCourseHeader(){
+         const headers = [
             "ID",
             "Tên khóa học",
             "Mô tả",
-            "Trạng thái",
             "Số buổi học",
             "Học phí"
         ];
 
         renderDatagridHeader("dgCourse", headers, true);
-
+    }
+    async function onLoadDgCourse(keyword = "", pageNumber = 1) {
         try {
-            const response = await CourseService.getAllCourses(keyword, 1, 10);
-            console.log("Response from API:", response);
-
+            const response = await CourseService.getAllCourses(keyword, pageNumber, pageSize);
             const data = response.map(course => ({
                 ID: course.id,
                 "Tên khóa học": course.name,
@@ -91,32 +99,41 @@
                     text: "Chi tiết",
                     iconClass: "fa-solid fa-info",
                     onClick: function (row) {
-                        alert(`Chi tiết khóa học: ${row.ID}`);
+                         const cellValue = getCellValueByColumnIndex(row, 0);
                     }
                 },
                 {
                     text: "Đăng ký",
                     iconClass: "fa-solid fa-arrow-right-to-bracket",
                     onClick: function (row) {
-                        alert(`Đăng ký khóa học: ${row.ID}`);
+                        const courseId = getCellValueByColumnIndex(row, 0); // Lấy ID khóa học
+                        const studentId = getStudentID();
+
                     }
                 }
             ]);
         } catch (error) {
-            console.error("Error fetching courses:", error);
+            console.error("Error loading courses:", error);
         }
     }
-    async function onLoadCoursePagination() {
-        renderPagination("pagDgCourse", 21, "onPageChange");
-        console.log("Pagination loaded");
+    async function onPageChange(newPage) {
+        currentPage = newPage;
+        await onLoadDgCourse(currentKeyword, currentPage);
     }
-
-    async function onPageChange(currentPage) {
-        console.log("Current page:", currentPage);
-        await onLoadDgCourse("", currentPage);
+    async function initialize() {
+        renderCourseHeader(); 
+        await calculateTotalPages();
+        await onLoadDgCourse();
+        const searchBox = document.getElementById("search-box");
+        searchBox.addEventListener("input", debounce(onSearch, 300));
     }
-
-    window.onLoadDgCourse = onLoadDgCourse;
-    window.onLoadCoursePagination = onLoadCoursePagination;
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+    window.initialize = initialize;
     window.onPageChange = onPageChange;
 </script>

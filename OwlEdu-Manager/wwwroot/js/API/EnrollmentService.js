@@ -2,65 +2,126 @@
 import { getAuthToken } from "../Utils/getCookies.js";
 
 const api_url = "https://localhost:7230";
-const token = getAuthToken(); // Định nghĩa token một lần để sử dụng lại
+const token = getAuthToken();
 
 const EnrollmentService = {
-    getAllEnrollments: function (keyword = "", pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/Enrollment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    getAllEnrollments: async function (keyword = "", pageNumber = 1, pageSize = 10) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching enrollments:", error);
+            throw error;
+        }
     },
 
-    getEnrollmentById: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/Enrollment/${id}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    getEnrollmentById: async function (id) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment/${id}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching enrollment by ID:", error);
+            throw error;
+        }
     },
 
-    addEnrollment: function (enrollmentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/Enrollment`,
-            method: "POST",
-            data: enrollmentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    addEnrollment: async function (enrollmentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment`,
+                method: "POST",
+                data: enrollmentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error adding enrollment:", error);
+            throw error;
+        }
     },
 
-    updateEnrollment: function (id, enrollmentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/Enrollment/${id}`,
-            method: "PUT",
-            data: enrollmentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    updateEnrollment: async function (id, enrollmentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment/${id}`,
+                method: "PUT",
+                data: enrollmentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error updating enrollment:", error);
+            throw error;
+        }
     },
 
-    deleteEnrollment: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/Enrollment/${id}`,
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    deleteEnrollment: async function (id) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment/${id}`,
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error deleting enrollment:", error);
+            throw error;
+        }
+    },
+    getEnrollmentByStudentId: async function (studentId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment/student/${studentId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching enrollments by student ID:", error);
+            throw error;
+        }
+    },
+
+    getEnrollmentByCourseId: async function (courseId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment/course/${courseId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching enrollments by course ID:", error);
+            throw error;
+        }
+    },
+
+    getEnrollmentByStudentIdCourseId: async function (studentId, courseId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Enrollment/student/${studentId}/course/${courseId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching enrollment by student ID and course ID:", error);
+            throw error;
+        }
     }
 };
 

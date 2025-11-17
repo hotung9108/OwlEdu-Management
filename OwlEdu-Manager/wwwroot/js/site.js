@@ -494,3 +494,17 @@ function activeFloatBox(id) {
 function inactiveFloatBox(id) {
     $("#" + id).hide();
 }
+function getCellValueByColumnIndex(row, columnIndex) {
+    if (!row || !(row instanceof HTMLTableRowElement)) {
+        console.error("Invalid row element provided.");
+        return null;
+    }
+
+    const cells = row.querySelectorAll("td");
+    if (columnIndex < 0 || columnIndex >= cells.length) {
+        console.error("Invalid column index provided.");
+        return null;
+    }
+
+    return cells[columnIndex].textContent.trim();
+}
