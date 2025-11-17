@@ -2,84 +2,69 @@
 import { getAuthToken } from "../Utils/getCookies.js";
 
 const api_url = "https://localhost:7230";
-const token = getAuthToken(); // Định nghĩa token một lần để sử dụng lại
 
 const ScoreService = {
-    getAllScores: function (pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
-        callApi({
+    async getAllScores(pageNumber = 1, pageSize = 10) {
+        return await callApi({
             url: `${api_url}/api/Score?pageNumber=${pageNumber}&pageSize=${pageSize}`,
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
     },
 
-    getScoresByClass: function (classId, successCallback, errorCallback) {
-        callApi({
+    async getScoresByClass(classId) {
+        return await callApi({
             url: `${api_url}/api/Score/Class/${classId}`,
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
     },
 
-    getScoresByStudent: function (studentId, successCallback, errorCallback) {
-        callApi({
+    async getScoresByStudent(studentId) {
+        return await callApi({
             url: `${api_url}/api/Score/Student/${studentId}`,
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
     },
 
-    getScoresByTeacher: function (teacherId, successCallback, errorCallback) {
-        callApi({
+    async getScoresByTeacher(teacherId) {
+        return await callApi({
             url: `${api_url}/api/Score/Teacher/${teacherId}`,
             method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
     },
 
-    addScore: function (scoreData, successCallback, errorCallback) {
-        callApi({
+    async addScore(scoreData) {
+        return await callApi({
             url: `${api_url}/api/Score`,
             method: "POST",
             data: scoreData,
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
+                "Authorization": `Bearer ${getAuthToken()}`
+            }
         });
     },
 
-    updateScore: function (studentId, classId, teacherId, title, scoreData, successCallback, errorCallback) {
-        callApi({
+    async updateScore(studentId, classId, teacherId, title, scoreData) {
+        return await callApi({
             url: `${api_url}/api/Score/${studentId}/${classId}/${teacherId}/${title}`,
             method: "PUT",
             data: scoreData,
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
+                "Authorization": `Bearer ${getAuthToken()}`
+            }
         });
     },
 
-    deleteScore: function (studentId, classId, teacherId, title, successCallback, errorCallback) {
-        callApi({
+    async deleteScore(studentId, classId, teacherId, title) {
+        return await callApi({
             url: `${api_url}/api/Score/${studentId}/${classId}/${teacherId}/${title}`,
             method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
+            headers: { "Authorization": `Bearer ${getAuthToken()}` }
         });
     }
 };

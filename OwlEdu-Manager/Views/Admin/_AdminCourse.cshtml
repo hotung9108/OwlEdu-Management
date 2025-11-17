@@ -1,0 +1,147 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Danh sách khóa học</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo khóa học mới</button>
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgCourse"}' hx-trigger="revealed" data-on-load="onLoadDgCourse"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgCourse"}' hx-trigger="revealed" data-on-load="onLoadCoursePagination"></div>
+    </div>
+</div>
+
+<style>
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+</style>
+
+<script>
+    function Test(currentPage) {
+        ActiveModal('modal', 'Thông báo', 'Trang hiện tại là: ' + currentPage);
+    }
+
+    function onLoadCoursePagination() {
+        renderPagination("pagDgCourse", 21, "Test");
+    }
+
+    function onLoadDgCourse() {
+        const headers = [
+            "Mã khóa học",
+            "Tên khóa học",
+            "Mô tả",
+            "Số buổi học",
+            "Học phí",
+            "Trạng thái"
+        ];
+
+        renderDatagridHeader("dgCourse", headers, true);
+
+        var data = [
+            {
+                "Mã khóa học": "1",
+                "Tên khóa học": "IELTS Foundation",
+                "Mô tả": "Mô tả",
+                "Số buổi học": 10,
+                "Học phí": 1000000,
+                "Trạng thái": "active"
+            },
+            {
+                "Mã khóa học": "2",
+                "Tên khóa học": "TOEIC Intensive",
+                "Mô tả": "Mô tả",
+                "Số buổi học": 10,
+                "Học phí": 1000000,
+                "Trạng thái": "inactive"
+            }
+        ];
+
+        fillDatagrid("dgCourse", data, true);
+
+        fillDatagridAction("dgCourse", [
+            { 
+                text: "Xem chi tiết", 
+                iconClass: "fa-solid fa-info", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Chỉnh sửa thông tin", 
+                iconClass: "fa-solid fa-pen-to-square", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Đóng khóa học", 
+                iconClass: "fa-solid fa-x", 
+                onClick: function() { alert("Clicked Đăng ký"); } 
+            }
+        ]);
+
+        styleStatusColumn("dgCourse");
+    }
+
+    function styleStatusColumn(containerId) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            // Lấy cột thứ 4 (index 3, 0-based)
+            const $statusTd = $tr.find('td').eq(5);
+            const statusText = $statusTd.text().trim().toLowerCase();
+
+            // Reset màu mặc định trước
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            // Gán màu theo trạng thái
+            switch (statusText) {
+                case 'active':
+                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    break;
+                case 'inactive':
+                    $statusTd.css('color', '#DC2626'); // đỏ
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+            }
+        });
+    }
+</script>
