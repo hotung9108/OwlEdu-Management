@@ -1,4 +1,4 @@
-* {
+﻿* {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
@@ -88,4 +88,72 @@ body {
 
 .sidebar.closed * {
     display: none;
+}
+
+/* Overlay mờ nền */
+.float-box-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 9999;
+}
+
+/* Box chứa bảng */
+.float-box-box {
+    background: var(--surface);
+    width: min(100%, 1200px);
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: fadeIn 0.25s ease;
+    overflow-y: auto;
+}
+
+/* Header */
+.float-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.float-box-header h4 {
+    color: var(--primary);
+    margin: 0;
+}
+
+/* Nút đóng */
+.float-box-header .close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.float-box-header .close-btn:hover {
+    color: var(--error);
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }

@@ -2,65 +2,89 @@
 import { getAuthToken } from "../Utils/getCookies.js";
 
 const api_url = "https://localhost:7230";
-const token = getAuthToken(); // Định nghĩa token một lần để sử dụng lại
+const token = getAuthToken();
 
 const ClassAssignmentService = {
-    getAllClassAssignments: function (keyword = "", pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/ClassAssignment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    // GET ALL
+    getAllClassAssignments: async function (keyword = "", pageNumber = 1, pageSize = 10) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (err) {
+            throw err;
+        }
     },
 
-    getClassAssignmentById: function (classId, studentId, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/ClassAssignment/${classId}/${studentId}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    // GET BY ID
+    getClassAssignmentById: async function (classId, studentId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment/${classId}/${studentId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (err) {
+            console.error(`Error fetching class assignment ${classId}-${studentId}:`, err);
+            throw err;
+        }
     },
 
-    addClassAssignment: function (classAssignmentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/ClassAssignment`,
-            method: "POST",
-            data: classAssignmentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    // CREATE
+    addClassAssignment: async function (classAssignmentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment`,
+                method: "POST",
+                data: classAssignmentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (err) {
+            console.error("Error adding class assignment:", err);
+            throw err;
+        }
     },
 
-    updateClassAssignment: function (classId, studentId, classAssignmentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/ClassAssignment/${classId}/${studentId}`,
-            method: "PUT",
-            data: classAssignmentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    // UPDATE
+    updateClassAssignment: async function (classId, studentId, classAssignmentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment/${classId}/${studentId}`,
+                method: "PUT",
+                data: classAssignmentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (err) {
+            console.error("Error updating class assignment:", err);
+            throw err;
+        }
     },
 
-    deleteClassAssignment: function (classId, studentId, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/ClassAssignment/${classId}/${studentId}`,
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    // DELETE
+    deleteClassAssignment: async function (classId, studentId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment/${classId}/${studentId}`,
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (err) {
+            console.error("Error deleting class assignment:", err);
+            throw err;
+        }
     }
 };
 

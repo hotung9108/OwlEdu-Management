@@ -69,26 +69,26 @@ function OpenProfile() {
 }
 
 //On get components
-document.addEventListener('DOMContentLoaded', function () {
-    htmx.onLoad(function (el) {
+document.addEventListener('DOMContentLoaded', async function () {
+    htmx.onLoad(async function (el) {
 
         var parent = el.parentElement;
         if (parent.classList && parent.classList.contains('component-container')) {
 
             const fnName = parent.getAttribute('data-on-load');
 
-            if (fnName && typeof window[fnName] === 'function') {
-                window[fnName]();
-            }
-
             if (el.classList && el.classList.contains('datagrid-container')) {
+                if (el.id == 'dgv1') console.log("dgv1");
                 const $container = $(el);
                 const $table = $container.find('.datagrid');
 
                 updateDatagridLayout($container);
-                makeDatagridSortable($table);
 
-                $(window).on('resize', () => updateDatagridLayout($container));
+                $container.on('resize', () => updateDatagridLayout($container));
+            }
+
+            if (fnName && typeof window[fnName] === 'function') {
+                await window[fnName]();
             }
         }
 
@@ -319,6 +319,8 @@ function renderDatagridHeader(containerId, headers, hasAction = false) {
     if (hasAction) {
         $table.find('thead tr').append($('<th>').text('Hành động'));
     }
+
+    makeDatagridSortable($table);
 }
 
 function fillDatagrid(containerId, data) {
@@ -367,6 +369,7 @@ function fillDatagrid(containerId, data) {
 
         $tbody.append($tr);
     });
+    updateDatagridLayout($container);
 }
 function fillDatagridAction(containerId, actions) {
     const $container = $('#' + containerId);
@@ -481,4 +484,13 @@ function addEvent(day, startTime, endTime, title, room, status = null, color = "
     $(`.schedule-column[data-day="${day}"]`).append(event);
 }
 
+//Float box
 
+
+function activeFloatBox(id) {
+    $("#" + id).show();
+}
+
+function inactiveFloatBox(id) {
+    $("#" + id).hide();
+}
