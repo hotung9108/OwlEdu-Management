@@ -15,8 +15,21 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/font-awesome/js/all.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+    @* <script src="~/js/API/AccountService.js"></script>
+    <script src="~/js/API/AuthService.js"></script> *@
+    @* <script src="~/js/API/AccountService.js"></script>
+    <script src="~/js/API/AccountService.js"></script>
+    <script src="~/js/API/AccountService.js"></script> *@
+
     @await RenderSectionAsync("Scripts", required: false)
 
     @RenderBody()
 </body>
 </html>
+
+@* <script type="module">
+    import AuthService from "/js/API/AuthService.js";
+    import { getAuthToken, getUserID, getUserRole, getStudentID, getTeacherID } from "/js/Utils/getCookies.js";
+    import CourseService from "/js/API/CourseService.js";
+    import ClassAssignmentService from "/js/API/ClassAssignmentService.js";
+</script> *@
