@@ -51,6 +51,18 @@ function toggleTheme() {
     setTheme(next);
 }
 
+//Sidebar
+function ToggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+
+    if (sidebar.classList.contains('closed')) {
+        sidebar.classList.remove('closed');
+    }
+    else {
+        sidebar.classList.add('closed');
+    }
+}
+
 //Profile
 function OpenProfile() {
     $('.sidebar-item').removeClass('active');

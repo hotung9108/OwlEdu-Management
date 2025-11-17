@@ -1,0 +1,162 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Danh sách lớp học</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo lớp mới</button>
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+</div>
+
+<style>
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+</style>
+
+<script>
+    function ChangePage(currentPage) {
+
+    }
+
+    function onLoadDg() {
+        var headers = ['Mã lớp', 'Tên lớp', 'Mã khóa học', 'Yêu cầu', 'Mục tiêu', 'Số lượng học viên tối đa', 'Ngày bắt đầu', 'Ngày kết thúc', 'Mã giáo viên', 'Trạng thái']
+
+        renderDatagridHeader('dgv', headers, true);
+
+        var data = [
+            {
+                'Mã lớp': 'L001',
+                'Tên lớp': 'Lập trình C# cơ bản',
+                'Mã khóa học': 'KH001',
+                'Yêu cầu': 'Biết sử dụng máy tính',
+                'Mục tiêu': 'Nắm vững C# căn bản',
+                'Số lượng học viên tối đa': 25,
+                'Ngày bắt đầu': '2025-03-01',
+                'Ngày kết thúc': '2025-05-30',
+                'Mã giáo viên': 'GV001',
+                'Trạng thái': 'active'
+            },
+            {
+                'Mã lớp': 'L002',
+                'Tên lớp': 'Java nâng cao',
+                'Mã khóa học': 'KH002',
+                'Yêu cầu': 'Đã học Java cơ bản',
+                'Mục tiêu': 'Làm chủ OOP và API',
+                'Số lượng học viên tối đa': 30,
+                'Ngày bắt đầu': '2025-04-10',
+                'Ngày kết thúc': '2025-06-25',
+                'Mã giáo viên': 'GV002',
+                'Trạng thái': 'inactive'
+            },
+            {
+                'Mã lớp': 'L003',
+                'Tên lớp': 'Web Frontend React',
+                'Mã khóa học': 'KH003',
+                'Yêu cầu': 'Biết HTML, CSS, JS',
+                'Mục tiêu': 'Xây dựng SPA với React',
+                'Số lượng học viên tối đa': 20,
+                'Ngày bắt đầu': '2025-02-15',
+                'Ngày kết thúc': '2025-04-20',
+                'Mã giáo viên': 'GV003',
+                'Trạng thái': 'active'
+            }
+        ];
+
+        fillDatagrid('dgv', data);
+
+        fillDatagridAction("dgv", [
+            { 
+                text: "Xem chi tiết", 
+                iconClass: "fa-solid fa-info", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Chỉnh sửa thông tin", 
+                iconClass: "fa-solid fa-pen-to-square", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Đóng lớp", 
+                iconClass: "fa-solid fa-x", 
+                onClick: function() { alert("Clicked "); } 
+            }
+        ]);
+
+        styleStatusColumn('dgv');
+    }
+
+    function onLoadPag() {
+        renderPagination('pag', 10, 'ChangePage')
+    }
+
+    function styleStatusColumn(containerId) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            // Lấy cột thứ 4 (index 3, 0-based)
+            const $statusTd = $tr.find('td').eq(9);
+            const statusText = $statusTd.text().trim().toLowerCase();
+
+            // Reset màu mặc định trước
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            // Gán màu theo trạng thái
+            switch (statusText) {
+                case 'active':
+                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    break;
+                case 'inactive':
+                    $statusTd.css('color', '#DC2626'); // đỏ
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+            }
+        });
+    }
+
+
+</script>

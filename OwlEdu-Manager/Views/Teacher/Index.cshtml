@@ -1,5 +1,5 @@
 ﻿<div class="main-container">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <img src="~/images/owl.png" alt="logo"/>
             <span class="sidebar-title">OwlEdu</span>
@@ -19,9 +19,6 @@
                     Quản lý
                 </legend>
             </fieldset>
-            @* <a href="#" class="sidebar-item">
-                <span class="label"><i class="fa-solid fa-book"></i>    Đăng ký khóa học</span>
-            </a> *@
             <a href="#" class="sidebar-item">
                 <span class="label"><i class="fa-solid fa-school"></i>  Lớp học của bạn</span>
             </a>
@@ -30,6 +27,9 @@
 
     <div class="main-panel">
         <header class="header">
+            <div style="margin-right: auto;">
+                <a href="#" onClick="ToggleSidebar()" class="toggle-sidebar-btn" style="color: var(--text-main)"><i class="fa-solid fa-bars"></i></a>
+            </div>
             <div class="header-right">
                 <button class="btn-mode" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></button>
 
@@ -38,13 +38,13 @@
                 <div class="user-menu">
                     <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
                     <div class="dropdown">
-                        <a href="#"><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        <a href="#" hx-get="/Teacher/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
                         <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
                     </div>
                 </div>
             </div>
         </header>
-        <main class="main">
+        <main id="main-panel" class="main">
             Teacher
         </main>
     </div>
@@ -84,6 +84,7 @@
     height: fit-content;
     gap: 15px;
     position: sticky;
+    padding-left: 0;
 }
 
 .header-right {
@@ -183,7 +184,9 @@
     flex-direction: column;
     overflow: auto;
     padding: 10px;
+    transform: translateX(0);
 }
+
 
 .sidebar-header {
     display: flex;

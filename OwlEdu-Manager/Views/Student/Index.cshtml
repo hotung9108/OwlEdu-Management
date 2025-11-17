@@ -1,5 +1,5 @@
 ﻿<div class="main-container">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <img src="~/images/owl.png" alt="logo"/>
             <span class="sidebar-title">OwlEdu</span>
@@ -44,6 +44,9 @@
 
     <div class="main-panel">
         <header class="header">
+            <div style="margin-right: auto;">
+                <a href="#" onClick="ToggleSidebar()" class="toggle-sidebar-btn" style="color: var(--text-main)"><i class="fa-solid fa-bars"></i></a>
+            </div>
             <div class="header-right">
                 <button class="btn-mode" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></button>
 
@@ -99,6 +102,7 @@
     gap: 15px;
     position: sticky;
     z-index: 100;
+    padding-left: 0;
 }
 
 .header-right {
@@ -198,7 +202,9 @@
     flex-direction: column;
     overflow: auto;
     padding: 10px;
+    transform: translateX(0);
 }
+
 
 .sidebar-header {
     display: flex;

@@ -1,0 +1,159 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Danh sách tài khoản</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo tài khoản mới</button>
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+</div>
+
+<style>
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+</style>
+
+<script>
+    function ChangePage(currentPage) {
+
+    }
+
+    function onLoadDg() {
+        var headers = ['Mã tài khoản', 'Tài khoản', 'Vai trò', 'Email', 'Trạng thái']
+
+        renderDatagridHeader('dgv', headers, true);
+
+        var data = [
+            {
+                "Mã tài khoản": "ACC001",
+                "Tài khoản": "nguyenvana",
+                "Vai trò": "Học viên",
+                "Email": "nguyenvana@example.com",
+                "Trạng thái": "active"
+            },
+            {
+                "Mã tài khoản": "ACC002",
+                "Tài khoản": "tranthib",
+                "Vai trò": "Học viên",
+                "Email": "tranthib@example.com",
+                "Trạng thái": "inactive"
+            },
+            {
+                "Mã tài khoản": "ACC003",
+                "Tài khoản": "phamduc",
+                "Vai trò": "Giảng viên",
+                "Email": "phamduc@example.com",
+                "Trạng thái": "active"
+            },
+            {
+                "Mã tài khoản": "ACC004",
+                "Tài khoản": "lethid",
+                "Vai trò": "Học viên",
+                "Email": "lethid@example.com",
+                "Trạng thái": "inactive"
+            },
+            {
+                "Mã tài khoản": "ACC005",
+                "Tài khoản": "nguyenvane",
+                "Vai trò": "Admin",
+                "Email": "nguyenvane@example.com",
+                "Trạng thái": "active"
+            }
+        ];
+
+
+
+
+        fillDatagrid('dgv', data);
+
+        fillDatagridAction("dgv", [
+            { 
+                text: "Chỉnh sửa thông tin", 
+                iconClass: "fa-solid fa-pen-to-square", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Hủy tài khoản", 
+                iconClass: "fa-solid fa-x",
+                onClick: function() { alert("Clicked "); } 
+            }
+        ]);
+
+        styleStatusColumn('dgv');
+    }
+
+    function onLoadPag() {
+        renderPagination('pag', 10, 'ChangePage')
+    }
+
+    function styleStatusColumn(containerId) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            // Lấy cột thứ 4 (index 3, 0-based)
+            const $statusTd = $tr.find('td').eq(4);
+            const statusText = $statusTd.text().trim().toLowerCase();
+
+            // Reset màu mặc định trước
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            // Gán màu theo trạng thái
+            switch (statusText) {
+                case 'active':
+                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    break;
+                case 'inactive':
+                    $statusTd.css('color', '#DC2626'); // đỏ
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+            }
+        });
+    }
+
+
+</script>
