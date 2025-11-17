@@ -6,14 +6,29 @@
             </div>
 
             <div class="col-12 col-md-4 text-md-end">
-                <input type="text" id="search-box" class="form-control"
-                    placeholder="Tìm kiếm..." />
+                <input type="text" id="search-box" class="form-control" placeholder="Tìm kiếm..." />
             </div>
         </div>
 
         <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+
+    <div id="scoreboard" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Bảng điểm</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('scoreboard')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv1"}' hx-trigger="revealed" data-on-load="onLoadDg1"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -45,84 +60,96 @@
 }
 </style>
 
-<script>
-    function ChangePage(currentPage) {
+<script type="module">
+    import CourseService from "../../js/API/CourseService.js";
+    import ClassService from "../../js/API/ClassService.js";
+    import ClassAssignmentService from "../../js/API/ClassAssignmentService.js";
+    import TeacherService from "../../js/API/TeacherService.js";
+    import ScoreService from "../../js/API/ScoreService.js";
+    import {getStudentID} from "../../js/Utils/getCookies.js";
 
-    }
+    inactiveFloatBox('scoreboard');
 
-    function onLoadDg() {
+    window.onLoadDg = onLoadDg;
+    window.styleStatusColumn = styleStatusColumn;
+    window.onLoadPag = onLoadPag;
+    window.OnPageChange = OnPageChange;
+    window.onLoadDg1 = onLoadDg1;
+    window.getFirstCellValue = getFirstCellValue;
+    window.SetDg1Data = SetDg1Data;
+
+    async function onLoadDg() {
+
         var headers = ['Mã lớp', 'Tên lớp', 'Ngày bắt đầu', 'Tên khóa học', 'Tên giáo viên', 'Trạng thái']
 
         renderDatagridHeader('dgv', headers, true);
 
-        var data = [
-            {
-                "Mã lớp": "CL001",
-                "Tên lớp": "IELTS Foundation A",
-                "Ngày bắt đầu": "2025-02-01",
-                "Tên khóa học": "IELTS Foundation",
-                "Tên giáo viên": "Nguyễn Minh Hùng",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã lớp": "CL002",
-                "Tên lớp": "TOEIC Intensive B",
-                "Ngày bắt đầu": "2025-02-10",
-                "Tên khóa học": "TOEIC Intensive",
-                "Tên giáo viên": "Trần Thu Hà",
-                "Trạng thái": "closed"
-            },
-            {
-                "Mã lớp": "CL003",
-                "Tên lớp": "Lập trình C# cơ bản - C",
-                "Ngày bắt đầu": "2025-03-05",
-                "Tên khóa học": "C# Cơ bản",
-                "Tên giáo viên": "Phạm Văn Long",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã lớp": "CL004",
-                "Tên lớp": "React Native nâng cao D",
-                "Ngày bắt đầu": "2025-03-15",
-                "Tên khóa học": "React Native nâng cao",
-                "Tên giáo viên": "Hoàng Đức Thịnh",
-                "Trạng thái": "closed"
-            },
-            {
-                "Mã lớp": "CL005",
-                "Tên lớp": "Java OOP Premium E",
-                "Ngày bắt đầu": "2025-04-01",
-                "Tên khóa học": "Java OOP Premium",
-                "Tên giáo viên": "Lê Thu Trang",
-                "Trạng thái": "closed"
-            }
-        ];
-
-
-
-        fillDatagrid('dgv', data);
-
-        fillDatagridAction("dgv", [
-            { 
-                text: "Chi tiết lớp", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
-            },
-            { 
-                text: "Xem điểm của bạn", 
-                iconClass: "fa-solid fa-star", 
-                onClick: function() { alert("Clicked "); } 
-            }
-        ]);
-
-        styleStatusColumn('dgv');
+        await OnPageChange(1);
     }
 
-    function onLoadPag() {
-        renderPagination('pag', 10, 'ChangePage')
+    async function OnPageChange(pageNumber) {
+        const response = await ClassAssignmentService.getAllClassAssignments(getStudentID(), pageNumber, 10);
+
+        const data = await Promise.all(response.map(async (ca) => {
+            const cls = await ClassService.getClassById(ca.classId);
+            const course = await CourseService.getCourseById(cls.courseId);
+            const teacher = await TeacherService.getTeacherById(cls.teacherId);
+
+            var status;
+            switch (ca.status) {
+                case "learning":
+                    status = "Đang học";
+                    break;
+                case "pass":
+                    status = "Đã hoàn thành";
+                    break;
+                default:
+                    status = "Trượt";
+                    break;
+            }
+
+            return {
+                "Mã lớp": ca.classId,
+                "Tên lớp": cls.name,
+                "Ngày bắt đầu": cls.startDate,
+                "Tên khóa học": course.name,
+                "Tên giáo viên": teacher.fullName,
+                "Trạng thái": status
+            }
+        }));
+
+        await fillDatagrid('dgv', data);
+
+        await fillDatagridAction("dgv", [
+                {
+                    text: "Chi tiết lớp", 
+                    iconClass: "fa-solid fa-info", 
+                    onClick: function (row) {
+                        alert(`Chi tiết khóa học: ${row}`);
+                    }
+                },
+                {
+                    text: "Xem điểm của bạn", 
+                    iconClass: "fa-solid fa-star", 
+                    onClick: async function (row) {
+                        const classId = getFirstCellValue(row);
+                        activeFloatBox('scoreboard');
+                        await SetDg1Data(classId);
+
+                    }
+                }
+            ]);
+
+        await styleStatusColumn('dgv', 5);
     }
 
-    function styleStatusColumn(containerId) {
+    async function onLoadPag() {
+        const response = await ClassAssignmentService.getAllClassAssignments(getStudentID(), -1, 10);
+
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange')
+    }
+
+    function styleStatusColumn(containerId, index) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
         const $tbody = $table.find('tbody');
@@ -130,7 +157,7 @@
         $tbody.find('tr').each(function () {
             const $tr = $(this);
             // Lấy cột thứ 4 (index 3, 0-based)
-            const $statusTd = $tr.find('td').eq(5);
+            const $statusTd = $tr.find('td').eq(index);
             const statusText = $statusTd.text().trim().toLowerCase();
 
             // Reset màu mặc định trước
@@ -141,10 +168,13 @@
 
             // Gán màu theo trạng thái
             switch (statusText) {
-                case 'active':
+                case "Đang học":
                     $statusTd.css('color', '#1D4ED8'); // xanh dương
                     break;
-                case 'closed':
+                case "Đã hoàn thành":
+                    $statusTd.css('color', '#DC2626'); // xanh lá
+                    break;
+                case "Trượt":
                     $statusTd.css('color', '#DC2626'); // đỏ
                     break;
                 default:
@@ -153,5 +183,44 @@
         });
     }
 
+    function getFirstCellValue(row) {
+        if (!row || !(row instanceof HTMLTableRowElement)) {
+            console.error("Invalid row element provided.");
+            return null;
+        }
 
+        const firstCell = row.querySelector("td"); 
+        return firstCell ? firstCell.textContent.trim() : null; 
+    }
+
+    function onLoadDg1() {
+        var headers = ['Tên bài kiểm tra', 'Điểm listening', 'Điểm speaking', 'Điểm reading', 'Điểm writing', 'Loại bài kiểm tra', 'Điểm trung bình']
+
+        renderDatagridHeader('dgv1', headers, false);
+    }
+
+    $('#search-box').on('keydown', function (e) {
+        if (e.keyCode === 13) 
+        {
+
+        }
+    });
+
+    async function SetDg1Data(classId) {
+        const response = await ScoreService.getScoresByStudent(getStudentID());
+
+        const scoresInClass = response.filter(s => s.classId === classId);
+
+        const data = await scoresInClass.map(score => ({
+            'Tên bài kiểm tra': score.title,
+            'Điểm listening': score.listening,
+            'Điểm speaking': score.speaking,
+            'Điểm reading': score.reading,
+            'Điểm writing': score.writing,
+            'Loại bài kiểm tra': score.type,
+            'Điểm trung bình': 10
+        }));
+
+        await fillDatagrid('dgv1', data);
+    }
 </script>

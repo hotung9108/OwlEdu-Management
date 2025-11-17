@@ -1,0 +1,176 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Danh sách học viên</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo học viên mới</button>
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+</div>
+
+<style>
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+</style>
+
+<script>
+    function ChangePage(currentPage) {
+
+    }
+
+    function onLoadDg() {
+        var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Email', 'Trạng thái']
+
+        renderDatagridHeader('dgv', headers, true);
+
+        var data = [
+            {
+                "Mã học viên": "STU001",
+                "Mã tài khoản": "ACC001",
+                "Tên học viên": "Nguyễn Văn A",
+                "Ngày sinh": "2005-01-12",
+                "Số điện thoại": "0901234567",
+                "Giới tính": "Nam",
+                "Email": "nguyenvana@example.com",
+                "Trạng thái": "active"
+            },
+            {
+                "Mã học viên": "STU002",
+                "Mã tài khoản": "ACC002",
+                "Tên học viên": "Trần Thị B",
+                "Ngày sinh": "2004-05-20",
+                "Số điện thoại": "0912345678",
+                "Giới tính": "Nữ",
+                "Email": "tranthib@example.com",
+                "Trạng thái": "inactive"
+            },
+            {
+                "Mã học viên": "STU003",
+                "Mã tài khoản": "ACC003",
+                "Tên học viên": "Phạm Đức C",
+                "Ngày sinh": "2005-03-15",
+                "Số điện thoại": "0923456789",
+                "Giới tính": "Nam",
+                "Email": "phamducc@example.com",
+                "Trạng thái": "active"
+            },
+            {
+                "Mã học viên": "STU004",
+                "Mã tài khoản": "ACC004",
+                "Tên học viên": "Lê Thị D",
+                "Ngày sinh": "2006-07-10",
+                "Số điện thoại": "0934567890",
+                "Giới tính": "Nữ",
+                "Email": "lethid@example.com",
+                "Trạng thái": "active"
+            },
+            {
+                "Mã học viên": "STU005",
+                "Mã tài khoản": "ACC005",
+                "Tên học viên": "Nguyễn Văn E",
+                "Ngày sinh": "2004-11-25",
+                "Số điện thoại": "0945678901",
+                "Giới tính": "Nam",
+                "Email": "nguyenvane@example.com",
+                "Trạng thái": "inactive"
+            }
+        ];
+
+        fillDatagrid('dgv', data);
+
+        fillDatagridAction("dgv", [
+            { 
+                text: "Xem chi tiết", 
+                iconClass: "fa-solid fa-info", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Chỉnh sửa thông tin", 
+                iconClass: "fa-solid fa-pen-to-square", 
+                onClick: function() { alert("Clicked Chi tiết"); } 
+            },
+            { 
+                text: "Hủy học viên", 
+                iconClass: "fa-solid fa-x",
+                onClick: function() { alert("Clicked "); } 
+            }
+        ]);
+
+        styleStatusColumn('dgv');
+    }
+
+    function onLoadPag() {
+        renderPagination('pag', 10, 'ChangePage')
+    }
+
+    function styleStatusColumn(containerId) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            // Lấy cột thứ 4 (index 3, 0-based)
+            const $statusTd = $tr.find('td').eq(7);
+            const statusText = $statusTd.text().trim().toLowerCase();
+
+            // Reset màu mặc định trước
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            // Gán màu theo trạng thái
+            switch (statusText) {
+                case 'active':
+                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    break;
+                case 'inactive':
+                    $statusTd.css('color', '#DC2626'); // đỏ
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+            }
+        });
+    }
+
+
+</script>

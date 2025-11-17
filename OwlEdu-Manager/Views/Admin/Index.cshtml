@@ -1,5 +1,5 @@
 ﻿<div class="main-container">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <img src="~/images/owl.png" alt="logo"/>
             <span class="sidebar-title">OwlEdu</span>
@@ -11,10 +11,10 @@
                     Thông tin
                 </legend>
             </fieldset>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Notification" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-bell"></i>    Thông báo</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Dashboard" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-chart-column"></i>  Báo cáo thống kê</span>
             </a>
             <fieldset class="sidebar-catalog">
@@ -22,13 +22,13 @@
                     Quản lý người dùng
                 </legend>
             </fieldset>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Account" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-users"></i>  Quản lý tài khoản</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Student" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-graduation-cap"></i>  Quản lý học viên</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Teacher" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-chalkboard-user"></i>  Quản lý giáo viên</span>
             </a>
             <fieldset class="sidebar-catalog">
@@ -36,13 +36,13 @@
                     Quản lý trung tâm   
                 </legend>
             </fieldset>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Enrollment" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-file-signature"></i>  Quản lý đăng ký học</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Class" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-school"></i>  Quản lý lớp học</span>
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Course" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-book"></i>   Quản lý khóa học</span>
             </a>
             <fieldset class="sidebar-catalog">
@@ -50,7 +50,7 @@
                     Quản lý tài chính
                 </legend>
             </fieldset>
-            <a href="#" class="sidebar-item">
+            <a href="#" class="sidebar-item" hx-get="/Admin/Payment" hx-trigger="click" hx-target="#main-panel">
                 <span class="label"><i class="fa-solid fa-money-bill"></i>  Quản lý học phí</span>
             </a>
         </nav>
@@ -58,6 +58,9 @@
 
     <div class="main-panel">
         <header class="header">
+            <div style="margin-right: auto;">
+                <a href="#" onClick="ToggleSidebar()" class="toggle-sidebar-btn" style="color: var(--text-main)"><i class="fa-solid fa-bars"></i></a>
+            </div>
             <div class="header-right">
                 <button class="btn-mode" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></button>
 
@@ -66,13 +69,13 @@
                 <div class="user-menu">
                     <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
                     <div class="dropdown">
-                        <a href="#"><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        <a href="#" hx-get="/Admin/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
                         <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
                     </div>
                 </div>
             </div>
         </header>
-        <main class="main">
+        <main id="main-panel" class="main">
             Admin
         </main>
     </div>
@@ -112,6 +115,7 @@
     height: fit-content;
     gap: 15px;
     position: sticky;
+    padding-left: 0;
 }
 
 .header-right {
@@ -211,6 +215,7 @@
     flex-direction: column;
     overflow: auto;
     padding: 10px;
+    transform: translateX(0);
 }
 
 .sidebar-header {
