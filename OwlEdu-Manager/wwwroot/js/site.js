@@ -57,8 +57,8 @@ function OpenProfile() {
 }
 
 //On get components
-document.addEventListener('DOMContentLoaded', function () {
-    htmx.onLoad(function (el) {
+document.addEventListener('DOMContentLoaded', async function () {
+    htmx.onLoad(async function (el) {
 
         var parent = el.parentElement;
         if (parent.classList && parent.classList.contains('component-container')) {
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const fnName = parent.getAttribute('data-on-load');
 
             if (fnName && typeof window[fnName] === 'function') {
-                window[fnName]();
+                await window[fnName]();
             }
 
             if (el.classList && el.classList.contains('datagrid-container')) {
@@ -355,6 +355,7 @@ function fillDatagrid(containerId, data) {
 
         $tbody.append($tr);
     });
+    //makeDatagridSortable($table);
 }
 function fillDatagridAction(containerId, actions) {
     const $container = $('#' + containerId);
@@ -469,4 +470,17 @@ function addEvent(day, startTime, endTime, title, room, status = null, color = "
     $(`.schedule-column[data-day="${day}"]`).append(event);
 }
 
+function getCellValueByColumnIndex(row, columnIndex) {
+    if (!row || !(row instanceof HTMLTableRowElement)) {
+        console.error("Invalid row element provided.");
+        return null;
+    }
 
+    const cells = row.querySelectorAll("td");
+    if (columnIndex < 0 || columnIndex >= cells.length) {
+        console.error("Invalid column index provided.");
+        return null;
+    }
+
+    return cells[columnIndex].textContent.trim();
+}
