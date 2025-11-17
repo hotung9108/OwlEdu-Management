@@ -1,6 +1,7 @@
 ﻿import callApi from "../Utils/callApi.js";
 import { getAuthToken } from "../Utils/getCookies.js";
 
+
 const api_url = "https://localhost:7230";
 const token = getAuthToken();
 

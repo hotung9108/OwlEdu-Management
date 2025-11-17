@@ -2,7 +2,7 @@
 import { getAuthToken } from "../Utils/getCookies.js";
 
 const api_url = "https://localhost:7230";
-const token = getAuthToken(); // Định nghĩa token một lần để sử dụng lại
+const token = getAuthToken(); 
 
 const PaymentService = {
     getAllPayments: function (keyword = "", pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
