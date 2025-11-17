@@ -63,6 +63,7 @@
         </header>
         <main id="main-panel" class="main">
             Student
+            <button id="log-courses-btn" class="btn btn-primary mt-3">Log Tất Cả Khóa Học</button>
         </main>
     </div>
 </div>
@@ -274,7 +275,19 @@
 </style>
 
 
-<script>
+<script type="module">
+    import CourseService from "../../js/API/CourseService.js";
+
+        $(document).ready(function () {
+            // Xử lý sự kiện nút log tất cả khóa học
+            $('#log-courses-btn').on('click', function () {
+                CourseService.getAllCourses("", 1, 100, function (response) {
+                    console.log("Danh sách tất cả khóa học:", response);
+                }, function (error) {
+                    console.error("Không thể lấy danh sách khóa học:", error);
+                });
+            });
+        });
 $(document).ready(function() {
     $('.btn-mode').click(function() {
         $('.btn-mode').toggleClass('dark');
