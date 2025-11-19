@@ -23,115 +23,103 @@
     </div>
 </div>
 
-<script>
-    function ChangePage(currentPage) {
-
-    }
-
-    function onLoadDg() {
-        var headers = ['Mã hóa đơn', 'Mã đăng ký', 'Số tiền', 'Ngày đóng học phí', 'Mã người thu', 'Mã người trả', 'Phương thức', 'Trạng thái']
-
+<script type="module">
+    import PaymentService from "../../js/API/PaymentService.js";
+    import AccountService from "../../js/API/AccountService.js";
+    window.onLoadDg = onLoadDg;
+    window.onLoadPag = onLoadPag;
+    // window.SubmitAccount = SubmitAccount;
+    window.OnPageChange = OnPageChange;
+    // window.SetAccountDetailData = SetAccountDetailData;
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
+    async function onLoadDg() {
+        var headers = ['Mã thanh toán', 'Mã đăng ký', 'Trạng thái', 'Thời gian giao dịch', 'Học phí', 'Người thu', 'Người đăng ký']
+        // var headers = ['Mã giáo viên', 'Mã tài khoản', 'Tên giáo viên', 'Chuyên môn', 'Trình độ', 'Số điện thoại', 'Giới tính', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
-
-        var data = [
-            {
-                "Mã hóa đơn": "HD001",
-                "Mã đăng ký": "DK001",
-                "Số tiền": "5.000.000đ",
-                "Ngày đóng học phí": "2025-01-12",
-                "Mã người thu": "NV001",
-                "Mã người trả": "NV001",
-                "Phương thức": "Tiền mặt",
-                "Trạng thái": "paid"
-            },
-            {
-                "Mã hóa đơn": "HD002",
-                "Mã đăng ký": "DK002",
-                "Số tiền": "3.500.000đ",
-                "Ngày đóng học phí": "2025-01-20",
-                "Mã người thu": "NV002",
-                "Mã người trả": "NV001",
-                "Phương thức": "Chuyển khoản",
-                "Trạng thái": "failed"
-            },
-            {
-                "Mã hóa đơn": "HD003",
-                "Mã đăng ký": "DK003",
-                "Số tiền": "7.200.000đ",
-                "Ngày đóng học phí": "2025-02-01",
-                "Mã người thu": "NV001",
-                "Mã người trả": "NV001",
-                "Phương thức": "Tiền mặt",
-                "Trạng thái": "paid"
-            },
-            {
-                "Mã hóa đơn": "HD004",
-                "Mã đăng ký": "DK004",
-                "Số tiền": "4.500.000đ",
-                "Ngày đóng học phí": "2025-02-10",
-                "Mã người thu": "NV003",
-                "Mã người trả": "NV001",
-                "Phương thức": "Chuyển khoản",
-                "Trạng thái": "pending"
-            },
-            {
-                "Mã hóa đơn": "HD005",
-                "Mã đăng ký": "DK005",
-                "Số tiền": "6.000.000đ",
-                "Ngày đóng học phí": "2025-03-01",
-                "Mã người thu": "NV002",
-                "Mã người trả": "NV001",
-                "Phương thức": "Tiền mặt",
-                "Trạng thái": "pending"
+        await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        currentPage = pageNumber;
+        const response = await PaymentService.getAllPayments(currentKeyword,pageNumber, pageSize);
+        const data = await Promise.all(response.map(async (payment)=>{
+            // const teacherDetail = await PaymentService.getPaymentById(teacher.id);
+            const payer = await AccountService.getAccountById(payment.payerId);
+            const feeCollector = await AccountService.getAccountById(payment.feeCollectorId);
+            return {
+                "Mã thanh toán": payment.id,
+                "Mã đăng ký": payment.enrollmentId,
+                "Trạng thái": payment.status,
+                "Thời gian giao dịch":payment.paymentDate,
+                "Học phí":payment.amount,
+                "Người thu":payer.username,
+                "Người đăng ký": feeCollector.username,
+                // "Tài khoản": teacherDetail.accountResponse.username,
+                // "Chuyên môn":teacher.specialization,
+                // "Trình độ": teacher.qualification,
+                // "Giới tính": teacher.gender? "Nam": "Nữ",
+                // "Vai trò": teacherDetail.accountResponse.role || "N/A",
+                // "Email": teacherDetail.accountResponse.email || "N/A",
+                // "Trạng thái": teacherDetail.accountResponse.status ? "Active" : "Inactive",
             }
-        ];
-
-
-        fillDatagrid('dgv', data);
-
-        fillDatagridAction("dgv", [
-            { 
-                text: "Xem chi tiết", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+        }));
+        // console.log(data);
+        await fillDatagrid('dgv', data);
+        await fillDatagridAction("dgv", [
+            {
+                text: "Chi tiết tài khoản",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
             },
-            { 
-                text: "In hóa đơn", 
-                iconClass: "fa-solid fa-print",
-                onClick: function() { alert("Clicked "); } 
+                {
+                text: "Chỉnh sửa tài khoản",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    // const accountId = getCellValueByColumnIndex(row, 0);
+                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     // activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
             },
-            { 
-                text: "Thanh toán hóa đơn", 
-                iconClass: "fa-solid fa-credit-card",
-                onClick: function() { alert("Clicked "); } 
-            },
-            { 
-                text: "Chỉnh sửa thông tin", 
-                iconClass: "fa-solid fa-pen-to-square", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
-            },
-            { 
-                text: "Hủy hóa đơn", 
-                iconClass: "fa-solid fa-x", 
-                onClick: function() { alert("Clicked Đăng ký"); } 
+            {
+                text: "Xóa",
+                iconClass: "fa-solid fa-trash",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
+                        // await AccountService.deleteAccount(accountId);
+                        await OnPageChange(1);
+                    }
+                }
             }
         ]);
 
-        styleStatusColumn('dgv');
+        await styleStatusColumn('dgv', 2);
     }
-
-    function onLoadPag() {
-        renderPagination('pag', 10, 'ChangePage')
+     async function onLoadPag() {
+        const response = await PaymentService.getAllPayments(currentKeyword,-1, 10);
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
     }
-
-    function styleStatusColumn(containerId) {
+    function styleStatusColumn(containerId, index) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
         const $tbody = $table.find('tbody');
 
         $tbody.find('tr').each(function () {
             const $tr = $(this);
-            const $statusTd = $tr.find('td').eq(7);
+            const $statusTd = $tr.find('td').eq(index);
             const statusText = $statusTd.text().trim().toLowerCase();
 
             $statusTd.css({
@@ -141,17 +129,144 @@
 
             switch (statusText) {
                 case 'paid':
-                    $statusTd.css('color', '#10B981'); // xanh dương
-                    break;
-                case 'pending':
-                    $statusTd.css('color', '#FBBF24'); // vàng
+                    $statusTd.css('color', '#1D4ED8');
                     break;
                 case 'failed':
-                    $statusTd.css('color', '#DC2626'); // đỏ
+                    $statusTd.css('color', '#DC2626');
                     break;
                 default:
-                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+                    $statusTd.css('color', '#6B7280');
             }
         });
     }
+    // function ChangePage(currentPage) {
+
+    // }
+
+    // function onLoadDg() {
+    //     var headers = ['Mã hóa đơn', 'Mã đăng ký', 'Số tiền', 'Ngày đóng học phí', 'Mã người thu', 'Mã người trả', 'Phương thức', 'Trạng thái']
+
+    //     renderDatagridHeader('dgv', headers, true);
+
+    //     var data = [
+    //         {
+    //             "Mã hóa đơn": "HD001",
+    //             "Mã đăng ký": "DK001",
+    //             "Số tiền": "5.000.000đ",
+    //             "Ngày đóng học phí": "2025-01-12",
+    //             "Mã người thu": "NV001",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Tiền mặt",
+    //             "Trạng thái": "paid"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD002",
+    //             "Mã đăng ký": "DK002",
+    //             "Số tiền": "3.500.000đ",
+    //             "Ngày đóng học phí": "2025-01-20",
+    //             "Mã người thu": "NV002",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Chuyển khoản",
+    //             "Trạng thái": "failed"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD003",
+    //             "Mã đăng ký": "DK003",
+    //             "Số tiền": "7.200.000đ",
+    //             "Ngày đóng học phí": "2025-02-01",
+    //             "Mã người thu": "NV001",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Tiền mặt",
+    //             "Trạng thái": "paid"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD004",
+    //             "Mã đăng ký": "DK004",
+    //             "Số tiền": "4.500.000đ",
+    //             "Ngày đóng học phí": "2025-02-10",
+    //             "Mã người thu": "NV003",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Chuyển khoản",
+    //             "Trạng thái": "pending"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD005",
+    //             "Mã đăng ký": "DK005",
+    //             "Số tiền": "6.000.000đ",
+    //             "Ngày đóng học phí": "2025-03-01",
+    //             "Mã người thu": "NV002",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Tiền mặt",
+    //             "Trạng thái": "pending"
+    //         }
+    //     ];
+
+
+    //     fillDatagrid('dgv', data);
+
+    //     fillDatagridAction("dgv", [
+    //         { 
+    //             text: "Xem chi tiết", 
+    //             iconClass: "fa-solid fa-info", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "In hóa đơn", 
+    //             iconClass: "fa-solid fa-print",
+    //             onClick: function() { alert("Clicked "); } 
+    //         },
+    //         { 
+    //             text: "Thanh toán hóa đơn", 
+    //             iconClass: "fa-solid fa-credit-card",
+    //             onClick: function() { alert("Clicked "); } 
+    //         },
+    //         { 
+    //             text: "Chỉnh sửa thông tin", 
+    //             iconClass: "fa-solid fa-pen-to-square", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Hủy hóa đơn", 
+    //             iconClass: "fa-solid fa-x", 
+    //             onClick: function() { alert("Clicked Đăng ký"); } 
+    //         }
+    //     ]);
+
+    //     styleStatusColumn('dgv');
+    // }
+
+    // function onLoadPag() {
+    //     renderPagination('pag', 10, 'ChangePage')
+    // }
+
+    // function styleStatusColumn(containerId) {
+    //     const $container = $('#' + containerId);
+    //     const $table = $container.find('table.datagrid');
+    //     const $tbody = $table.find('tbody');
+
+    //     $tbody.find('tr').each(function () {
+    //         const $tr = $(this);
+    //         const $statusTd = $tr.find('td').eq(7);
+    //         const statusText = $statusTd.text().trim().toLowerCase();
+
+    //         $statusTd.css({
+    //             'color': '',
+    //             'font-weight': 'bold'
+    //         });
+
+    //         switch (statusText) {
+    //             case 'paid':
+    //                 $statusTd.css('color', '#10B981'); xanh dương
+    //                 break;
+    //             case 'pending':
+    //                 $statusTd.css('color', '#FBBF24'); vàng
+    //                 break;
+    //             case 'failed':
+    //                 $statusTd.css('color', '#DC2626'); đỏ
+    //                 break;
+    //             default:
+    //                 $statusTd.css('color', '#6B7280'); xám cho các trạng thái khác
+    //         }
+    //     });
+    // }
 </script>

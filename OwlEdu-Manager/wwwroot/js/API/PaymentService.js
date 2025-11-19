@@ -2,11 +2,12 @@
 import { getAuthToken } from "../Utils/getCookies.js";
 
 const api_url = "https://localhost:7230";
+const token = getAuthToken();
 
 const PaymentService = {
-    async getAllPayments(keyword = "", pageNumber = 1, pageSize = 10) {
+    // Lấy danh sách tất cả các thanh toán
+    getAllPayments: async function (keyword = "", pageNumber = 1, pageSize = 10) {
         try {
-            const token = getAuthToken();
             const response = await callApi({
                 url: `${api_url}/Payment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
                 method: "GET",
@@ -14,14 +15,14 @@ const PaymentService = {
             });
             return response;
         } catch (error) {
-            console.error("Error in getAllPayments:", error);
+            console.error("Error fetching payments:", error);
             throw error;
         }
     },
 
-    async getPaymentById(id) {
+    // Lấy thông tin chi tiết của một thanh toán
+    getPaymentById: async function (id) {
         try {
-            const token = getAuthToken();
             const response = await callApi({
                 url: `${api_url}/Payment/${id}`,
                 method: "GET",
@@ -29,14 +30,13 @@ const PaymentService = {
             });
             return response;
         } catch (error) {
-            console.error("Error in getPaymentById:", error);
+            console.error("Error fetching payment by ID:", error);
             throw error;
         }
     },
 
     async getPaymentByEnrollmentId(enrollmentId) {
         try {
-            const token = getAuthToken();
             const response = await callApi({
                 url: `${api_url}/Payment/enrollment/${enrollmentId}`,
                 method: "GET",
@@ -48,10 +48,9 @@ const PaymentService = {
             throw error;
         }
     },
-
-    async addPayment(paymentData) {
+    // Thêm một thanh toán mới
+    addPayment: async function (paymentData) {
         try {
-            const token = getAuthToken();
             const response = await callApi({
                 url: `${api_url}/Payment`,
                 method: "POST",
@@ -63,14 +62,14 @@ const PaymentService = {
             });
             return response;
         } catch (error) {
-            console.error("Error in addPayment:", error);
+            console.error("Error adding payment:", error);
             throw error;
         }
     },
 
-    async updatePayment(id, paymentData) {
+    // Cập nhật thông tin thanh toán
+    updatePayment: async function (id, paymentData) {
         try {
-            const token = getAuthToken();
             const response = await callApi({
                 url: `${api_url}/Payment/${id}`,
                 method: "PUT",
@@ -82,14 +81,14 @@ const PaymentService = {
             });
             return response;
         } catch (error) {
-            console.error("Error in updatePayment:", error);
+            console.error("Error updating payment:", error);
             throw error;
         }
     },
 
-    async deletePayment(id) {
+    // Xóa một thanh toán
+    deletePayment: async function (id) {
         try {
-            const token = getAuthToken();
             const response = await callApi({
                 url: `${api_url}/Payment/${id}`,
                 method: "DELETE",
@@ -97,7 +96,7 @@ const PaymentService = {
             });
             return response;
         } catch (error) {
-            console.error("Error in deletePayment:", error);
+            console.error("Error deleting payment:", error);
             throw error;
         }
     }

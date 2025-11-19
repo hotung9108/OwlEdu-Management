@@ -4,10 +4,10 @@ import { getAuthToken } from "../Utils/getCookies.js";
 const api_url = "https://localhost:7230";
 const token = getAuthToken();
 const TeacherService = {
-    getAllTeachers: async function (pageNumber = 1, pageSize = 10) {
+    getAllTeachers: async function (keyword = "", pageNumber = 1, pageSize = 10) {
         try {
             const response = await callApi({
-                url: `${api_url}/api/Teacher?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                url: `${api_url}/api/Teacher?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
             });

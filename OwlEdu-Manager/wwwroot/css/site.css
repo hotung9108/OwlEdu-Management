@@ -145,3 +145,21 @@ body {
 .float-box-header .close-btn:hover {
     color: var(--error);
 }
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+#teacherFields h5 {
+    color: var(--primary);
+}
+#studentFields h5 {
+    color: var(--primary);
+}
