@@ -57,9 +57,18 @@
     // function ChangePage(currentPage) {
 
     // }
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
     window.onLoadDg = onLoadDg;
     window.OnPageChange = OnPageChange;
     window.onLoadPag = onLoadPag;
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
     async function onLoadDg() {
         // var headers = ['Mã tài khoản','Họ và tên', 'Tài khoản', 'Vai trò', 'Email', 'Trạng thái']
         var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Trạng thái']
@@ -67,7 +76,8 @@
         await OnPageChange(1);
     }
     async function OnPageChange(pageNumber) {
-        const response = await StudentService.getAllStudents("",pageNumber, 10);
+        currentPage = pageNumber;
+        const response = await StudentService.getAllStudents(currentKeyword,pageNumber, pageSize);
         const data = await Promise.all(response.map(async (student)=>{
             const studentDetail = await StudentService.getStudentById(student.id);
             // const accountdetail = await AccountService.getAccountById(account.id);
@@ -134,9 +144,13 @@
         await styleStatusColumn('dgv', 6);
     }
     async function onLoadPag() {
-        const response = await StudentService.getAllStudents("",-1, 10);
+        const response = await StudentService.getAllStudents(currentKeyword,-1, 10);
         renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
     }
+    // async function onLoadPag() {
+    //     const response = await StudentService.getAllStudents("",-1, 10);
+    //     renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
+    // }
     // function onLoadDg() {
     //     var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Email', 'Trạng thái']
 

@@ -17,9 +17,9 @@
             </div>
         </div>
 
-        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgCourse"}' hx-trigger="revealed" data-on-load="onLoadDgCourse"></div>
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgCourse"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
 
-        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgCourse"}' hx-trigger="revealed" data-on-load="onLoadCoursePagination"></div>
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgCourse"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
     </div>
 </div>
 
@@ -52,7 +52,19 @@
 </style>
 
 <script type="module">
-    import StudentService from "../../js/API/StudentService.js";
+    import CourseService from "../../js/API/CourseService.js";
+    window.onLoadDg = onLoadDg;
+    window.OnPageChange = OnPageChange;
+    window.onLoadPag = onLoadPag;
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
     async function onLoadDg() {
         // var headers = ['Mã tài khoản','Họ và tên', 'Tài khoản', 'Vai trò', 'Email', 'Trạng thái']
         // var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Trạng thái']
@@ -64,8 +76,90 @@
             "Học phí",
             "Trạng thái"
         ];
-        renderDatagridHeader('dgv', headers, true);
+        renderDatagridHeader('dgCourse', headers, true);
         await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        currentPage = pageNumber;
+        const response = await CourseService.getAllCourses(currentKeyword,pageNumber, pageSize);
+        const data = await Promise.all(response.map(async (course)=>{
+            return {
+                "Mã khóa học": course.id,
+                "Tên khóa học": course.name,
+                "Mô tả": course.description,
+                "Số buổi học": course.numberOfLessons,
+                "Học phí": course.fee,
+                "Trạng thái": course.status? "Active":"Inactive",
+ 
+            }
+        }));
+        await fillDatagrid('dgCourse', data);
+        await fillDatagridAction("dgCourse", [
+            {
+                text: "Chi tiết khóa học",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
+            },
+                {
+                text: "Chỉnh sửa khóa học",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    // const accountId = getCellValueByColumnIndex(row, 0);
+                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     // activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
+            },
+            {
+                text: "Xóa khóa học",
+                iconClass: "fa-solid fa-trash",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
+                        // await AccountService.deleteAccount(accountId);
+                        await OnPageChange(1);
+                    }
+                }
+            }
+        ]);
+
+        await styleStatusColumn('dgCourse', 5);
+    }
+    async function onLoadPag() {
+        const response = await CourseService.getAllCourses(currentKeyword,-1, 10);
+        renderPagination('pagDgCourse', Math.ceil(response.length / 10), 'OnPageChange');
+    }
+    function styleStatusColumn(containerId, index) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            const $statusTd = $tr.find('td').eq(index);
+            const statusText = $statusTd.text().trim().toLowerCase();
+
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            switch (statusText) {
+                case 'completed':
+                    $statusTd.css('color', '#1D4ED8');
+                    break;
+                case 'active':
+                    $statusTd.css('color', '#DC2626');
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280');
+            }
+        });
     }
     // function Test(currentPage) {
     //     ActiveModal('modal', 'Thông báo', 'Trang hiện tại là: ' + currentPage);
