@@ -15,8 +15,47 @@
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgCourse"}' hx-trigger="revealed" data-on-load="onLoadCoursePagination"></div>
     </div>
-</div>
 
+    <div id="details" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết khóa học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content row g-3">
+                <div class="col-md-6">
+                    <label class="btl-label">Mã khóa học</label>
+                    <p id="id-display" class="btl-view">student01</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Tên khóa học</label>
+                    <p id="name-display" class="btl-view">student01</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Số buổi học</label>
+                    <p id="numberoflessons-display" class="btl-view">student01</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Học phí</label>
+                    <p id="fee-display" class="btl-view">student01</p>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="btl-label">Mô tả</label>
+                    <p id="desc-display" class="btl-view">student01</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
 <style>
 
 .title {
@@ -43,8 +82,22 @@
     background-color: var(--primary-hover);
     color: #FFFFFF;
 }
+
+.btl-label {
+    color:var(--text-main);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btl-view {
+    padding: 8px 0;
+    margin: 0;
+    color: var(--text-muted);
+}
 </style>
 <script type="module">
+    inactiveFloatBox('details');
+
     import CourseService from "../../js/API/CourseService.js";
     import EnrollmentService from "../../js/API/EnrollmentService.js";
     import { getStudentID } from "../../js/Utils/getCookies.js";
@@ -71,7 +124,7 @@
     }
     function renderCourseHeader(){
          const headers = [
-            "ID",
+            "Mã khóa học",
             "Tên khóa học",
             "Mô tả",
             "Số buổi học",
@@ -83,11 +136,13 @@
     async function onLoadDgCourse(keyword = "", pageNumber = 1) {
         try {
             const response = await CourseService.getAllCourses(keyword, pageNumber, pageSize);
-            const data = response.map(course => ({
-                ID: course.id,
+            const data = response
+            .filter(course => course.status === true)
+            .map(course => ({
+                "Mã khóa học": course.id,
                 "Tên khóa học": course.name,
                 "Mô tả": course.description,
-                "Trạng thái": course.status ? "Hoạt động" : "Không hoạt động",
+                "Trạng thái": "Không hoạt động",
                 "Số buổi học": course.numberOfLessons,
                 "Học phí": course.fee
             }));
@@ -98,16 +153,46 @@
                 {
                     text: "Chi tiết",
                     iconClass: "fa-solid fa-info",
-                    onClick: function (row) {
-                         const cellValue = getCellValueByColumnIndex(row, 0);
+                    onClick: async function (row) {
+                         const courseId = getFirstCellValue(row);
+
+                         const response = await CourseService.getCourseById(courseId);
+
+                         $('#id-display').text(courseId);
+                         $('#name-display').text(response.name);
+                         $('#numberoflessons-display').text(response.numberOfLessons);
+                         $('#fee-display').text(response.fee);
+                         $('#desc-display').text(response.description);
+
+                         activeFloatBox("details");
                     }
                 },
                 {
                     text: "Đăng ký",
                     iconClass: "fa-solid fa-arrow-right-to-bracket",
-                    onClick: function (row) {
-                        const courseId = getCellValueByColumnIndex(row, 0); // Lấy ID khóa học
-                        const studentId = getStudentID();
+                    onClick: async function (row) {
+                        const newCourseId = getCellValueByColumnIndex(row, 0); // Lấy ID khóa học
+                        const newStudentId = getStudentID();
+
+                        var check = await EnrollmentService.getAllEnrollments(newCourseId + " " + newStudentId + " " + "active", -1, -1);
+                        
+                        if (check.length > 0) {
+                            ActiveModal("modal", "Thông báo", "Đăng ký của khóa học đang được xử lý");
+                            return;
+                        }
+
+                        const now = new Date();
+
+                        const newEnrollment = {
+                            id: "", 
+                            studentId: newStudentId,
+                            courseId: newCourseId,
+                            enrollmentDate: now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
+                            status: "active",
+                            createdBy: newStudentId
+                        };
+
+                        var response = await EnrollmentService.addEnrollment(newEnrollment);
 
                     }
                 }

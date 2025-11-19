@@ -53,7 +53,7 @@
                 <button class="btn-fullscreen" onclick="toggleFullScreen()"><i class="fa-solid fa-compress"></i></button>
 
                 <div class="user-menu">
-                    <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
+                    <button id="username" class="btn-user"><i class="fa-solid fa-user"></i><span id="user-fullname">Full name</span></button>
                     <div class="dropdown">
                         <a href="#" hx-get="/Student/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
                         <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
@@ -276,18 +276,20 @@
 
 
 <script type="module">
-    // import CourseService from "../../js/API/CourseService.js";
+import {getStudentID} from "../../js/Utils/getCookies.js";
+import StudentService from "../../js/API/StudentService.js";
 
-    //     $(document).ready(function () {
-    //         Xử lý sự kiện nút log tất cả khóa học
-    //         $('#log-courses-btn').on('click', function () {
-    //             CourseService.getAllCourses("", 1, 100, function (response) {
-    //                 console.log("Danh sách tất cả khóa học:", response);
-    //             }, function (error) {
-    //                 console.error("Không thể lấy danh sách khóa học:", error);
-    //             });
-    //         });
-    //     });
+window.toggleFullScreen = toggleFullScreen;
+window.Setup = Setup;
+
+await Setup();
+
+async function Setup() {
+    console.log(getStudentID());
+    const studentInfor = await StudentService.getStudentById(getStudentID());
+    $('#user-fullname').text(studentInfor.fullName);
+}
+
 $(document).ready(function() {
     $('.btn-mode').click(function() {
         $('.btn-mode').toggleClass('dark');

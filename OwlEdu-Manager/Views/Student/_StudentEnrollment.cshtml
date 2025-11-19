@@ -11,9 +11,9 @@
             </div>
         </div>
 
-        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgEnrollment"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
 
-        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgvEnrollment"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
     </div>
 </div>
 
@@ -45,67 +45,106 @@
 }
 </style>
 
-<script>
-    function ChangePage(currentPage) {
+<script type="module">
+    import CourseService from "../../js/API/CourseService.js";
+    import EnrollmentService from "../../js/API/EnrollmentService.js";
+    import {getStudentID} from "../../js/Utils/getCookies.js";
 
+    window.onLoadDg = onLoadDg;
+    window.styleStatusColumn = styleStatusColumn;
+    window.onLoadPag = onLoadPag;
+    window.OnPageChange = OnPageChange;
+    window.CancelEnrollment = CancelEnrollment;
+
+    let currentPage = 1;
+    const pageSize = 10;
+    let totalPages = 0;
+    let currentKeyword = "";
+
+    async function onLoadDg() {
+        const searchBox = document.getElementById("search-box");
+        searchBox.addEventListener("input", debounce(onSearch, 300));
+
+        var headers = ['Mã đăng ký', 'Mã khóa học', 'Tên khóa học', 'Ngày đăng ký', 'Trạng thái']
+
+        renderDatagridHeader('dgv', headers);
+
+        await OnPageChange(1);
     }
 
-    function onLoadDg() {
-        var headers = ['ID', 'Tên khóa học', 'Ngày đăng ký', 'Trạng thái']
+    async function onLoadPag() {
+        const response = await EnrollmentService.getAllEnrollments(getStudentID() + " " + currentKeyword, -1, 10000);
 
-        renderDatagridHeader('dgEnrollment', headers);
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange')
+    }
 
-        var data = [
-            {
-                ID: "1",
-                "Tên khóa học": "IELTS Foundation",
-                "Ngày đăng ký": "2025-01-12",
-                "Trạng thái": "active"
-            },
-            {
-                ID: "2",
-                "Tên khóa học": "TOEIC Intensive",
-                "Ngày đăng ký": "2025-01-20",
-                "Trạng thái": "cancelled"
-            },
-            {
-                ID: "3",
-                "Tên khóa học": "Lập trình C# cơ bản",
-                "Ngày đăng ký": "2025-02-01",
-                "Trạng thái": "active"
-            },
-            {
-                ID: "4",
-                "Tên khóa học": "React Native nâng cao",
-                "Ngày đăng ký": "2025-02-10",
-                "Trạng thái": "completed"
+    async function OnPageChange(newPage, keyword = currentKeyword) {
+        currentPage = newPage;
+        const response = await EnrollmentService.getAllEnrollments(getStudentID() + " " + keyword, newPage, pageSize);
+
+        const data = await Promise.all(response.map(async (enr) => {
+            const course = await CourseService.getCourseById(enr.courseId);
+
+            var status;
+            switch (enr.status) {
+                case "active":
+                    status = "Đang xử lý";
+                    break;
+                case "completed":
+                    status = "Đã xác nhận";
+                    break;
+                default:
+                    status = "Hủy";
+                    break;
             }
-        ];
 
+            return {
+                "Mã đăng ký": enr.id,
+                "Mã khóa học": enr.courseId,
+                "Tên khóa học": course.name,
+                "Ngày đăng ký": enr.enrollmentDate,
+                "Trạng thái": status
+            }
+        }));
 
-        fillDatagrid('dgEnrollment', data, true);
+        await fillDatagrid('dgv', data, true);
 
-        fillDatagridAction("dgEnrollment", [
-            { 
-                text: "Chi tiết", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
-            },
+        await fillDatagridAction("dgv", [
+            // { 
+            //     text: "Chi tiết", 
+            //     iconClass: "fa-solid fa-info", 
+            //     onClick: function() { alert("Clicked Chi tiết"); } 
+            // },
             { 
                 text: "Hủy đăng ký", 
                 iconClass: "fa-solid fa-x", 
-                onClick: function() { alert("Clicked Đăng ký"); } 
+                onClick: async function (row) {
+                    var status = getCellValueByColumnIndex(row, 4);
+                    if (status == "Hủy") {
+                            ActiveModal("modal", "Thông báo", "Đăng ký đã được hủy");
+                            return;
+                    }
+                    if (status == "Đã xác nhận") {
+                            ActiveModal("modal", "Thông báo", "Đăng ký đã được xác nhận");
+                            return;
+                    }
+                    const updateEnrollment = {
+                        id: getFirstCellValue(row),
+                        studentId: getStudentID(),
+                        courseId: getCellValueByColumnIndex(row, 1),
+                        enrollmentDate: getCellValueByColumnIndex(row, 3),
+                        status: "cancelled",
+                        createdBy: ""
+                    }
+                    await CancelEnrollment(updateEnrollment);
+                } 
             }
         ]);
 
-        styleStatusColumn('dgEnrollment');
+        await styleStatusColumn('dgv');
     }
 
-    function onLoadPag() {
-        renderPagination('pagDgvEnrollment', 10, 'ChangePage')
-    }
-
-    function styleStatusColumn(containerId) {
+    async function styleStatusColumn(containerId) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
         const $tbody = $table.find('tbody');
@@ -113,8 +152,8 @@
         $tbody.find('tr').each(function () {
             const $tr = $(this);
             // Lấy cột thứ 4 (index 3, 0-based)
-            const $statusTd = $tr.find('td').eq(3);
-            const statusText = $statusTd.text().trim().toLowerCase();
+            const $statusTd = $tr.find('td').eq(4);
+            const statusText = $statusTd.text().trim();
 
             // Reset màu mặc định trước
             $statusTd.css({
@@ -124,13 +163,13 @@
 
             // Gán màu theo trạng thái
             switch (statusText) {
-                case 'active':
+                case 'Đang xử lý':
                     $statusTd.css('color', '#1D4ED8'); // xanh dương
                     break;
-                case 'completed':
+                case 'Đã xác nhận':
                     $statusTd.css('color', '#16A34A'); // xanh lá
                     break;
-                case 'cancelled':
+                case 'Hủy':
                     $statusTd.css('color', '#DC2626'); // đỏ
                     break;
                 default:
@@ -139,5 +178,23 @@
         });
     }
 
+    async function onSearch() {
+        const searchBox = document.getElementById("search-box");
+        currentKeyword = searchBox.value.trim();
+        currentPage = 1;
+
+        await onLoadPag();
+
+        await OnPageChange(currentPage, currentKeyword);
+    }
+
+
+    async function CancelEnrollment(updateEnrollment) {
+        console.log(updateEnrollment);
+
+        await EnrollmentService.updateEnrollment(updateEnrollment.id, updateEnrollment);
+
+        await OnPageChange(1);
+    }
 
 </script>

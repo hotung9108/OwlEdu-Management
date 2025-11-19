@@ -34,6 +34,35 @@ const ClassAssignmentService = {
         }
     },
 
+    // GET BY student ID
+    getClassAssignmentByStudentId: async function (studentId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment/student/${studentId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (err) {
+            console.error(`Error fetching class assignment ${studentId}:`, err);
+            throw err;
+        }
+    },
+
+    getClassAssignmentByClassId: async function (classId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/ClassAssignment/class/${classId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (err) {
+            console.error(`Error fetching class assignment ${classId}:`, err);
+            throw err;
+        }
+    },
+
     // CREATE
     addClassAssignment: async function (classAssignmentData) {
         try {

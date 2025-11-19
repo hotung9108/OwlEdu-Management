@@ -30,6 +30,74 @@
             </div>
         </div>
     </div>
+
+    <div id="details" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết lớp học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã lớp học</label>
+                        <p id="classid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên lớp học</label>
+                        <p id="classname-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <p id="courseid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên khóa học</label>
+                        <p id="coursename-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã giáo viên</label>
+                        <p id="teacherid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên giáo viên</label>
+                        <p id="teachername-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái lớp</label>
+                        <p id="classstatus-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái học</label>
+                        <p id="status-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày lớp bắt đầu</label>
+                        <p id="startdate-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày lớp kết thúc</label>
+                        <p id="enddate-display" class="btl-view">student01</p>
+                    </div>
+                </div>
+
+                <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv2"}' hx-trigger="revealed" data-on-load="onLoadDg2"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -58,15 +126,30 @@
     background-color: var(--primary-hover);
     color: #FFFFFF;
 }
+
+.btl-label {
+    color:var(--text-main);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btl-view {
+    padding: 8px 0;
+    margin: 0;
+    color: var(--text-muted);
+}
 </style>
 
 <script type="module">
+    inactiveFloatBox('details');
+
     import CourseService from "../../js/API/CourseService.js";
     import ClassService from "../../js/API/ClassService.js";
     import ClassAssignmentService from "../../js/API/ClassAssignmentService.js";
     import TeacherService from "../../js/API/TeacherService.js";
     import ScoreService from "../../js/API/ScoreService.js";
     import {getStudentID} from "../../js/Utils/getCookies.js";
+    import StudentService from "../../js/API/StudentService.js";
 
     inactiveFloatBox('scoreboard');
 
@@ -77,8 +160,18 @@
     window.onLoadDg1 = onLoadDg1;
     window.getFirstCellValue = getFirstCellValue;
     window.SetDg1Data = SetDg1Data;
+    window.SetDetails = SetDetails;
+    window.onLoadDg2 = onLoadDg2;
+    window.SetDg2Data = SetDg2Data;
+
+    let currentPage = 1;
+    const pageSize = 10;
+    let totalPages = 0;
+    let currentKeyword = "";
 
     async function onLoadDg() {
+        const searchBox = document.getElementById("search-box");
+        searchBox.addEventListener("input", debounce(onSearch, 300));
 
         var headers = ['Mã lớp', 'Tên lớp', 'Ngày bắt đầu', 'Tên khóa học', 'Tên giáo viên', 'Trạng thái']
 
@@ -87,8 +180,8 @@
         await OnPageChange(1);
     }
 
-    async function OnPageChange(pageNumber) {
-        const response = await ClassAssignmentService.getAllClassAssignments(getStudentID(), pageNumber, 10);
+    async function OnPageChange(pageNumber, keyword = currentKeyword) {
+        const response = await ClassAssignmentService.getAllClassAssignments(getStudentID() + " " + keyword, pageNumber, pageSize);
 
         const data = await Promise.all(response.map(async (ca) => {
             const cls = await ClassService.getClassById(ca.classId);
@@ -124,8 +217,9 @@
                 {
                     text: "Chi tiết lớp", 
                     iconClass: "fa-solid fa-info", 
-                    onClick: function (row) {
-                        alert(`Chi tiết khóa học: ${row}`);
+                    onClick: async function (row) {
+                        activeFloatBox('details');
+                        await SetDetails(row)
                     }
                 },
                 {
@@ -144,7 +238,7 @@
     }
 
     async function onLoadPag() {
-        const response = await ClassAssignmentService.getAllClassAssignments(getStudentID(), -1, 10);
+        const response = await ClassAssignmentService.getAllClassAssignments(getStudentID() + " " + currentKeyword, -1, 10);
 
         renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange')
     }
@@ -158,7 +252,7 @@
             const $tr = $(this);
             // Lấy cột thứ 4 (index 3, 0-based)
             const $statusTd = $tr.find('td').eq(index);
-            const statusText = $statusTd.text().trim().toLowerCase();
+            const statusText = $statusTd.text();
 
             // Reset màu mặc định trước
             $statusTd.css({
@@ -182,16 +276,6 @@
             }
         });
     }
-   
-    function getFirstCellValue(row) {
-        if (!row || !(row instanceof HTMLTableRowElement)) {
-            console.error("Invalid row element provided.");
-            return null;
-        }
-
-        const firstCell = row.querySelector("td"); 
-        return firstCell ? firstCell.textContent.trim() : null; 
-    }
 
     function onLoadDg1() {
         var headers = ['Tên bài kiểm tra', 'Điểm listening', 'Điểm speaking', 'Điểm reading', 'Điểm writing', 'Loại bài kiểm tra', 'Điểm trung bình']
@@ -199,28 +283,128 @@
         renderDatagridHeader('dgv1', headers, false);
     }
 
-    $('#search-box').on('keydown', function (e) {
-        if (e.keyCode === 13) 
-        {
+    async function onSearch() {
+        const searchBox = document.getElementById("search-box");
+        currentKeyword = searchBox.value.trim();
+        currentPage = 1;
 
-        }
-    });
+        await onLoadPag();
+
+        await OnPageChange(currentPage, currentKeyword);
+    }
 
     async function SetDg1Data(classId) {
         const response = await ScoreService.getScoresByStudent(getStudentID());
 
         const scoresInClass = response.filter(s => s.classId === classId);
 
-        const data = await scoresInClass.map(score => ({
-            'Tên bài kiểm tra': score.title,
-            'Điểm listening': score.listening,
-            'Điểm speaking': score.speaking,
-            'Điểm reading': score.reading,
-            'Điểm writing': score.writing,
-            'Loại bài kiểm tra': score.type,
-            'Điểm trung bình': 10
+        const data = await Promise.all(scoresInClass.map(async (score) => {
+
+            var type;
+
+            switch (score.type) {
+                case 'assignment':
+                    type = "Bài tập";
+                    break;
+                case "test":
+                    type = "Bài kiểm tra";
+                    break;
+                case "final-test":
+                    type = "Bài cuối khóa";
+                    break;
+            }
+
+            var count  = 4;
+            if (score.listening == null) {
+                score.listening = 0;
+                count--;
+            }
+            if (score.speaking == null) {
+                score.speaking = 0;
+                count--;
+            }
+            if (score.reading == null) {
+                score.reading = 0;
+                count--;
+            }
+            if (score.writing == null) {
+                score.writing = 0;
+                count--;
+            }
+            var avg = (score.listening + score.speaking + score.reading + score.writing) / count;
+
+            return {
+                'Tên bài kiểm tra': score.title,
+                'Điểm listening': score.listening,
+                'Điểm speaking': score.speaking,
+                'Điểm reading': score.reading,
+                'Điểm writing': score.writing,
+                'Loại bài kiểm tra': type,
+                'Điểm trung bình': avg.toFixed(2)
+            }
         }));
 
         await fillDatagrid('dgv1', data);
+    }
+
+    async function SetDetails(row) {
+        const classid = getFirstCellValue(row);
+        const classname = getCellValueByColumnIndex(row, 1);
+
+        const cls = await ClassService.getClassById(classid);
+
+        const courseid = cls.courseId;
+        const coursename = getCellValueByColumnIndex(row, 3);
+
+        const teacherid = cls.teacherId;
+        const teachername = getCellValueByColumnIndex(row, 4);
+
+        const classstatus = cls.status;
+        const status = getCellValueByColumnIndex(row, 5);
+
+        const startdate = getCellValueByColumnIndex(row, 2);
+        const enddate = cls.endDate;
+
+        $('#classid-display').text(classid);
+        $('#classname-display').text(classname);
+
+        $('#courseid-display').text(courseid);
+        $('#coursename-display').text(coursename);
+
+        $('#teacherid-display').text(teacherid);
+        $('#teachername-display').text(teachername);
+
+        $('#classstatus-display').text(classstatus);
+        $('#status-display').text(status);
+
+        $('#startdate-display').text(startdate);
+        $('#enddate-display').text(enddate);
+
+        await SetDg2Data(classid);
+        
+    }
+
+    function onLoadDg2() {
+        var headers = ['Mã học viên', 'Tên học viên', 'Giới tính', 'Số điện thoại']
+
+        renderDatagridHeader('dgv2', headers, false);
+    }
+
+    async function SetDg2Data(classId) {
+        const response = await ClassAssignmentService.getClassAssignmentByClassId(classId);
+
+        const data = await Promise.all(response.map(async (ca) => {
+            
+            const studentInfor = await StudentService.getStudentById(ca.studentId);
+
+            return {
+                'Mã học viên': studentInfor.id,
+                'Tên học viên': studentInfor.fullName,
+                'Giới tính': studentInfor.gender,
+                'Số điện thoại': studentInfor.phoneNumber
+            }
+        }));
+
+        await fillDatagrid('dgv2', data);
     }
 </script>

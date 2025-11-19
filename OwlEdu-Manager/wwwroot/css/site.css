@@ -115,7 +115,6 @@ body {
     border-radius: 14px;
     border: 1px solid var(--border);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    animation: fadeIn 0.25s ease;
     overflow-y: auto;
 }
 

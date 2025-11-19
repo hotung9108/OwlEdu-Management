@@ -69,6 +69,7 @@ function OpenProfile() {
 }
 
 //On get components
+const datagridList = new Set();
 document.addEventListener('DOMContentLoaded', async function () {
     htmx.onLoad(async function (el) {
 
@@ -78,21 +79,23 @@ document.addEventListener('DOMContentLoaded', async function () {
             const fnName = parent.getAttribute('data-on-load');
 
             if (el.classList && el.classList.contains('datagrid-container')) {
-                if (el.id == 'dgv1') console.log("dgv1");
+                if (el.id == 'dgv2') console.log("dgv2");
                 const $container = $(el);
                 const $table = $container.find('.datagrid');
 
                 updateDatagridLayout($container);
 
-                $container.on('resize', () => updateDatagridLayout($container));
+                $(window).on('resize', () => updateDatagridLayout($container));
             }
 
             if (fnName && typeof window[fnName] === 'function') {
                 await window[fnName]();
+
             }
         }
 
     });
+
 });
 
 //Pagination Function
@@ -369,6 +372,7 @@ function fillDatagrid(containerId, data) {
 
         $tbody.append($tr);
     });
+
     updateDatagridLayout($container);
 }
 function fillDatagridAction(containerId, actions) {
@@ -428,6 +432,30 @@ function fillDatagridAction(containerId, actions) {
 
 
 //Schedule
+function getWeekDates(inputDate) {
+    const date = new Date(inputDate); // nhận Date hoặc chuỗi ngày
+    const dayOfWeek = date.getDay();  // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
+
+    // Tính ngày Chủ Nhật của tuần
+    const sunday = new Date(date);
+    sunday.setDate(date.getDate() - dayOfWeek);
+
+    const weekDates = [];
+
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(sunday);
+        d.setDate(sunday.getDate() + i);
+
+        // Định dạng yyyy-MM-dd
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+
+        weekDates.push(`${yyyy}-${mm}-${dd}`);
+    }
+
+    return weekDates;
+}
 
 function setScheduleWeek(currentDate) {
     const date = new Date(currentDate);
@@ -452,6 +480,10 @@ function setScheduleWeek(currentDate) {
 
         $(this).html(`${dayName}<br><small>${dayStr}</small>`);
     });
+
+    for (var i = 0; i < 7; i++) {
+        $(`.schedule-column[data-day="${i}"]`).empty();
+    }
 }
 
 function addEvent(day, startTime, endTime, title, room, status = null, color = "event-blue") {
@@ -494,6 +526,17 @@ function activeFloatBox(id) {
 function inactiveFloatBox(id) {
     $("#" + id).hide();
 }
+//dgv cell
+function getFirstCellValue(row) {
+    if (!row || !(row instanceof HTMLTableRowElement)) {
+        console.error("Invalid row element provided.");
+        return null;
+    }
+
+    const firstCell = row.querySelector("td");
+    return firstCell ? firstCell.textContent.trim() : null;
+}
+
 function getCellValueByColumnIndex(row, columnIndex) {
     if (!row || !(row instanceof HTMLTableRowElement)) {
         console.error("Invalid row element provided.");
@@ -507,4 +550,12 @@ function getCellValueByColumnIndex(row, columnIndex) {
     }
 
     return cells[columnIndex].textContent.trim();
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
 }
