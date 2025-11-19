@@ -1,64 +1,92 @@
 ﻿import callApi from '../Utils/callApi.js';
 import { getAuthToken } from "../Utils/getCookies.js";
+
 const api_url = "https://localhost:7230";
 const token = getAuthToken();
+
 const StudentService = {
-    getAllStudents: function (pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+
+    getAllStudents: async function (pageNumber = 1, pageSize = 10) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            return response;
+        } catch (error) {
+            console.error("Error getAllStudents:", error);
+            throw error;
+        }
     },
 
-    getStudentById: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student/${id}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    getStudentById: async function (id) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student/${id}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            return response;
+        } catch (error) {
+            console.error("Error getStudentById:", error);
+            throw error;
+        }
     },
 
-    addStudent: function (studentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student`,
-            method: "POST",
-            data: studentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    addStudent: async function (studentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student`,
+                method: "POST",
+                data: studentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            return response;
+        } catch (error) {
+            console.error("Error addStudent:", error);
+            throw error;
+        }
     },
 
-    updateStudent: function (id, studentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student/${id}`,
-            method: "PUT",
-            data: studentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    updateStudent: async function (id, studentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student/${id}`,
+                method: "PUT",
+                data: studentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            return response;
+        } catch (error) {
+            console.error("Error updateStudent:", error);
+            throw error;
+        }
     },
 
-    deleteStudent: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student/${id}`,
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    deleteStudent: async function (id) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student/${id}`,
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            return response;
+        } catch (error) {
+            console.error("Error deleteStudent:", error);
+            throw error;
+        }
     }
 };
 

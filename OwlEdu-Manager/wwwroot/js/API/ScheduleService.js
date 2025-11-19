@@ -2,65 +2,92 @@
 import { getAuthToken } from "../Utils/getCookies.js";
 
 const api_url = "https://localhost:7230";
-const token = getAuthToken(); // Định nghĩa token một lần để sử dụng lại
 
 const ScheduleService = {
-    getAllSchedules: function (keyword = "", pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Schedule?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    async getAllSchedules(keyword = "", pageNumber = 1, pageSize = 10) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
+            });
+        } catch (error) {
+            console.error("Error in getAllSchedules:", error);
+            throw error;
+        }
     },
 
-    getScheduleById: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Schedule/${id}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    async getScheduleById(id) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule/${id}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
+            });
+        } catch (error) {
+            console.error("Error in getScheduleById:", error);
+            throw error;
+        }
     },
 
-    addSchedule: function (scheduleData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Schedule`,
-            method: "POST",
-            data: scheduleData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    async getScheduleByClassId(classId) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule/Class/${classId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
+            });
+        } catch (error) {
+            console.error("Error in getScheduleByClassId:", error);
+            throw error;
+        }
     },
 
-    updateSchedule: function (id, scheduleData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Schedule/${id}`,
-            method: "PUT",
-            data: scheduleData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    async addSchedule(scheduleData) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule`,
+                method: "POST",
+                data: scheduleData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${getAuthToken()}`
+                }
+            });
+        } catch (error) {
+            console.error("Error in addSchedule:", error);
+            throw error;
+        }
     },
 
-    deleteSchedule: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Schedule/${id}`,
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    async updateSchedule(id, scheduleData) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule/${id}`,
+                method: "PUT",
+                data: scheduleData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${getAuthToken()}`
+                }
+            });
+        } catch (error) {
+            console.error("Error in updateSchedule:", error);
+            throw error;
+        }
+    },
+
+    async deleteSchedule(id) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule/${id}`,
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
+            });
+        } catch (error) {
+            console.error("Error in deleteSchedule:", error);
+            throw error;
+        }
     }
 };
 
