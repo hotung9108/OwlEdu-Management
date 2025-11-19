@@ -69,8 +69,12 @@
                 <div class="user-menu">
                     <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
                     <div class="dropdown">
-                        <a href="#" hx-get="/Admin/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
-                        <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
+                        <a href="#" hx-get="/Admin/Pr.ofile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        @* <a href="/Authentication/Login"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a> *@
+                        <a href="javascript:void(0);" onclick="logoutUser()">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </a>
+                        @* <button onclick="logoutUser()">TƯEQ</button> *@
                     </div>
                 </div>
             </div>
@@ -283,6 +287,16 @@
 }
 </style>
 
+<script>
+    function logoutUser() {
+        document.cookie.split(";").forEach(function (cookie) {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+        });
+
+        window.location.assign("/Authentication/Login");
+    }
+</script>
 
 <script>
 $(document).ready(function() {

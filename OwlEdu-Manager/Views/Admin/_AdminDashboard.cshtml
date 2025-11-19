@@ -1,5 +1,117 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<div class="container py-4">
+    <div class="row g-4">
+        <!-- Box: Số học viên -->
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="studentCount"></h3>
+                    <p>Số học viên</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Box: Số khóa học -->
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="courseCount"></h3>
+                    <p>Số khóa học</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Box: Số lớp học -->
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="classCount"></h3>
+                    <p>Số lớp học</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-chalkboard"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Box: Số giáo viên -->
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="teacherCount"></h3>
+                    <p>Số giáo viên</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-chalkboard-teacher"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .info-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        border-radius: 20px; /* Góc bo tròn */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-box-content {
+        text-align: left;
+    }
+
+        .info-box-content h3 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .info-box-content p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+    .info-box-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+</style>
+<script type="module">
+    import DashboardService from "../../js/API/DashboardService.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+
+        console.log("⏳ Dashboard loading...");
+
+        try {
+            console.log("➡️ Gọi API: getStudentCount()");
+            const studentCount = await DashboardService.getStudentCount();
+            console.log("✔️ studentCount =", studentCount);
+
+            console.log("➡️ Gọi API: getCourseCount()");
+            const courseCount = await DashboardService.getCourseCount();
+            console.log("✔️ courseCount =", courseCount);
+
+            console.log("➡️ Gọi API: getClassCount()");
+            const classCount = await DashboardService.getClassCount();
+            console.log("✔️ classCount =", classCount);
+
+            console.log("➡️ Gọi API: getTeacherCount()");
+            const teacherCount = await DashboardService.getTeacherCount();
+            console.log("✔️ teacherCount =", teacherCount);
+
+            // Gán lên UI
+            document.getElementById("studentCount").textContent = studentCount ?? "0";
+            document.getElementById("courseCount").textContent = courseCount ?? "0";
+            document.getElementById("classCount").textContent = classCount ?? "0";
+            document.getElementById("teacherCount").textContent = teacherCount ?? "0";
+
+        } catch (error) {
+            console.error("❌ Error loading dashboard data:", error);
+        }
+    });
+</script>

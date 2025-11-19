@@ -1,64 +1,91 @@
 ﻿import callApi from '../Utils/callApi.js';
 import { getAuthToken } from "../Utils/getCookies.js";
+
 const api_url = "https://localhost:7230";
 const token = getAuthToken();
+
 const StudentService = {
-    getAllStudents: function (pageNumber = 1, pageSize = 10, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    // Lấy danh sách tất cả học viên
+    getAllStudents: async function (keyword = "", pageNumber = 1, pageSize = 10) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching students:", error);
+            throw error;
+        }
     },
 
-    getStudentById: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student/${id}`,
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    // Lấy thông tin chi tiết của một học viên
+    getStudentById: async function (id) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student/${id}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching student by ID:", error);
+            throw error;
+        }
     },
 
-    addStudent: function (studentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student`,
-            method: "POST",
-            data: studentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    // Thêm một học viên mới
+    addStudent: async function (studentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student`,
+                method: "POST",
+                data: studentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error adding student:", error);
+            throw error;
+        }
     },
 
-    updateStudent: function (id, studentData, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student/${id}`,
-            method: "PUT",
-            data: studentData,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            successCallback,
-            errorCallback
-        });
+    // Cập nhật thông tin học viên
+    updateStudent: async function (id, studentData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student/${id}`,
+                method: "PUT",
+                data: studentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error updating student:", error);
+            throw error;
+        }
     },
 
-    deleteStudent: function (id, successCallback, errorCallback) {
-        callApi({
-            url: `${api_url}/api/Student/${id}`,
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` },
-            successCallback,
-            errorCallback
-        });
+    // Xóa một học viên
+    deleteStudent: async function (id) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Student/${id}`,
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error deleting student:", error);
+            throw error;
+        }
     }
 };
 

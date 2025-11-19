@@ -51,112 +51,220 @@
 }
 </style>
 
-<script>
-    function ChangePage(currentPage) {
-
-    }
-
-    function onLoadDg() {
-        var headers = ['Mã lớp', 'Tên lớp', 'Mã khóa học', 'Yêu cầu', 'Mục tiêu', 'Số lượng học viên tối đa', 'Ngày bắt đầu', 'Ngày kết thúc', 'Mã giáo viên', 'Trạng thái']
-
+<script type="module">
+    import ClassService from "../../js/API/ClassService.js";
+    import TeacherService from "../../js/API/TeacherService.js";
+    import CourseService from "../../js/API/CourseService.js";
+    window.onLoadDg = onLoadDg;
+    window.onLoadPag = onLoadPag;
+    // window.SubmitAccount = SubmitAccount;
+    window.OnPageChange = OnPageChange;
+    // window.SetAccountDetailData = SetAccountDetailData;
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
+    async function onLoadDg() {
+        var headers = ['Mã lớp học', 'Mã khóa học','Tên khóa học', 'Tên lớp học', 'Giáo viên phụ trách', 'Học viên tối đa', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
-
-        var data = [
-            {
-                'Mã lớp': 'L001',
-                'Tên lớp': 'Lập trình C# cơ bản',
-                'Mã khóa học': 'KH001',
-                'Yêu cầu': 'Biết sử dụng máy tính',
-                'Mục tiêu': 'Nắm vững C# căn bản',
-                'Số lượng học viên tối đa': 25,
-                'Ngày bắt đầu': '2025-03-01',
-                'Ngày kết thúc': '2025-05-30',
-                'Mã giáo viên': 'GV001',
-                'Trạng thái': 'active'
-            },
-            {
-                'Mã lớp': 'L002',
-                'Tên lớp': 'Java nâng cao',
-                'Mã khóa học': 'KH002',
-                'Yêu cầu': 'Đã học Java cơ bản',
-                'Mục tiêu': 'Làm chủ OOP và API',
-                'Số lượng học viên tối đa': 30,
-                'Ngày bắt đầu': '2025-04-10',
-                'Ngày kết thúc': '2025-06-25',
-                'Mã giáo viên': 'GV002',
-                'Trạng thái': 'inactive'
-            },
-            {
-                'Mã lớp': 'L003',
-                'Tên lớp': 'Web Frontend React',
-                'Mã khóa học': 'KH003',
-                'Yêu cầu': 'Biết HTML, CSS, JS',
-                'Mục tiêu': 'Xây dựng SPA với React',
-                'Số lượng học viên tối đa': 20,
-                'Ngày bắt đầu': '2025-02-15',
-                'Ngày kết thúc': '2025-04-20',
-                'Mã giáo viên': 'GV003',
-                'Trạng thái': 'active'
+        await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        currentPage = pageNumber;
+        const response = await ClassService.getAllClasses(currentKeyword,pageNumber, pageSize);
+        const data = await Promise.all(response.map(async (classes)=>{
+            const teacherDetail = await TeacherService.getTeacherById(classes.teacherId);
+            const courseDetail = await CourseService.getCourseById(classes.courseId);
+            return {
+                "Mã lớp học": classes.id,
+                "Mã khóa học": classes.courseId,
+                "Tên khóa học":courseDetail.name,
+                "Tên lớp học": classes.name,
+                "Giáo viên phụ trách": teacherDetail.fullName,
+                "Học viên tối đa":classes.maxStudents,
+                "Trạng thái": classes.status?"Active":"Inactive",
+                // "Thời gian bắt đầu":classes.startDate,
             }
-        ];
-
-        fillDatagrid('dgv', data);
-
-        fillDatagridAction("dgv", [
-            { 
-                text: "Xem chi tiết", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+        }));
+        await fillDatagrid('dgv', data);
+        await fillDatagridAction("dgv", [
+            {
+                text: "Chi tiết lớp",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
             },
-            { 
-                text: "Chỉnh sửa thông tin", 
-                iconClass: "fa-solid fa-pen-to-square", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+                {
+                text: "Chỉnh sửa lớp",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    // const accountId = getCellValueByColumnIndex(row, 0);
+                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     // activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
             },
-            { 
-                text: "Đóng lớp", 
-                iconClass: "fa-solid fa-x", 
-                onClick: function() { alert("Clicked "); } 
+            {
+                text: "Xóa lớp",
+                iconClass: "fa-solid fa-trash",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
+                        // await AccountService.deleteAccount(accountId);
+                        await OnPageChange(1);
+                    }
+                }
             }
         ]);
 
-        styleStatusColumn('dgv');
+        await styleStatusColumn('dgv', 6);
     }
-
-    function onLoadPag() {
-        renderPagination('pag', 10, 'ChangePage')
+     async function onLoadPag() {
+        const response = await ClassService.getAllClasses(currentKeyword,-1, 10);
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
     }
-
-    function styleStatusColumn(containerId) {
+    function styleStatusColumn(containerId, index) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
         const $tbody = $table.find('tbody');
 
         $tbody.find('tr').each(function () {
             const $tr = $(this);
-            // Lấy cột thứ 4 (index 3, 0-based)
-            const $statusTd = $tr.find('td').eq(9);
+            const $statusTd = $tr.find('td').eq(index);
             const statusText = $statusTd.text().trim().toLowerCase();
 
-            // Reset màu mặc định trước
             $statusTd.css({
                 'color': '',
                 'font-weight': 'bold'
             });
 
-            // Gán màu theo trạng thái
             switch (statusText) {
                 case 'active':
-                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    $statusTd.css('color', '#1D4ED8');
                     break;
                 case 'inactive':
-                    $statusTd.css('color', '#DC2626'); // đỏ
+                    $statusTd.css('color', '#DC2626');
                     break;
                 default:
-                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+                    $statusTd.css('color', '#6B7280');
             }
         });
     }
+
+    // function ChangePage(currentPage) {
+
+    // }
+
+    // function onLoadDg() {
+    //     var headers = ['Mã lớp', 'Tên lớp', 'Mã khóa học', 'Yêu cầu', 'Mục tiêu', 'Số lượng học viên tối đa', 'Ngày bắt đầu', 'Ngày kết thúc', 'Mã giáo viên', 'Trạng thái']
+
+    //     renderDatagridHeader('dgv', headers, true);
+
+    //     var data = [
+    //         {
+    //             'Mã lớp': 'L001',
+    //             'Tên lớp': 'Lập trình C# cơ bản',
+    //             'Mã khóa học': 'KH001',
+    //             'Yêu cầu': 'Biết sử dụng máy tính',
+    //             'Mục tiêu': 'Nắm vững C# căn bản',
+    //             'Số lượng học viên tối đa': 25,
+    //             'Ngày bắt đầu': '2025-03-01',
+    //             'Ngày kết thúc': '2025-05-30',
+    //             'Mã giáo viên': 'GV001',
+    //             'Trạng thái': 'active'
+    //         },
+    //         {
+    //             'Mã lớp': 'L002',
+    //             'Tên lớp': 'Java nâng cao',
+    //             'Mã khóa học': 'KH002',
+    //             'Yêu cầu': 'Đã học Java cơ bản',
+    //             'Mục tiêu': 'Làm chủ OOP và API',
+    //             'Số lượng học viên tối đa': 30,
+    //             'Ngày bắt đầu': '2025-04-10',
+    //             'Ngày kết thúc': '2025-06-25',
+    //             'Mã giáo viên': 'GV002',
+    //             'Trạng thái': 'inactive'
+    //         },
+    //         {
+    //             'Mã lớp': 'L003',
+    //             'Tên lớp': 'Web Frontend React',
+    //             'Mã khóa học': 'KH003',
+    //             'Yêu cầu': 'Biết HTML, CSS, JS',
+    //             'Mục tiêu': 'Xây dựng SPA với React',
+    //             'Số lượng học viên tối đa': 20,
+    //             'Ngày bắt đầu': '2025-02-15',
+    //             'Ngày kết thúc': '2025-04-20',
+    //             'Mã giáo viên': 'GV003',
+    //             'Trạng thái': 'active'
+    //         }
+    //     ];
+
+    //     fillDatagrid('dgv', data);
+
+    //     fillDatagridAction("dgv", [
+    //         { 
+    //             text: "Xem chi tiết", 
+    //             iconClass: "fa-solid fa-info", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Chỉnh sửa thông tin", 
+    //             iconClass: "fa-solid fa-pen-to-square", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Đóng lớp", 
+    //             iconClass: "fa-solid fa-x", 
+    //             onClick: function() { alert("Clicked "); } 
+    //         }
+    //     ]);
+
+    //     styleStatusColumn('dgv');
+    // }
+
+    // function onLoadPag() {
+    //     renderPagination('pag', 10, 'ChangePage')
+    // }
+
+    // function styleStatusColumn(containerId) {
+    //     const $container = $('#' + containerId);
+    //     const $table = $container.find('table.datagrid');
+    //     const $tbody = $table.find('tbody');
+
+    //     $tbody.find('tr').each(function () {
+    //         const $tr = $(this);
+    //         Lấy cột thứ 4 (index 3, 0-based)
+    //         const $statusTd = $tr.find('td').eq(9);
+    //         const statusText = $statusTd.text().trim().toLowerCase();
+
+    //         Reset màu mặc định trước
+    //         $statusTd.css({
+    //             'color': '',
+    //             'font-weight': 'bold'
+    //         });
+
+    //         Gán màu theo trạng thái
+    //         switch (statusText) {
+    //             case 'active':
+    //                 $statusTd.css('color', '#1D4ED8'); xanh dương
+    //                 break;
+    //             case 'inactive':
+    //                 $statusTd.css('color', '#DC2626'); đỏ
+    //                 break;
+    //             default:
+    //                 $statusTd.css('color', '#6B7280'); xám cho các trạng thái khác
+    //         }
+    //     });
+    // }
 
 
 </script>
