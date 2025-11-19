@@ -35,6 +35,19 @@ const PaymentService = {
         }
     },
 
+    async getPaymentByEnrollmentId(enrollmentId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/Payment/enrollment/${enrollmentId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error in getPaymentById:", error);
+            throw error;
+        }
+    },
     // Thêm một thanh toán mới
     addPayment: async function (paymentData) {
         try {
