@@ -51,126 +51,233 @@
 }
 </style>
 
-<script>
-    function ChangePage(currentPage) {
+<script type="module">
+    // import AccountService from "../../js/API/AccountService.js";
+    import StudentService from "../../js/API/StudentService.js";
+    // function ChangePage(currentPage) {
 
-    }
-
-    function onLoadDg() {
-        var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Email', 'Trạng thái']
-
+    // }
+    window.onLoadDg = onLoadDg;
+    window.OnPageChange = OnPageChange;
+    window.onLoadPag = onLoadPag;
+    async function onLoadDg() {
+        // var headers = ['Mã tài khoản','Họ và tên', 'Tài khoản', 'Vai trò', 'Email', 'Trạng thái']
+        var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
-
-        var data = [
-            {
-                "Mã học viên": "STU001",
-                "Mã tài khoản": "ACC001",
-                "Tên học viên": "Nguyễn Văn A",
-                "Ngày sinh": "2005-01-12",
-                "Số điện thoại": "0901234567",
-                "Giới tính": "Nam",
-                "Email": "nguyenvana@example.com",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã học viên": "STU002",
-                "Mã tài khoản": "ACC002",
-                "Tên học viên": "Trần Thị B",
-                "Ngày sinh": "2004-05-20",
-                "Số điện thoại": "0912345678",
-                "Giới tính": "Nữ",
-                "Email": "tranthib@example.com",
-                "Trạng thái": "inactive"
-            },
-            {
-                "Mã học viên": "STU003",
-                "Mã tài khoản": "ACC003",
-                "Tên học viên": "Phạm Đức C",
-                "Ngày sinh": "2005-03-15",
-                "Số điện thoại": "0923456789",
-                "Giới tính": "Nam",
-                "Email": "phamducc@example.com",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã học viên": "STU004",
-                "Mã tài khoản": "ACC004",
-                "Tên học viên": "Lê Thị D",
-                "Ngày sinh": "2006-07-10",
-                "Số điện thoại": "0934567890",
-                "Giới tính": "Nữ",
-                "Email": "lethid@example.com",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã học viên": "STU005",
-                "Mã tài khoản": "ACC005",
-                "Tên học viên": "Nguyễn Văn E",
-                "Ngày sinh": "2004-11-25",
-                "Số điện thoại": "0945678901",
-                "Giới tính": "Nam",
-                "Email": "nguyenvane@example.com",
-                "Trạng thái": "inactive"
+        await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        const response = await StudentService.getAllStudents("",pageNumber, 10);
+        const data = await Promise.all(response.map(async (student)=>{
+            const studentDetail = await StudentService.getStudentById(student.id);
+            // const accountdetail = await AccountService.getAccountById(account.id);
+            // var name;
+            // if(account.role == "teacher"){
+            //     name = accountdetail.teacher.fullName;
+            // }
+            // else if (account.role == "student"){
+            //     name = accountdetail.student.fullName;
+            // }
+            // else{
+            //     name = "Quản trị viên";
+            // }
+            // console.log(accountdetail.student);
+            return {
+                "Mã học viên": student.id,
+                "Mã tài khoản": studentDetail.accountResponse.id,
+                "Tên học viên": student.fullName,
+                "Ngày sinh": studentDetail.birthDate,
+                "Số điện thoại":student.phoneNumber,
+                "Tài khoản": studentDetail.accountResponse.username,
+                "Giới tính": student.gender? "Nam": "Nữ",
+                // "Vai trò": studentDetail.accountResponse.role || "N/A",
+                "Email": studentDetail.accountResponse.email || "N/A",
+                "Trạng thái": studentDetail.accountResponse.status ? "Active" : "Inactive",
             }
-        ];
-
-        fillDatagrid('dgv', data);
-
-        fillDatagridAction("dgv", [
-            { 
-                text: "Xem chi tiết", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+        }));
+        // console.log(data);
+        await fillDatagrid('dgv', data);
+        await fillDatagridAction("dgv", [
+            {
+                text: "Chi tiết tài khoản",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
             },
-            { 
-                text: "Chỉnh sửa thông tin", 
-                iconClass: "fa-solid fa-pen-to-square", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+                {
+                text: "Chỉnh sửa tài khoản",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    // const accountId = getCellValueByColumnIndex(row, 0);
+                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
+                     // activeFloatBox('detailAccount');
+                     // await SetdgvAccountDetailData(accountId);
+                }
             },
-            { 
-                text: "Hủy học viên", 
-                iconClass: "fa-solid fa-x",
-                onClick: function() { alert("Clicked "); } 
+            {
+                text: "Xóa",
+                iconClass: "fa-solid fa-trash",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
+                        // await AccountService.deleteAccount(accountId);
+                        await OnPageChange(1);
+                    }
+                }
             }
         ]);
 
-        styleStatusColumn('dgv');
+        await styleStatusColumn('dgv', 6);
     }
-
-    function onLoadPag() {
-        renderPagination('pag', 10, 'ChangePage')
+    async function onLoadPag() {
+        const response = await StudentService.getAllStudents("",-1, 10);
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
     }
+    // function onLoadDg() {
+    //     var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Email', 'Trạng thái']
 
-    function styleStatusColumn(containerId) {
+    //     renderDatagridHeader('dgv', headers, true);
+
+    //     var data = [
+    //         {
+    //             "Mã học viên": "STU001",
+    //             "Mã tài khoản": "ACC001",
+    //             "Tên học viên": "Nguyễn Văn A",
+    //             "Ngày sinh": "2005-01-12",
+    //             "Số điện thoại": "0901234567",
+    //             "Giới tính": "Nam",
+    //             "Email": "nguyenvana@example.com",
+    //             "Trạng thái": "active"
+    //         },
+    //         {
+    //             "Mã học viên": "STU002",
+    //             "Mã tài khoản": "ACC002",
+    //             "Tên học viên": "Trần Thị B",
+    //             "Ngày sinh": "2004-05-20",
+    //             "Số điện thoại": "0912345678",
+    //             "Giới tính": "Nữ",
+    //             "Email": "tranthib@example.com",
+    //             "Trạng thái": "inactive"
+    //         },
+    //         {
+    //             "Mã học viên": "STU003",
+    //             "Mã tài khoản": "ACC003",
+    //             "Tên học viên": "Phạm Đức C",
+    //             "Ngày sinh": "2005-03-15",
+    //             "Số điện thoại": "0923456789",
+    //             "Giới tính": "Nam",
+    //             "Email": "phamducc@example.com",
+    //             "Trạng thái": "active"
+    //         },
+    //         {
+    //             "Mã học viên": "STU004",
+    //             "Mã tài khoản": "ACC004",
+    //             "Tên học viên": "Lê Thị D",
+    //             "Ngày sinh": "2006-07-10",
+    //             "Số điện thoại": "0934567890",
+    //             "Giới tính": "Nữ",
+    //             "Email": "lethid@example.com",
+    //             "Trạng thái": "active"
+    //         },
+    //         {
+    //             "Mã học viên": "STU005",
+    //             "Mã tài khoản": "ACC005",
+    //             "Tên học viên": "Nguyễn Văn E",
+    //             "Ngày sinh": "2004-11-25",
+    //             "Số điện thoại": "0945678901",
+    //             "Giới tính": "Nam",
+    //             "Email": "nguyenvane@example.com",
+    //             "Trạng thái": "inactive"
+    //         }
+    //     ];
+
+    //     fillDatagrid('dgv', data);
+
+    //     fillDatagridAction("dgv", [
+    //         { 
+    //             text: "Xem chi tiết", 
+    //             iconClass: "fa-solid fa-info", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Chỉnh sửa thông tin", 
+    //             iconClass: "fa-solid fa-pen-to-square", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Hủy học viên", 
+    //             iconClass: "fa-solid fa-x",
+    //             onClick: function() { alert("Clicked "); } 
+    //         }
+    //     ]);
+
+    //     styleStatusColumn('dgv');
+    // }
+
+    // function onLoadPag() {
+    //     renderPagination('pag', 10, 'ChangePage')
+    // }
+    function styleStatusColumn(containerId, index) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
         const $tbody = $table.find('tbody');
 
         $tbody.find('tr').each(function () {
             const $tr = $(this);
-            // Lấy cột thứ 4 (index 3, 0-based)
-            const $statusTd = $tr.find('td').eq(7);
+            const $statusTd = $tr.find('td').eq(index);
             const statusText = $statusTd.text().trim().toLowerCase();
 
-            // Reset màu mặc định trước
             $statusTd.css({
                 'color': '',
                 'font-weight': 'bold'
             });
 
-            // Gán màu theo trạng thái
             switch (statusText) {
                 case 'active':
-                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    $statusTd.css('color', '#1D4ED8');
                     break;
                 case 'inactive':
-                    $statusTd.css('color', '#DC2626'); // đỏ
+                    $statusTd.css('color', '#DC2626');
                     break;
                 default:
-                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+                    $statusTd.css('color', '#6B7280');
             }
         });
     }
+    // function styleStatusColumn(containerId) {
+    //     const $container = $('#' + containerId);
+    //     const $table = $container.find('table.datagrid');
+    //     const $tbody = $table.find('tbody');
+
+    //     $tbody.find('tr').each(function () {
+    //         const $tr = $(this);
+    //         Lấy cột thứ 4 (index 3, 0-based)
+    //         const $statusTd = $tr.find('td').eq(7);
+    //         const statusText = $statusTd.text().trim().toLowerCase();
+
+    //         Reset màu mặc định trước
+    //         $statusTd.css({
+    //             'color': '',
+    //             'font-weight': 'bold'
+    //         });
+
+    //         Gán màu theo trạng thái
+    //         switch (statusText) {
+    //             case 'active':
+    //                 $statusTd.css('color', '#1D4ED8'); 
+    //                 break;
+    //             case 'inactive':
+    //                 $statusTd.css('color', '#DC2626'); 
+    //                 break;
+    //             default:
+    //                 $statusTd.css('color', '#6B7280'); 
+    //         }
+    //     });
+    // }
 
 
 </script>

@@ -51,120 +51,216 @@
 }
 </style>
 
-<script>
-    function ChangePage(currentPage) {
-
-    }
-
-    function onLoadDg() {
+<script type="module">
+    import EnrollmentService from "../../js/API/EnrollmentService.js";
+    window.onLoadDg = onLoadDg;
+    window.onLoadPag = onLoadPag;
+    // window.SubmitAccount = SubmitAccount;
+    window.OnPageChange = OnPageChange;
+    // window.SetAccountDetailData = SetAccountDetailData;
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
+    async function onLoadDg() {
         var headers = ['Mã đăng ký', 'Mã học viên', 'Mã khóa học', 'Ngày đăng ký', 'Trạng thái']
-
         renderDatagridHeader('dgv', headers, true);
-
-        var data = [
-            {
-                "Mã đăng ký": "ENR001",
-                "Mã học viên": "HV001",
-                "Mã khóa học": "KH001",
-                "Ngày đăng ký": "2025-01-12",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã đăng ký": "ENR002",
-                "Mã học viên": "HV002",
-                "Mã khóa học": "KH003",
-                "Ngày đăng ký": "2025-01-18",
-                "Trạng thái": "completed"
-            },
-            {
-                "Mã đăng ký": "ENR003",
-                "Mã học viên": "HV001",
-                "Mã khóa học": "KH004",
-                "Ngày đăng ký": "2025-01-22",
-                "Trạng thái": "cancelled"
-            },
-            {
-                "Mã đăng ký": "ENR004",
-                "Mã học viên": "HV003",
-                "Mã khóa học": "KH002",
-                "Ngày đăng ký": "2025-02-01",
-                "Trạng thái": "active"
-            },
-            {
-                "Mã đăng ký": "ENR005",
-                "Mã học viên": "HV004",
-                "Mã khóa học": "KH005",
-                "Ngày đăng ký": "2025-02-05",
-                "Trạng thái": "completed"
+        await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        currentPage = pageNumber;
+        const response = await EnrollmentService.getAllEnrollments(currentKeyword,pageNumber, pageSize);
+        const data = await Promise.all(response.map(async (enrollment)=>{
+            return {
+                "Mã đăng ký": enrollment.id,
+                "Mã học viên": enrollment.studentId,
+                "Mã khóa học": enrollment.courseId,
+                "Ngày đăng ký":enrollment.enrollmentDate,
+                "Trạng thái":enrollment.status,
+                // "Họ và tên": name,
+                // "Tài khoản": account.username,
+                // "Vai trò": account.role || "N/A",
+                // "Email": account.email || "N/A",
+                // "Trạng thái": account.status ? "Active" : "Inactive",
             }
-        ];
-
-
-        fillDatagrid('dgv', data);
-
+        }));
+        await fillDatagrid('dgv', data);
         fillDatagridAction("dgv", [
-            { 
-                text: "Xem chi tiết", 
-                iconClass: "fa-solid fa-info", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+            {
+                text: "Xem chi tiết",
+                iconClass: "fa-solid fa-info",
+                onClick: function() { alert("Clicked Chi tiết"); }
             },
-            { 
-                text: "Xếp lớp", 
+            {
+                text: "Xếp lớp",
                 iconClass: "fa-solid fa-file-signature",
-                onClick: function() { alert("Clicked Chi tiết"); } 
+                onClick: function() { alert("Clicked Chi tiết"); }
             },
-            { 
-                text: "Chỉnh sửa thông tin", 
-                iconClass: "fa-solid fa-pen-to-square", 
-                onClick: function() { alert("Clicked Chi tiết"); } 
+            {
+                text: "Chỉnh sửa thông tin",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: function() { alert("Clicked Chi tiết"); }
             },
-            { 
-                text: "Hủy đăng ký", 
+            {
+                text: "Hủy đăng ký",
                 iconClass: "fa-solid fa-x",
-                onClick: function() { alert("Clicked "); } 
+                onClick: function() { alert("Clicked "); }
             }
         ]);
 
-        styleStatusColumn('dgv');
+        await styleStatusColumn('dgv', 4);
     }
-
-    function onLoadPag() {
-        renderPagination('pag', 10, 'ChangePage')
+    async function onLoadPag() {
+        const response = await EnrollmentService.getAllEnrollments(currentKeyword, -1, pageSize);
+        const totalRecords = response.length;
+        const totalPages = Math.ceil(totalRecords / pageSize);
+        renderPagination('pag', totalPages, 'OnPageChange');
     }
-
-    function styleStatusColumn(containerId) {
+    function styleStatusColumn(containerId, index) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
         const $tbody = $table.find('tbody');
 
         $tbody.find('tr').each(function () {
             const $tr = $(this);
-            // Lấy cột thứ 4 (index 3, 0-based)
-            const $statusTd = $tr.find('td').eq(4);
+            const $statusTd = $tr.find('td').eq(index);
             const statusText = $statusTd.text().trim().toLowerCase();
 
-            // Reset màu mặc định trước
             $statusTd.css({
                 'color': '',
                 'font-weight': 'bold'
             });
 
-            // Gán màu theo trạng thái
             switch (statusText) {
                 case 'active':
-                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    $statusTd.css('color', '#1D4ED8');
                     break;
                 case 'completed':
-                    $statusTd.css('color', '#10B981'); // xanh lá
-                    break;
-                case 'cancelled':
-                    $statusTd.css('color', '#DC2626'); // đỏ
+                    $statusTd.css('color', '#DC2626');
                     break;
                 default:
-                    $statusTd.css('color', 'var(--text-muted)'); // xám cho các trạng thái khác
+                    $statusTd.css('color', '#6B7280');
             }
         });
     }
+    // function ChangePage(currentPage) {
+
+    // }
+
+    // function onLoadDg() {
+    //     var headers = ['Mã đăng ký', 'Mã học viên', 'Mã khóa học', 'Ngày đăng ký', 'Trạng thái']
+
+    //     renderDatagridHeader('dgv', headers, true);
+
+    //     var data = [
+    //         {
+    //             "Mã đăng ký": "ENR001",
+    //             "Mã học viên": "HV001",
+    //             "Mã khóa học": "KH001",
+    //             "Ngày đăng ký": "2025-01-12",
+    //             "Trạng thái": "active"
+    //         },
+    //         {
+    //             "Mã đăng ký": "ENR002",
+    //             "Mã học viên": "HV002",
+    //             "Mã khóa học": "KH003",
+    //             "Ngày đăng ký": "2025-01-18",
+    //             "Trạng thái": "completed"
+    //         },
+    //         {
+    //             "Mã đăng ký": "ENR003",
+    //             "Mã học viên": "HV001",
+    //             "Mã khóa học": "KH004",
+    //             "Ngày đăng ký": "2025-01-22",
+    //             "Trạng thái": "cancelled"
+    //         },
+    //         {
+    //             "Mã đăng ký": "ENR004",
+    //             "Mã học viên": "HV003",
+    //             "Mã khóa học": "KH002",
+    //             "Ngày đăng ký": "2025-02-01",
+    //             "Trạng thái": "active"
+    //         },
+    //         {
+    //             "Mã đăng ký": "ENR005",
+    //             "Mã học viên": "HV004",
+    //             "Mã khóa học": "KH005",
+    //             "Ngày đăng ký": "2025-02-05",
+    //             "Trạng thái": "completed"
+    //         }
+    //     ];
+
+
+    //     fillDatagrid('dgv', data);
+
+    //     fillDatagridAction("dgv", [
+    //         { 
+    //             text: "Xem chi tiết", 
+    //             iconClass: "fa-solid fa-info", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Xếp lớp", 
+    //             iconClass: "fa-solid fa-file-signature",
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Chỉnh sửa thông tin", 
+    //             iconClass: "fa-solid fa-pen-to-square", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Hủy đăng ký", 
+    //             iconClass: "fa-solid fa-x",
+    //             onClick: function() { alert("Clicked "); } 
+    //         }
+    //     ]);
+
+    //     styleStatusColumn('dgv');
+    // }
+
+    // function onLoadPag() {
+    //     renderPagination('pag', 10, 'ChangePage')
+    // }
+
+    // function styleStatusColumn(containerId) {
+    //     const $container = $('#' + containerId);
+    //     const $table = $container.find('table.datagrid');
+    //     const $tbody = $table.find('tbody');
+
+    //     $tbody.find('tr').each(function () {
+    //         const $tr = $(this);
+    //         Lấy cột thứ 4 (index 3, 0-based)
+    //         const $statusTd = $tr.find('td').eq(4);
+    //         const statusText = $statusTd.text().trim().toLowerCase();
+
+    //         Reset màu mặc định trước
+    //         $statusTd.css({
+    //             'color': '',
+    //             'font-weight': 'bold'
+    //         });
+
+    //         Gán màu theo trạng thái
+    //         switch (statusText) {
+    //             case 'active':
+    //                 $statusTd.css('color', '#1D4ED8'); xanh dương
+    //                 break;
+    //             case 'completed':
+    //                 $statusTd.css('color', '#10B981'); xanh lá
+    //                 break;
+    //             case 'cancelled':
+    //                 $statusTd.css('color', '#DC2626'); đỏ
+    //                 break;
+    //             default:
+    //                 $statusTd.css('color', 'var(--text-muted)'); xám cho các trạng thái khác
+    //         }
+    //     });
+    // }
 
 
 </script>

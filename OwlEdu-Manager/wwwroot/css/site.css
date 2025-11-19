@@ -157,3 +157,10 @@ body {
         opacity: 1;
     }
 }
+
+#teacherFields h5 {
+    color: var(--primary);
+}
+#studentFields h5 {
+    color: var(--primary);
+}
