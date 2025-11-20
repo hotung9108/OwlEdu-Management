@@ -1,0 +1,264 @@
+﻿@model string
+
+<div class="a4" id="invoice">
+    <header class="invoice-header">
+      <div class="brand">
+        <div class="logo">
+            <img src="~/images/owl.png" alt="">
+        </div>
+        <div class="center-info">
+          <h2 style="font-weight=900;">OwlEdu</h2>
+          <p>Địa chỉ: Số 3, Đường Cầu Giấy, Ngọc Khánh, Đống Đa, Hà Nội</p>
+          <p>Hotline: 0987 809 936</p>
+          <p>Email: tuan.phamminh211@owl.edu.vn</p>
+        </div>
+      </div>
+
+      <div class="invoice-meta">
+        <div class="meta-row">
+          <div>HÓA ĐƠN THANH TOÁN</div>
+        </div>
+        <div class="meta-row">
+          <small>Số hóa đơn</small>
+          <div class="value" id="invoice-no"></div>
+        </div>
+        <div class="meta-row">
+          <small>Ngày lập</small>
+          <div class="value" id="invoice-date"></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="info-grid">
+      <div class="card">
+        <b>Thông tin học viên</b>
+        <p>Họ và tên: <span id="student-name"></span></p>
+        <p>Điện thoại: <span id="student-phone"></span></p>
+        <p>Email: <span id="student-email"></span></p>
+      </div>
+
+      <div class="card">
+        <b>Thông tin đăng ký</b>
+        <p>Mã khóa học: <span id="course-id"></span></p>
+        <p>Tên khóa học: <span id="course-name"> </span></p>
+        <p>Mã đăng ký: <span id="registration-code"></span></p>
+      </div>
+
+      <div class="card">
+        <b>Thanh toán</b>
+        <p>Người thu: <span id="collector-code"></span></p>
+        <p>Phương thức: <span id="payment-method"> </span></p>
+        <p>Trạng thái: <span id="payment-status">  </span></p>
+      </div>
+    </section>
+
+    <!-- Bảng các khoản mục (dùng headers từ biến JS) -->
+    <div style="overflow:auto;">
+      <table class="invoice-table" id="items-table">
+        <thead>
+          <tr id="thead-row">
+            <!-- JS sẽ sinh header ở đây -->
+          <th>Mã hóa đơn</th><th>Mã đăng ký</th><th class="text-right">Số tiền</th><th>Ngày thanh toán</th><th>Mã người thanh toán</th><th>Mã người thu</th><th>Phương thức</th>
+        </tr>
+        </thead>
+        <tbody id="tbody-rows">
+          <tr>
+            <td id="table-invoice-id"></td>
+            <td id="table-enrollment-id"></td>
+            <td class="text-right"><span id="table-amount"></span>&nbsp;₫</td>
+            <td id="table-payment-date"></td>
+            <td id="table-payer-id"></td>
+            <td id="table-collector-id"></td>
+            <td id="table-method"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <div class="notes">
+        <strong>Ghi chú:</strong>
+        <p>- Xin vui lòng giữ lại hóa đơn này để làm chứng từ khi cần.</p>
+        <p>- Không hoàn tiền nếu đã làm phát sinh tài liệu hoặc thực hành theo chính sách trung tâm</p>
+      </div>
+
+      <div class="signature">
+        <div>Người thu tiền</div>
+        <div class="name" id="collector-name"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px; text-align:right;" class="no-print">
+      <button onclick="window.print()">In / Xuất PDF (Print)</button>
+    </div>
+  </div>
+
+  <div id="modal-loading" class="loading-modal-backdrop loading-modal-active">
+    <div class="loading-modal">
+        <p class="loading-modal-title"><i class="fa-solid fa-spinner"></i> Đang chuẩn bị hóa đơn</p>
+    </div>
+    <style>
+    .loading-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0,0,0,0.4);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; 
+    }
+
+    .loading-modal-active {
+        display: flex;
+    }
+
+    .loading-modal {
+        background-color: var(--surface);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        width: auto;
+        display: flex;
+        justify-content: center;
+    }
+    .loading-modal-title {
+        margin: 0;
+    }
+    .loading-modal p {
+        margin: 0;
+        color: var(--text-main);
+    }
+    </style>
+
+</div>
+
+  <script>
+    const paymentId = "@Model";
+</script>
+
+  <script type="module">
+    import PaymentService from "../../js/API/PaymentService.js";
+    import AccountService from "../../js/API/AccountService.js";
+    import CourseService from "../../js/API/CourseService.js";
+    import EnrollmentService from "../../js/API/EnrollmentService.js";
+
+    window.Setup = Setup;
+
+    await Setup();
+
+    async function Setup() {
+        console.log(paymentId);
+        const payment = await PaymentService.getPaymentById(paymentId);
+
+        if (paymentId != null && paymentId.trim() != "") {
+
+            var method;
+            switch (payment.method) {
+                case 'cash':
+                    method = 'Tiền mặt';
+                    break;
+                case 'bank-transfer':
+                    method = 'Chuyển khoản';
+                    break;
+                case 'credit_card':
+                    method = 'Thẻ tín dụng';
+                    break;
+                case 'momo':
+                    method = 'Ví điện tử Momo';
+                    break;
+                default:
+                    method = 'Không xác định';
+                    break;
+            }
+
+            var status;
+            switch (payment.status) {
+                case 'pending':
+                    status = 'Chưa thanh toán';
+                    break;
+                case 'paid':
+                    status = 'Đã thanh toán';
+                    break;
+                case 'failed':
+                    status = 'Hủy';
+                    break;
+                default:
+                    status = 'Không xác định';
+                    break;
+            }
+
+            $('#invoice-no').text(paymentId);
+
+            $('#invoice-date').text(payment.paymentDate);
+
+            $('#registration-code').text(payment.enrollmentId);
+
+            $('#collector-code').text(payment.feeCollectorId);
+
+            $('#payment-method').text(method);
+
+            $('#payment-status').text(status);
+
+            $('#table-invoice-id').text(paymentId);
+
+            $('#table-enrollment-id').text(payment.enrollmentId);
+
+            $('#table-amount').text(payment.amount);
+
+            $('#table-payment-date').text(payment.paymentDate);
+
+            $('#table-payer-id').text(payment.payerId);
+
+            $('#table-collector-id').text(payment.feeCollectorId);
+
+            $('#table-method').text(method);
+        }
+
+        if (payment.payerId != null && payment.payerId.trim() != "") {
+            const student = await AccountService.getAccountById(payment.payerId);
+
+            console.log(student);
+
+            $('#student-name').text(student.student.fullName);
+
+            $('#student-phone').text(student.student.phoneNumber);
+
+            $('#student-email').text(student.email);
+        }
+        else {
+            console.log("Student not found");
+        }
+
+        if (payment.enrollmentId != null && payment.enrollmentId.trim() != "") {
+            const enrollment = await EnrollmentService.getEnrollmentById(payment.enrollmentId);
+
+            console.log(enrollment);
+
+            const course = await CourseService.getCourseById(enrollment.courseId);
+
+            console.log(course);
+
+            $('#course-id').text(course.id);
+
+            $('#course-name').text(course.name);
+        }
+        else {
+            console.log("Enrollment not found");
+        }
+
+        if (payment.feeCollectorId != null && payment.feeCollectorId.trim() != "") {
+            const teacher = await AccountService.getAccountById(payment.feeCollectorId);
+
+            console.log(teacher);
+
+            $('#collector-name').text(teacher.teacher.fullName)
+        }
+        else {
+            console.log("Fee Collector not found");
+        }
+
+        var $modal = document.getElementById('modal-loading');
+        $modal.classList.remove('loading-modal-active');
+    }
+  </script>
+    

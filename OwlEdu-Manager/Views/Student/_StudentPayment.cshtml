@@ -140,7 +140,11 @@
             { 
                 text: "In hóa đơn", 
                 iconClass: "fa-solid fa-print",
-                onClick: function() { alert("Clicked "); } 
+                onClick: function(row) 
+                { 
+                    const id = getFirstCellValue(row);
+                    window.open(`/Payment/Invoice?paymentId=${id}`);
+                } 
             }
         ]);
 
