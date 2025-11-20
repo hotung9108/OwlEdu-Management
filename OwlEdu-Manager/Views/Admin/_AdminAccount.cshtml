@@ -191,6 +191,19 @@
     background-color: var(--primary-hover);
     color: #FFFFFF;
 }
+
+#accountDetails p strong, #studentDetails p strong, #teacherDetails p strong {
+    color: var(--text-main);
+}
+
+#accountDetails p span, #studentDetails p span, #teacherDetails p span {
+    color: var(--text-muted);
+}
+
+#studentDetails h5, #teacherDetails h5 {
+    color: var(--primary);
+}
+
 </style>
 <script>
     document.getElementById('role').addEventListener('change', function () {
@@ -247,7 +260,7 @@
                 "Tài khoản": account.username,
                 "Vai trò": account.role || "N/A",
                 "Email": account.email || "N/A",
-                "Trạng thái": account.status ? "Active" : "Inactive",
+                "Trạng thái": account.status ? "Kích hoạt" : "Vô hiệu hóa",
                 // "Ngày tạo": account.createdAt ? new Date(account.createdAt).toLocaleDateString() : "N/A",
                 // "Ngày cập nhật": account.updateAt ? new Date(account.updateAt).toLocaleDateString() : "N/A"
             }
@@ -256,25 +269,30 @@
         await fillDatagrid('dgv', data);
         await fillDatagridAction("dgv", [
             {
-                text: "Chi tiết tài khoản",
-                iconClass: "fa-solid fa-pen-to-square",
+                text: "Chi tiết",
+                iconClass: "fa-solid fa-info",
                 onClick: async function (row) {
                     const accountId = getCellValueByColumnIndex(row, 0);
-                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     activeFloatBox('detailAccount');
-                     await SetAccountDetailData(accountId);
-                     // await SetdgvAccountDetailData(accountId);
+                    activeFloatBox('detailAccount');
+                    await SetAccountDetailData(accountId);
                 }
             },
             {
-                text: "Xóa",
-                iconClass: "fa-solid fa-trash",
+                text: "Chỉnh sửa",
+                iconClass: "fa-solid fa-pen-to-square",
                 onClick: async function (row) {
                     const accountId = getCellValueByColumnIndex(row, 0);
-                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
-                        // await AccountService.deleteAccount(accountId);
-                        await OnPageChange(1);
-                    }
+                    activeFloatBox('detailAccount');
+                    await SetAccountDetailData(accountId);
+                }
+            },
+            {
+                text: "Chỉnh sửa trạng thái",
+                iconClass: "fa-solid fa-gears",
+                onClick: async function (row) {
+                    const accountId = getCellValueByColumnIndex(row, 0);
+                    await AccountService.deleteAccount(accountId);
+                    await OnPageChange(currentPage);
                 }
             }
         ]);
@@ -317,14 +335,14 @@
 
         try {
             const response = await AccountService.addAccount(accountData);
-            alert("Tài khoản đã được tạo thành công!");
+            ActiveModal("modal", "Thông báo","Tài khoản đã được tạo thành công!");
             createAccountForm.reset();
             inactiveFloatBox('createAccount');
 
             await onLoadDg();
         } catch (error) {
             console.error("Lỗi khi tạo tài khoản:", error);
-            alert("Đã xảy ra lỗi khi tạo tài khoản. Vui lòng thử lại.");
+            ActiveModal("modal", "Thông báo","Đã xảy ra lỗi khi tạo tài khoản. Vui lòng thử lại.");
         }
     }
         async function SetAccountDetailData(accountId) {
@@ -424,7 +442,7 @@
         $tbody.find('tr').each(function () {
             const $tr = $(this);
             const $statusTd = $tr.find('td').eq(index);
-            const statusText = $statusTd.text().trim().toLowerCase();
+            const statusText = $statusTd.text().trim();
 
             $statusTd.css({
                 'color': '',
@@ -432,10 +450,10 @@
             });
 
             switch (statusText) {
-                case 'active':
+                case 'Kích hoạt':
                     $statusTd.css('color', '#1D4ED8');
                     break;
-                case 'inactive':
+                case 'Vô hiệu hóa':
                     $statusTd.css('color', '#DC2626');
                     break;
                 default:
