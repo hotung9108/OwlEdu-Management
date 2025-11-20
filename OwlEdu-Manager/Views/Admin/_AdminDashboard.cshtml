@@ -1,10 +1,9 @@
 ﻿<div class="container py-4">
     <div class="row g-4">
-        <!-- Box: Số học viên -->
         <div class="col-12 col-md-3">
             <div class="info-box bg-primary text-white">
                 <div class="info-box-content">
-                    <h3 id="studentCount"></h3>
+                    <h3 id="studentCount">0</h3>
                     <p>Số học viên</p>
                 </div>
                 <div class="info-box-icon">
@@ -12,11 +11,10 @@
                 </div>
             </div>
         </div>
-        <!-- Box: Số khóa học -->
         <div class="col-12 col-md-3">
             <div class="info-box bg-primary text-white">
                 <div class="info-box-content">
-                    <h3 id="courseCount"></h3>
+                    <h3 id="courseCount">0</h3>
                     <p>Số khóa học</p>
                 </div>
                 <div class="info-box-icon">
@@ -24,11 +22,10 @@
                 </div>
             </div>
         </div>
-        <!-- Box: Số lớp học -->
         <div class="col-12 col-md-3">
             <div class="info-box bg-primary text-white">
                 <div class="info-box-content">
-                    <h3 id="classCount"></h3>
+                    <h3 id="classCount">0</h3>
                     <p>Số lớp học</p>
                 </div>
                 <div class="info-box-icon">
@@ -36,11 +33,10 @@
                 </div>
             </div>
         </div>
-        <!-- Box: Số giáo viên -->
         <div class="col-12 col-md-3">
             <div class="info-box bg-primary text-white">
                 <div class="info-box-content">
-                    <h3 id="teacherCount"></h3>
+                    <h3 id="teacherCount">0</h3>
                     <p>Số giáo viên</p>
                 </div>
                 <div class="info-box-icon">
@@ -49,14 +45,128 @@
             </div>
         </div>
     </div>
+    <div class="btl-card">
+        <div class="title">
+            <p>Báo cáo hoá đơn</p>
+            <div>
+                <button class="btn btn-primary" id="dailyBtn">Theo ngày</button>
+                <button class="btn btn-primary" id="monthlyBtn">Theo tháng</button>
+                <button class="btn btn-primary" id="yearlyBtn">Theo năm</button>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-12 col-md-6">
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <h3 id="totalRevenue">0 đ</h3>
+                        <p>Tổng doanh số</p>
+                    </div>
+                    <div class="info-box-icon">
+                        <div class="circle" id="totalRevenueCircle">100%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <h3 id="tuitionRevenue">0 đ</h3>
+                        <p>Doanh số học phí</p>
+                    </div>
+                    <div class="info-box-icon">
+                        <div class="circle" id="tuitionRevenueCircle">97%</div>
+                    </div>
+                </div>
+            </div>
+            @* <div class="col-12 col-md-6">
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <h3 id="salesRevenue">0 đ</h3>
+                        <p>Doanh số bán hàng</p>
+                    </div>
+                    <div class="info-box-icon">
+                        <div class="circle" id="salesRevenueCircle">3%</div>
+                    </div>
+                </div>
+            </div> *@
+            <div class="col-12 col-md-6">
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <h3 id="debtRevenue">0 đ</h3>
+                        <p>Nợ hoá đơn</p>
+                    </div>
+                    <div class="info-box-icon">
+                        <div class="circle" id="debtRevenueCircle">2%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script type="module">
+    const mockData = {
+        daily: {
+            totalRevenue: "2.078.200.000 đ",
+            tuitionRevenue: "2.024.690.000 đ",
+            salesRevenue: "53.510.000 đ",
+            debtRevenue: "41.800.000 đ",
+        },
+        monthly: {
+            totalRevenue: "62.346.000.000 đ",
+            tuitionRevenue: "60.740.700.000 đ",
+            salesRevenue: "1.605.300.000 đ",
+            debtRevenue: "1.254.000.000 đ",
+        },
+        yearly: {
+            totalRevenue: "748.152.000.000 đ",
+            tuitionRevenue: "729.000.000.000 đ",
+            salesRevenue: "19.152.000.000 đ",
+            debtRevenue: "15.048.000.000 đ",
+        },
+    };
+
+    function updateRevenueView(view) {
+        const data = mockData[view];
+        $("#totalRevenue").text(data.totalRevenue);
+        $("#tuitionRevenue").text(data.tuitionRevenue);
+        $("#salesRevenue").text(data.salesRevenue);
+        $("#debtRevenue").text(data.debtRevenue);
+    }
+
+    $(document).ready(function () {
+        $("#dailyBtn").click(() => updateRevenueView("daily"));
+        $("#monthlyBtn").click(() => updateRevenueView("monthly"));
+        $("#yearlyBtn").click(() => updateRevenueView("yearly"));
+
+        // Default view
+        updateRevenueView("daily");
+    });
+</script>
+
 <style>
+    .circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
+        font-weight: bold;
+    }
+    .btl-card {
+        background: var(--surface);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-top: 20px; 
+    }
     .info-box {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 20px;
-        border-radius: 20px; /* Góc bo tròn */
+        border-radius: 20px; 
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
@@ -68,10 +178,12 @@
             margin: 0;
             font-size: 2rem;
             font-weight: bold;
+            color: var(--text-main);
         }
 
         .info-box-content p {
             margin: 0;
+            color: var(--text-main);
             font-size: 1rem;
         }
 
@@ -80,38 +192,27 @@
         opacity: 0.8;
     }
 </style>
+
 <script type="module">
     import DashboardService from "../../js/API/DashboardService.js";
 
-    document.addEventListener("DOMContentLoaded", async function () {
-
-        console.log("⏳ Dashboard loading...");
-
+    $(document).ready(async function () {
         try {
-            console.log("➡️ Gọi API: getStudentCount()");
-            const studentCount = await DashboardService.getStudentCount();
-            console.log("✔️ studentCount =", studentCount);
-
-            console.log("➡️ Gọi API: getCourseCount()");
-            const courseCount = await DashboardService.getCourseCount();
-            console.log("✔️ courseCount =", courseCount);
-
-            console.log("➡️ Gọi API: getClassCount()");
-            const classCount = await DashboardService.getClassCount();
-            console.log("✔️ classCount =", classCount);
-
-            console.log("➡️ Gọi API: getTeacherCount()");
-            const teacherCount = await DashboardService.getTeacherCount();
-            console.log("✔️ teacherCount =", teacherCount);
-
-            // Gán lên UI
-            document.getElementById("studentCount").textContent = studentCount ?? "0";
-            document.getElementById("courseCount").textContent = courseCount ?? "0";
-            document.getElementById("classCount").textContent = classCount ?? "0";
-            document.getElementById("teacherCount").textContent = teacherCount ?? "0";
+            const studentCount = await DashboardService.getTotalStudents();
+            const courseCount = await DashboardService.getTotalCourses();
+            const classCount = await DashboardService.getTotalClasses();
+            const teacherCount = await DashboardService.getTotalTeachers();
+            window.studentCount = studentCount;
+            window.courseCount = courseCount;
+            window.classCount = classCount;
+            window.teacherCount = teacherCount;
+            $("#studentCount").text(studentCount);
+            $("#courseCount").text(courseCount);
+            $("#classCount").text(classCount);
+            $("#teacherCount").text(teacherCount);
 
         } catch (error) {
-            console.error("❌ Error loading dashboard data:", error);
+            console.error("Error loading dashboard data:", error);
         }
     });
 </script>
