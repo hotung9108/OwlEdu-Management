@@ -39,22 +39,22 @@
                     <p><strong>Email:</strong> <span id="accountEmail"></span></p>
                     <p><strong>Ngày tạo:</strong> <span id="accountCreatedAt"></span></p>
                     <p><strong>Ngày cập nhật:</strong> <span id="accountUpdatedAt"></span></p>
-                    <div id="studentDetails" style="display: none;">
-                        <h5>Thông tin học viên</h5>
-                        <p><strong>Mã học viên:</strong> <span id="studentId"></span></p>
-                        <p><strong>Họ và tên:</strong> <span id="studentFullName"></span></p>
-                        <p><strong>Số điện thoại:</strong> <span id="studentPhoneNumber"></span></p>
-                        <p><strong>Địa chỉ:</strong> <span id="studentAddress"></span></p>
-                        <p><strong>Giới tính:</strong> <span id="studentGender"></span></p>
-                    </div>
-                    <div id="teacherDetails" style="display: none;">
-                        <h5>Thông tin giảng viên</h5>
-                        <p><strong>Mã giảng viên:</strong> <span id="teacherId"></span></p>
-                        <p><strong>Họ và tên:</strong> <span id="teacherFullName"></span></p>
-                        <p><strong>Số điện thoại:</strong> <span id="teacherPhoneNumber"></span></p>
-                        <p><strong>Địa chỉ:</strong> <span id="teacherAddress"></span></p>
-                        <p><strong>Giới tính:</strong> <span id="teacherGender"></span></p>
-                    </div>
+                </div>
+                <div id="studentDetails" style="display: none;">
+                    <h5>Thông tin học viên</h5>
+                    <p><strong>Mã học viên:</strong> <span id="studentId"></span></p>
+                    <p><strong>Họ và tên:</strong> <span id="studentFullName"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="studentPhoneNumber"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="studentAddress"></span></p>
+                    <p><strong>Giới tính:</strong> <span id="studentGender"></span></p>
+                </div>
+                <div id="teacherDetails" style="display: none;">
+                    <h5>Thông tin giảng viên</h5>
+                    <p><strong>Mã giảng viên:</strong> <span id="teacherId"></span></p>
+                    <p><strong>Họ và tên:</strong> <span id="teacherFullName"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="teacherPhoneNumber"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="teacherAddress"></span></p>
+                    <p><strong>Giới tính:</strong> <span id="teacherGender"></span></p>
                 </div>
             </div>
           @*   <div class="float-box-content">
@@ -345,7 +345,7 @@
             ActiveModal("modal", "Thông báo","Đã xảy ra lỗi khi tạo tài khoản. Vui lòng thử lại.");
         }
     }
-        async function SetAccountDetailData(accountId) {
+    async function SetAccountDetailData(accountId) {
         try {
             // Gọi API để lấy thông tin tài khoản
             const account = await AccountService.getAccountById(accountId);

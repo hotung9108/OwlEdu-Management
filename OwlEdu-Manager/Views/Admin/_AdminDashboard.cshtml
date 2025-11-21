@@ -100,9 +100,55 @@
                 </div>
             </div>
         </div>
+        <div class="btl-card">
+            <div class="title">
+                <p>Biểu đồ</p>
+                <button class="btn btn-primary" onclick="toggleChartTheme()">Chuyển đổi chế độ</button>
+            </div>
+            <div id="barchart_material" style="width: 900px; height: 500px;"></div>
+        </div>
     </div>
 </div>
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['bar'] });
 
+    function drawChart(theme) {
+        const isDarkMode = theme === 'dark';
+
+        const data = google.visualization.arrayToDataTable([
+            ['Lớp', 'Điểm1', 'Điểm2', 'Điểm'],
+            ['IT2', 1030, 540, 350],
+            ['IT3', 1030, 540, 350],
+            ['IT4', 1030, 540, 350]
+        ]);
+
+        const options = {
+            chart: {
+                title: 'Company Performance',
+                subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+            },
+            bars: 'horizontal',
+            backgroundColor: isDarkMode ? '#1E293B' : '#FFFFFF', 
+            hAxis: { textStyle: { color: isDarkMode ? '#F3F4F6' : '#111827' } }, 
+            vAxis: { textStyle: { color: isDarkMode ? '#F3F4F6' : '#111827' } }, 
+        };
+
+        const chart = new google.charts.Bar(document.getElementById('barchart_material'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function toggleChartTheme() {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme); // Hàm setTheme đã có sẵn trong site.js
+        drawChart(newTheme);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        google.charts.setOnLoadCallback(() => drawChart(savedTheme));
+    });
+</script>
 <script type="module">
     const mockData = {
         daily: {
