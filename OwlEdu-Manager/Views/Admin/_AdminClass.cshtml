@@ -70,7 +70,7 @@
     let currentPage = 1;
     const pageSize = 10;
     async function onLoadDg() {
-        var headers = ['Mã lớp học', 'Mã khóa học','Tên khóa học', 'Tên lớp học', 'Giáo viên phụ trách', 'Học viên tối đa', 'Trạng thái']
+        var headers = ['Mã lớp học', 'Tên lớp học', 'Mã khóa học','Tên khóa học', 'Giáo viên phụ trách', 'Học viên tối đa', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
         await OnPageChange(1);
     }
