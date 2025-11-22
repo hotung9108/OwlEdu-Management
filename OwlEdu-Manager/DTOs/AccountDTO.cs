@@ -34,6 +34,10 @@
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdateAt { get; set; }
     }
+    public class UpdateAccountStatusDTO
+    {
+        public bool Status { get; set; }
+    }
     //public class AccountDetailResponse
     //{
     //    public string Id { get; set; } = null!;

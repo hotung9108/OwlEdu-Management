@@ -82,6 +82,19 @@ const ClassService = {
             throw error;
         }
     },
+    getClassesByCourseId: async function (courseId) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Class/by-course/${courseId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching classes by Course ID:", error);
+            throw error;
+        }
+    }
 
     patchClassStatus: async function (id, status) {
         try {

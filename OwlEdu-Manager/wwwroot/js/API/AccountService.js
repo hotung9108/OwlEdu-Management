@@ -18,7 +18,23 @@ const AccountService = {
             throw error;
         }
     },
-
+    updateAccountPartial: async function (id, accountData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Account/${id}`,
+                method: "PATCH",
+                data: accountData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error partially updating account:", error);
+            throw error;
+        }
+    },
     getAccountById: async function (id) {
         try {
             const response = await callApi({
@@ -68,7 +84,24 @@ const AccountService = {
             throw error;
         }
     },
-
+        // Cập nhật trạng thái tài khoản
+    updateAccountStatus: async function (id, status) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Account/${id}/status`,
+                method: "PATCH",
+                data: status,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error updating account status:", error);
+            throw error;
+        }
+    },
     deleteAccount: async function (id) {
         try {
             const response = await callApi({
@@ -83,5 +116,4 @@ const AccountService = {
         }
     }
 };
-
 export default AccountService;

@@ -13,13 +13,184 @@
 
         <div>
             <div class="col-12 col-md-12" style="margin-bottom: 10px;">
-                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo học viên mới</button>
+                <button type="button" class="btn btn-primary" onClick="activeFloatBox('createStudent')"><i class="fa-solid fa-plus"></i>    Tạo học viên mới</button>
             </div>
         </div>
 
         <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+    <div id="createStudent" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Tạo học viên</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('createStudent')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <form id="createStudentForm">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="fullName"><strong>Họ và tên:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="fullName" class="form-control" placeholder="Họ và tên" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="birthDate"><strong>Ngày sinh:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="date" id="birthDate" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="phoneNumber"><strong>Số điện thoại:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="phoneNumber" class="form-control" placeholder="Số điện thoại" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="address"><strong>Địa chỉ:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <textarea id="address" class="form-control" placeholder="Địa chỉ" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="gender"><strong>Giới tính:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="gender" class="form-control" required>
+                                <option value="male">Nam</option>
+                                <option value="female">Nữ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="createStudentButton">Tạo học viên</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="detailStudent" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Thông tin chi tiết</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('detailStudent')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <div id="studentDetails">
+                    <h5 style="color: var(--primary);">Thông tin học viên</h5>
+                    <p style="color: var(--text-main);"><strong>Mã học viên:</strong> <span id="studentId"></span></p>
+                    <p style="color: var(--text-main);"><strong>Họ và tên:</strong> <span id="studentFullName"></span></p>
+                    <p style="color: var(--text-main);"><strong>Ngày sinh:</strong> <span id="studentBirthDate"></span></p>
+                    <p style="color: var(--text-main);"><strong>Số điện thoại:</strong> <span id="studentPhoneNumber"></span></p>
+                    <p style="color: var(--text-main);"><strong>Địa chỉ:</strong> <span id="studentAddress"></span></p>
+                    <p style="color: var(--text-main);"><strong>Giới tính:</strong> <span id="studentGender"></span></p>
+                </div>
+                <div id="accountDetails">
+                    <h5 style="color: var(--primary);">Thông tin tài khoản</h5>
+                    <p style="color: var(--text-main);"><strong>Mã tài khoản:</strong> <span id="accountId"></span></p>
+                    <p style="color: var(--text-main);"><strong>Tên tài khoản:</strong> <span id="accountUsername"></span></p>
+                    <p style="color: var(--text-main);"><strong>Vai trò:</strong> <span id="accountRole"></span></p>
+                    <p style="color: var(--text-main);"><strong>Trạng thái:</strong> <span id="accountStatus"></span></p>
+                    <p style="color: var(--text-main);"><strong>Email:</strong> <span id="accountEmail"></span></p>
+                    <p style="color: var(--text-main);"><strong>Ngày tạo:</strong> <span id="accountCreatedAt"></span></p>
+                    <p style="color: var(--text-main);"><strong>Ngày cập nhật:</strong> <span id="accountUpdatedAt"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="updateStudent" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Cập nhật học viên</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('updateStudent')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="updateStudentForm" class="float-box-content">
+                <h5 style="color: var(--primary);">Thông tin học viên</h5>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="studentIdInput"><strong>Mã học viên:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <input  type="text" id="studentIdInput" class="form-control" readonly />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="studentFullNameInput"><strong>Họ và tên:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" id="studentFullNameInput" class="form-control" placeholder="Họ và tên" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="studentBirthDateInput"><strong>Ngày sinh:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="date" id="studentBirthDateInput" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="studentPhoneNumberInput"><strong>Số điện thoại:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="text" id="studentPhoneNumberInput" class="form-control" placeholder="Số điện thoại" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="studentAddressInput"><strong>Địa chỉ:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <textarea id="studentAddressInput" class="form-control" placeholder="Địa chỉ"></textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="studentGenderInput"><strong>Giới tính:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <select id="studentGenderInput" class="form-control">
+                            <option value="male">Nam</option>
+                            <option value="female">Nữ</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <label style="color: var(--text-main);" for="accountStatusInput"><strong>Trạng thái tài khoản:</strong></label>
+                    </div>
+                    <div class="col-8">
+                        <select id="accountStatusInput" class="form-control">
+                            <option value="active">Kích hoạt</option>
+                            <option value="inactive">Vô hiệu hóa</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" id="saveStudentButton">Lưu thay đổi</button>
+                </div>
+            
+            </form>
+        </div>
     </div>
 </div>
 
@@ -52,11 +223,11 @@
 </style>
 
 <script type="module">
-    // import AccountService from "../../js/API/AccountService.js";
     import StudentService from "../../js/API/StudentService.js";
-    // function ChangePage(currentPage) {
-
-    // }
+    import AccountService from "../../js/API/AccountService.js";
+    inactiveFloatBox('detailStudent');
+    inactiveFloatBox('updateStudent');
+    inactiveFloatBox('createStudent');
     document.getElementById('search-box').addEventListener('input', async function () {
         const keyword = this.value.trim();
         currentKeyword = keyword;
@@ -70,7 +241,6 @@
     let currentPage = 1;
     const pageSize = 10;
     async function onLoadDg() {
-        // var headers = ['Mã tài khoản','Họ và tên', 'Tài khoản', 'Vai trò', 'Email', 'Trạng thái']
         var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
         await OnPageChange(1);
@@ -80,18 +250,6 @@
         const response = await StudentService.getAllStudents(currentKeyword,pageNumber, pageSize);
         const data = await Promise.all(response.map(async (student)=>{
             const studentDetail = await StudentService.getStudentById(student.id);
-            // const accountdetail = await AccountService.getAccountById(account.id);
-            // var name;
-            // if(account.role == "teacher"){
-            //     name = accountdetail.teacher.fullName;
-            // }
-            // else if (account.role == "student"){
-            //     name = accountdetail.student.fullName;
-            // }
-            // else{
-            //     name = "Quản trị viên";
-            // }
-            // console.log(accountdetail.student);
             return {
                 "Mã học viên": student.id,
                 "Mã tài khoản": studentDetail.accountResponse.id,
@@ -100,39 +258,47 @@
                 "Số điện thoại":student.phoneNumber,
                 "Tài khoản": studentDetail.accountResponse.username,
                 "Giới tính": student.gender? "Nam": "Nữ",
-                // "Vai trò": studentDetail.accountResponse.role || "N/A",
                 "Email": studentDetail.accountResponse.email || "N/A",
                 "Trạng thái": studentDetail.accountResponse.status ? "Kích hoạt" : "Vô hiệu hóa",
             }
         }));
-        // console.log(data);
         await fillDatagrid('dgv', data);
         await fillDatagridAction("dgv", [
             {
                 text: "Chi tiết",
                 iconClass: "fa-solid fa-pen-to-square",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                     activeFloatBox('detailAccount');
+                    const studentId = getCellValueByColumnIndex(row, 0);
+                    activeFloatBox('detailStudent');
+                    await SetStudentDetailData(studentId);
                 }
             },
             {
                 text: "Chỉnh sửa",
                 iconClass: "fa-solid fa-trash",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
-                        await OnPageChange(currentPage);
-                    }
+                    const studentId = getCellValueByColumnIndex(row, 0);
+                    activeFloatBox('updateStudent');
+                    await SetUpdateStudentForm(studentId);
                 }
             },
             {
-                text: "Chỉnh sửa trạng thái",
+                text: "Hủy học viên",
                 iconClass: "fa-solid fa-trash",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
-                        await OnPageChange(currentPage);
+                    const studentId = getCellValueByColumnIndex(row, 0);
+                    try {
+                        const studentDetail = await StudentService.getStudentById(studentId);
+                        const accountId = studentDetail.accountResponse.id;
+                        if (confirm(`Bạn có chắc chắn muốn hủy học viên với tài khoản ${accountId}?`)) {
+                            await AccountService.updateAccountStatus(accountId, { status: false });
+
+                            alert("Hủy học viên thành công!");
+                            await OnPageChange(currentPage); 
+                        }
+                    } catch (error) {
+                        console.error("Lỗi khi hủy học viên:", error);
+                        alert("Không thể hủy học viên. Vui lòng thử lại.");
                     }
                 }
             }
@@ -144,94 +310,47 @@
         const response = await StudentService.getAllStudents(currentKeyword,-1, 10);
         renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
     }
-    // async function onLoadPag() {
-    //     const response = await StudentService.getAllStudents("",-1, 10);
-    //     renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
-    // }
-    // function onLoadDg() {
-    //     var headers = ['Mã học viên', 'Mã tài khoản', 'Tên học viên', 'Ngày sinh', 'Số điện thoại', 'Giới tính', 'Email', 'Trạng thái']
+    async function SetUpdateStudentForm(studentId) {
+        try {
+            const student = await StudentService.getStudentById(studentId);
 
-    //     renderDatagridHeader('dgv', headers, true);
+            document.getElementById("studentIdInput").value = student.id;
+            document.getElementById("studentFullNameInput").value = student.fullName || "Họ và tên";
+            document.getElementById("studentBirthDateInput").value = student.birthDate || "";
+            document.getElementById("studentPhoneNumberInput").value = student.phoneNumber || "Số điện thoại";
+            document.getElementById("studentAddressInput").value = student.address || "Địa chỉ";
+            document.getElementById("studentGenderInput").value = student.gender ? "male" : "female";
+            const account = student.accountResponse;
+            document.getElementById("accountStatusInput").value = account.status ? "active" : "inactive";
 
-    //     var data = [
-    //         {
-    //             "Mã học viên": "STU001",
-    //             "Mã tài khoản": "ACC001",
-    //             "Tên học viên": "Nguyễn Văn A",
-    //             "Ngày sinh": "2005-01-12",
-    //             "Số điện thoại": "0901234567",
-    //             "Giới tính": "Nam",
-    //             "Email": "nguyenvana@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã học viên": "STU002",
-    //             "Mã tài khoản": "ACC002",
-    //             "Tên học viên": "Trần Thị B",
-    //             "Ngày sinh": "2004-05-20",
-    //             "Số điện thoại": "0912345678",
-    //             "Giới tính": "Nữ",
-    //             "Email": "tranthib@example.com",
-    //             "Trạng thái": "inactive"
-    //         },
-    //         {
-    //             "Mã học viên": "STU003",
-    //             "Mã tài khoản": "ACC003",
-    //             "Tên học viên": "Phạm Đức C",
-    //             "Ngày sinh": "2005-03-15",
-    //             "Số điện thoại": "0923456789",
-    //             "Giới tính": "Nam",
-    //             "Email": "phamducc@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã học viên": "STU004",
-    //             "Mã tài khoản": "ACC004",
-    //             "Tên học viên": "Lê Thị D",
-    //             "Ngày sinh": "2006-07-10",
-    //             "Số điện thoại": "0934567890",
-    //             "Giới tính": "Nữ",
-    //             "Email": "lethid@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã học viên": "STU005",
-    //             "Mã tài khoản": "ACC005",
-    //             "Tên học viên": "Nguyễn Văn E",
-    //             "Ngày sinh": "2004-11-25",
-    //             "Số điện thoại": "0945678901",
-    //             "Giới tính": "Nam",
-    //             "Email": "nguyenvane@example.com",
-    //             "Trạng thái": "inactive"
-    //         }
-    //     ];
-
-    //     fillDatagrid('dgv', data);
-
-    //     fillDatagridAction("dgv", [
-    //         { 
-    //             text: "Xem chi tiết", 
-    //             iconClass: "fa-solid fa-info", 
-    //             onClick: function() { alert("Clicked Chi tiết"); } 
-    //         },
-    //         { 
-    //             text: "Chỉnh sửa thông tin", 
-    //             iconClass: "fa-solid fa-pen-to-square", 
-    //             onClick: function() { alert("Clicked Chi tiết"); } 
-    //         },
-    //         { 
-    //             text: "Hủy học viên", 
-    //             iconClass: "fa-solid fa-x",
-    //             onClick: function() { alert("Clicked "); } 
-    //         }
-    //     ]);
-
-    //     styleStatusColumn('dgv');
-    // }
-
-    // function onLoadPag() {
-    //     renderPagination('pag', 10, 'ChangePage')
-    // }
+            activeFloatBox("updateStudent");
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin học viên:", error);
+            alert("Không thể tải thông tin học viên. Vui lòng thử lại.");
+        }
+    }
+    async function SetStudentDetailData(StudentId) {
+        try {
+            const student = await StudentService.getStudentById(StudentId);
+            document.getElementById("studentId").textContent = student.id;
+            document.getElementById("studentFullName").textContent = student.fullName;
+            document.getElementById("studentBirthDate").textContent = student.birthDate;
+            document.getElementById("studentPhoneNumber").textContent = student.phoneNumber;
+            document.getElementById("studentAddress").textContent = student.address;
+            document.getElementById("studentGender").textContent = student.gender;
+            document.getElementById("accountId").textContent = student.accountResponse.id;
+            document.getElementById("accountUsername").textContent = student.accountResponse.username;
+            document.getElementById("accountRole").textContent = student.accountResponse.role;
+            document.getElementById("accountStatus").textContent = student.accountResponse.status;
+            document.getElementById("accountEmail").textContent = student.accountResponse.email;
+            document.getElementById("accountCreatedAt").textContent = student.accountResponse.createdAt;
+            document.getElementById("accountUpdatedAt").textContent = student.accountResponse.updateAt;
+            activeFloatBox("detailAccount");
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin tài khoản:", error);
+            alert("Không thể tải thông tin tài khoản. Vui lòng thử lại.");
+        }
+    }
     function styleStatusColumn(containerId, index) {
         const $container = $('#' + containerId);
         const $table = $container.find('table.datagrid');
@@ -259,36 +378,47 @@
             }
         });
     }
-    // function styleStatusColumn(containerId) {
-    //     const $container = $('#' + containerId);
-    //     const $table = $container.find('table.datagrid');
-    //     const $tbody = $table.find('tbody');
+    document.getElementById("saveStudentButton").addEventListener("click", async function () {
+        try {
+            const studentId = document.getElementById("studentIdInput").value;
+            const studentDetail = await StudentService.getStudentById(studentId);
+            const accountId = studentDetail.accountResponse.id;
+            const studentData = {
+                fullName: document.getElementById("studentFullNameInput").value,
+                birthDate: document.getElementById("studentBirthDateInput").value,
+                phoneNumber: document.getElementById("studentPhoneNumberInput").value,
+                address: document.getElementById("studentAddressInput").value,
+                gender: document.getElementById("studentGenderInput").value 
+            };
 
-    //     $tbody.find('tr').each(function () {
-    //         const $tr = $(this);
-    //         Lấy cột thứ 4 (index 3, 0-based)
-    //         const $statusTd = $tr.find('td').eq(7);
-    //         const statusText = $statusTd.text().trim().toLowerCase();
-
-    //         Reset màu mặc định trước
-    //         $statusTd.css({
-    //             'color': '',
-    //             'font-weight': 'bold'
-    //         });
-
-    //         Gán màu theo trạng thái
-    //         switch (statusText) {
-    //             case 'active':
-    //                 $statusTd.css('color', '#1D4ED8'); 
-    //                 break;
-    //             case 'inactive':
-    //                 $statusTd.css('color', '#DC2626'); 
-    //                 break;
-    //             default:
-    //                 $statusTd.css('color', '#6B7280'); 
-    //         }
-    //     });
-    // }
-
-
+            await StudentService.updateStudent(studentId, studentData);
+            
+            await AccountService.updateAccountStatus(accountId, { status: document.getElementById("accountStatusInput").value==='active'?true:false });
+            alert("Cập nhật thành công!");
+            inactiveFloatBox("updateStudent"); 
+            await OnPageChange(currentPage); 
+        } catch (error) {
+            console.error("Lỗi khi cập nhật dữ liệu:", error);
+            alert("Cập nhật thất bại. Vui lòng thử lại.");
+        }
+    });
+    document.getElementById("createStudentButton").addEventListener("click", async function () {
+        try {
+            const studentData = {
+                fullName: document.getElementById("fullName").value,
+                birthDate: document.getElementById("birthDate").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                address: document.getElementById("address").value,
+                gender: document.getElementById("gender").value
+            };
+            console.log(studentData);
+            await StudentService.addStudent(studentData);
+            alert("Tạo học viên thành công!"); 
+            inactiveFloatBox("createStudent"); 
+            await onLoadDg(); 
+        } catch (error) {
+            console.error("Lỗi khi tạo học viên:", error);
+            alert("Không thể tạo học viên. Vui lòng thử lại.");
+        }
+    });
 </script>
