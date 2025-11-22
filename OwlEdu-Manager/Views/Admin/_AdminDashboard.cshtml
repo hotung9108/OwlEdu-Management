@@ -45,104 +45,195 @@
             </div>
         </div>
     </div>
-    <div class="btl-card">
-        <div class="title">
-            <p>Báo cáo hoá đơn</p>
-            <div>
-                <button class="btn btn-primary" id="dailyBtn">Theo ngày</button>
-                <button class="btn btn-primary" id="monthlyBtn">Theo tháng</button>
-                <button class="btn btn-primary" id="yearlyBtn">Theo năm</button>
+    <div class="row g-4">
+        <!-- Total Donut Chart -->
+        <div class="col-12 col-lg-8">
+            <div class="btl-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="m-0" style="color:var(--primary)">Biểu đồ tổng doanh thu theo năm</h5>
+                    <div class="col-3">
+                        <input type="number" id="revenueYearInput" class="form-control" placeholder="Nhập năm" min="2000" max="2100" />
+                    </div>
+                </div>
+                <div id="revenueChartTotalRevenue" style="height: 400px;"></div>
             </div>
         </div>
-        <div class="row g-4">
-            <div class="col-12 col-md-6">
-                <div class="info-box">
-                    <div class="info-box-content">
-                        <h3 id="totalRevenue">0 đ</h3>
-                        <p>Tổng doanh số</p>
-                    </div>
-                    <div class="info-box-icon">
-                        <div class="circle" id="totalRevenueCircle">100%</div>
-                    </div>
-                </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="btl-card mb-4">
+                <h5 class="m-0 mb-3" style="color:var(--primary)">Doanh thu đang chờ xử lý</h5>
+                <div id="revenueChartPendingRevenue" style="height: 200px;"></div>
             </div>
-            <div class="col-12 col-md-6">
-                <div class="info-box">
-                    <div class="info-box-content">
-                        <h3 id="tuitionRevenue">0 đ</h3>
-                        <p>Doanh số học phí</p>
-                    </div>
-                    <div class="info-box-icon">
-                        <div class="circle" id="tuitionRevenueCircle">97%</div>
-                    </div>
-                </div>
-            </div>
-            @* <div class="col-12 col-md-6">
-                <div class="info-box">
-                    <div class="info-box-content">
-                        <h3 id="salesRevenue">0 đ</h3>
-                        <p>Doanh số bán hàng</p>
-                    </div>
-                    <div class="info-box-icon">
-                        <div class="circle" id="salesRevenueCircle">3%</div>
-                    </div>
-                </div>
-            </div> *@
-            <div class="col-12 col-md-6">
-                <div class="info-box">
-                    <div class="info-box-content">
-                        <h3 id="debtRevenue">0 đ</h3>
-                        <p>Nợ hoá đơn</p>
-                    </div>
-                    <div class="info-box-icon">
-                        <div class="circle" id="debtRevenueCircle">2%</div>
-                    </div>
-                </div>
+
+            <div class="btl-card">
+                <h5 class="m-0 mb-3" style="color:var(--primary)">Doanh thu đã thanh toán</h5>
+                <div id="revenueChartPaidRevenue" style="height: 200px;"></div>
             </div>
         </div>
     </div>
 </div>
+@* <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+</script> *@
+<script type="text/javascript">
+    // google.charts.load('current', {'packages':['corechart']});
+    // google.charts.setOnLoadCallback(drawChart);
 
-<script type="module">
-    const mockData = {
-        daily: {
-            totalRevenue: "2.078.200.000 đ",
-            tuitionRevenue: "2.024.690.000 đ",
-            salesRevenue: "53.510.000 đ",
-            debtRevenue: "41.800.000 đ",
-        },
-        monthly: {
-            totalRevenue: "62.346.000.000 đ",
-            tuitionRevenue: "60.740.700.000 đ",
-            salesRevenue: "1.605.300.000 đ",
-            debtRevenue: "1.254.000.000 đ",
-        },
-        yearly: {
-            totalRevenue: "748.152.000.000 đ",
-            tuitionRevenue: "729.000.000.000 đ",
-            salesRevenue: "19.152.000.000 đ",
-            debtRevenue: "15.048.000.000 đ",
-        },
-    };
+    // function drawChart() {
 
-    function updateRevenueView(view) {
-        const data = mockData[view];
-        $("#totalRevenue").text(data.totalRevenue);
-        $("#tuitionRevenue").text(data.tuitionRevenue);
-        $("#salesRevenue").text(data.salesRevenue);
-        $("#debtRevenue").text(data.debtRevenue);
-    }
+    //   var data = google.visualization.arrayToDataTable([
+    //     ['Effort', 'Amount given'],
+    //     ['My all',     100],
+    //   ]);
 
-    $(document).ready(function () {
-        $("#dailyBtn").click(() => updateRevenueView("daily"));
-        $("#monthlyBtn").click(() => updateRevenueView("monthly"));
-        $("#yearlyBtn").click(() => updateRevenueView("yearly"));
+    //   var options = {
+    //     pieHole: 0.5,
+    //     pieSliceTextStyle: {
+    //       color: 'black',
+    //     },
+    //     legend: 'none'
+    //   };
 
-        // Default view
-        updateRevenueView("daily");
-    });
+    //   var chart = new google.visualization.PieChart(document.getElementById('revenueChartTotalRevenue'));
+    //   chart.draw(data, options);
+    // }
 </script>
 
+<script type="module">
+    import DashboardService from "../../js/API/DashboardService.js";
+
+    google.charts.setOnLoadCallback(() => {
+        initDashboardCharts();
+    });
+
+    async function initDashboardCharts() {
+        const yearInput = document.getElementById("revenueYearInput");
+
+        yearInput.addEventListener("change", () => {
+            const year = yearInput.value;
+            if (year >= 2000) loadAllCharts(year);
+        });
+
+        const currentYear = new Date().getFullYear();
+        yearInput.value = currentYear;
+        loadAllCharts(currentYear);
+    }
+
+    async function loadAllCharts(year) {
+        try {
+            const [total, paid, pending] = await Promise.all([
+                DashboardService.getTotalRevenueByYear(year),
+                DashboardService.getPaidRevenueByYear(year),
+                DashboardService.getPendingRevenueByYear(year)
+            ]);
+
+            drawTotalRevenueChart(total);
+            drawPaidRevenueChart(paid.paidRevenue);
+            drawPendingRevenueChart(pending.pendingRevenue);
+
+        } catch (err) {
+            console.error("Lỗi load biểu đồ:", err);
+        }
+    }
+
+
+    function drawTotalRevenueChart(totalRevenue) {
+        const data = google.visualization.arrayToDataTable([
+            ["Loại", "Doanh thu"],
+            ["Tổng doanh thu", totalRevenue]
+        ]);
+        const styles = getComputedStyle(document.documentElement);
+        const options = {
+            pieHole: 0.5,
+            legend: "none",
+            pieSliceText: "value",
+            pieSliceTextStyle: {
+            color: styles.getPropertyValue("--text-main").trim(),
+                fontSize: 16,
+                bold: true
+            },
+        };
+
+        const chart = new google.visualization.PieChart(
+            document.getElementById("revenueChartTotalRevenue")
+        );
+
+        chart.draw(data, options);
+    }
+
+
+    function drawPendingRevenueChart(pendingRevenue) {
+        const data = google.visualization.arrayToDataTable([
+            ["Loại", "Doanh thu"],
+            ["Pending", pendingRevenue]
+        ]);
+        const styles = getComputedStyle(document.documentElement);
+        const options = {
+            pieHole: 0.6,
+            legend: "none",
+            pieSliceText: "value",
+            pieSliceTextStyle: {
+            color: styles.getPropertyValue("--text-main").trim(),
+                fontSize: 16,
+                bold: true
+            },
+            slices: {
+                0: { color: styles.getPropertyValue("--secondary").trim() },
+                1: { color: styles.getPropertyValue("--error").trim() }
+                }
+            };
+
+        const chart = new google.visualization.PieChart(
+            document.getElementById("revenueChartPendingRevenue")
+        );
+
+        chart.draw(data, options);
+    }
+
+
+    function drawPaidRevenueChart(paidRevenue) {
+        const data = google.visualization.arrayToDataTable([
+            ["Loại", "Doanh thu"],
+            ["Paid", paidRevenue]
+        ]);
+        const styles = getComputedStyle(document.documentElement);
+        const options = {
+            pieHole: 0.6,
+            legend: "none",
+            pieSliceText: "value",
+            pieSliceTextStyle: {
+            color: styles.getPropertyValue("--text-main").trim(),
+                fontSize: 16,
+                bold: true
+            },
+            slices: {
+                0: { color: styles.getPropertyValue("--secondary").trim() },
+                1: { color: styles.getPropertyValue("--error").trim() }
+                }
+            };
+
+        const chart = new google.visualization.PieChart(
+            document.getElementById("revenueChartPaidRevenue")
+        );
+
+        chart.draw(data, options);
+    }
+
+    $(document).ready(async function () {
+        try {
+            const studentCount = await DashboardService.getTotalStudents();
+            const courseCount = await DashboardService.getTotalCourses();
+            const classCount = await DashboardService.getTotalClasses();
+            const teacherCount = await DashboardService.getTotalTeachers();
+
+            $("#studentCount").text(studentCount);
+            $("#courseCount").text(courseCount);
+            $("#classCount").text(classCount);
+            $("#teacherCount").text(teacherCount);
+        } catch (error) {
+            console.error("Error loading dashboard data:", error);
+        }
+    });
+</script>
 <style>
     .circle {
         width: 60px;
@@ -192,6 +283,9 @@
         opacity: 0.8;
     }
 </style>
+<script type="text/javascript">
+    google.charts.load('current', { packages: ['corechart'] });
+</script>
 
 <script type="module">
     import DashboardService from "../../js/API/DashboardService.js";

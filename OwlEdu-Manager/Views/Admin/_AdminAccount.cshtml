@@ -21,6 +21,187 @@
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
     </div>
+    <div id="updateAccount" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Cập nhật tài khoản</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('updateAccount')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <form id="updateAccountForm">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="IDInput"><strong>ID người dùng:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="IDInput" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="username"><strong>Tên tài khoản:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="usernameInput" class="form-control" placeholder="Tên tài khoản" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="password"><strong>Mật khẩu:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input  type="password" id="passwordInput" class="form-control" placeholder="Mật khẩu" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="avatar"><strong>Avatar:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="avatarInput" class="form-control" placeholder="Avatar (URL)" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="role"><strong>Vai trò:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="roleInput" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="status" style="color: var(--text-main);"><strong>Trạng thái:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="statusInput" class="form-select" required>
+                                <option value="true">Kích hoạt</option>
+                                <option value="false">Vô hiệu hóa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="email" style="color: var(--text-main);"><strong>Email:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="email" id="emailInput" class="form-control" placeholder="Email" />
+                        </div>
+                    </div>
+
+                    <div id="studentFieldsInput" class="mt-4" style="display: none;">
+                        <h5>Thông tin học viên</h5>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="studentFullName"><strong>Họ và tên:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="studentFullNameInput" class="form-control" placeholder="Họ và tên" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="studentBirthDate"><strong>Ngày sinh:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="date" id="studentBirthDateInput" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="studentPhoneNumber"><strong>Số điện thoại:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="studentPhoneNumberInput" class="form-control" placeholder="Số điện thoại" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="studentAddress"><strong>Địa chỉ:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="studentAddressInput" class="form-control" placeholder="Địa chỉ" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="studentGender"><strong>Giới tính:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <select id="studentGenderInput" class="form-select">
+                                    <option value="male">Nam</option>
+                                    <option value="female">Nữ</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="teacherFieldsInput" class="mt-4" style="display: none;">
+                        <h5>Thông tin giảng viên</h5>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="teacherFullName"><strong>Họ và tên:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="teacherFullNameInput" class="form-control" placeholder="Họ và tên" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="teacherSpecialization"><strong>Chuyên môn:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="teacherSpecializationInput" class="form-control" placeholder="Chuyên môn" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="teacherQualification"><strong>Trình độ:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="teacherQualificationInput" class="form-control" placeholder="Trình độ" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="teacherPhoneNumber"><strong>Số điện thoại:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="teacherPhoneNumberInput" class="form-control" placeholder="Số điện thoại" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="teacherAddress"><strong>Địa chỉ:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <input type="text" id="teacherAddressInput" class="form-control" placeholder="Địa chỉ" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="teacherGender"><strong>Giới tính:</strong></label>
+                            </div>
+                            <div class="col-8">
+                                <select id="teacherGenderInput" class="form-select">
+                                    <option value="male">Nam</option>
+                                    <option value="female">Nữ</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="saveAccountButton">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div id="detailAccount" class="float-box-overlay">
         <div class="float-box-box">
 
@@ -39,27 +220,25 @@
                     <p><strong>Email:</strong> <span id="accountEmail"></span></p>
                     <p><strong>Ngày tạo:</strong> <span id="accountCreatedAt"></span></p>
                     <p><strong>Ngày cập nhật:</strong> <span id="accountUpdatedAt"></span></p>
-                    <div id="studentDetails" style="display: none;">
-                        <h5>Thông tin học viên</h5>
-                        <p><strong>Mã học viên:</strong> <span id="studentId"></span></p>
-                        <p><strong>Họ và tên:</strong> <span id="studentFullName"></span></p>
-                        <p><strong>Số điện thoại:</strong> <span id="studentPhoneNumber"></span></p>
-                        <p><strong>Địa chỉ:</strong> <span id="studentAddress"></span></p>
-                        <p><strong>Giới tính:</strong> <span id="studentGender"></span></p>
-                    </div>
-                    <div id="teacherDetails" style="display: none;">
-                        <h5>Thông tin giảng viên</h5>
-                        <p><strong>Mã giảng viên:</strong> <span id="teacherId"></span></p>
-                        <p><strong>Họ và tên:</strong> <span id="teacherFullName"></span></p>
-                        <p><strong>Số điện thoại:</strong> <span id="teacherPhoneNumber"></span></p>
-                        <p><strong>Địa chỉ:</strong> <span id="teacherAddress"></span></p>
-                        <p><strong>Giới tính:</strong> <span id="teacherGender"></span></p>
-                    </div>
+                </div>
+                <div id="studentDetails" style="display: none;">
+                    <h5>Thông tin học viên</h5>
+                    <p><strong>Mã học viên:</strong> <span id="studentId"></span></p>
+                    <p><strong>Họ và tên:</strong> <span id="studentFullName"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="studentPhoneNumber"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="studentAddress"></span></p>
+                    <p><strong>Giới tính:</strong> <span id="studentGender"></span></p>
+                </div>
+                <div id="teacherDetails" style="display: none;">
+                    <h5>Thông tin giảng viên</h5>
+                    <p><strong>Mã giảng viên:</strong> <span id="teacherId"></span></p>
+                    <p><strong>Họ và tên:</strong> <span id="teacherFullName"></span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="teacherPhoneNumber"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="teacherAddress"></span></p>
+                    <p><strong>Giới tính:</strong> <span id="teacherGender"></span></p>
                 </div>
             </div>
-          @*   <div class="float-box-content">
-                <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgvAccountDetail"}' hx-trigger="revealed" data-on-load="onLoadDgAccountDetail"></div>
-            </div> *@
+
         </div>
     </div>
     <div id="createAccount" class="float-box-overlay">
@@ -225,8 +404,7 @@
         await onLoadPag();
         await OnPageChange(1); 
     });
-    // window.SetdgvAccountDetailData = SetdgvAccountDetailData;
-    // window.onLoadDgAccountDetail = onLoadDgAccountDetail
+    inactiveFloatBox('updateAccount')
     inactiveFloatBox('detailAccount');
     inactiveFloatBox('createAccount');
     let currentKeyword = "";
@@ -261,11 +439,9 @@
                 "Vai trò": account.role || "N/A",
                 "Email": account.email || "N/A",
                 "Trạng thái": account.status ? "Kích hoạt" : "Vô hiệu hóa",
-                // "Ngày tạo": account.createdAt ? new Date(account.createdAt).toLocaleDateString() : "N/A",
-                // "Ngày cập nhật": account.updateAt ? new Date(account.updateAt).toLocaleDateString() : "N/A"
+
             }
         }));
-        // console.log(data);
         await fillDatagrid('dgv', data);
         await fillDatagridAction("dgv", [
             {
@@ -282,17 +458,26 @@
                 iconClass: "fa-solid fa-pen-to-square",
                 onClick: async function (row) {
                     const accountId = getCellValueByColumnIndex(row, 0);
-                    activeFloatBox('detailAccount');
-                    await SetAccountDetailData(accountId);
+                    activeFloatBox('updateAccount');
+                    await SetUpdateAccountForm(accountId);
                 }
             },
             {
-                text: "Chỉnh sửa trạng thái",
+                text: "Xóa tài khoản",
                 iconClass: "fa-solid fa-gears",
                 onClick: async function (row) {
                     const accountId = getCellValueByColumnIndex(row, 0);
-                    await AccountService.deleteAccount(accountId);
-                    await OnPageChange(currentPage);
+                    try {
+                        if (confirm(`Bạn có chắc chắn muốn hủy tài khoản với tài khoản ${accountId}?`)) {
+                            await AccountService.updateAccountStatus(accountId, { status: false });
+
+                            alert("Hủy tài khoản thành công!");
+                            await OnPageChange(currentPage);
+                        }
+                    } catch (error) {
+                        console.error("Lỗi khi hủy học viên:", error);
+                        alert("Không thể hủy học viên. Vui lòng thử lại.");
+                    }
                 }
             }
         ]);
@@ -345,12 +530,93 @@
             ActiveModal("modal", "Thông báo","Đã xảy ra lỗi khi tạo tài khoản. Vui lòng thử lại.");
         }
     }
-        async function SetAccountDetailData(accountId) {
+    async function SetUpdateAccountForm(accountId) {
         try {
-            // Gọi API để lấy thông tin tài khoản
+            const account = await AccountService.getAccountById(accountId);
+            document.getElementById("IDInput").value = accountId;
+            document.getElementById("usernameInput").value = account.username;
+            document.getElementById("passwordInput").value = "";
+            document.getElementById("avatarInput").value = account.avatar || "";
+            document.getElementById("roleInput").value = account.role;
+            document.getElementById("statusInput").value = account.status ? "true" : "false";
+            document.getElementById("emailInput").value = account.email || "";
+
+            if (account.role === "student" && account.studentRequest) {
+                document.getElementById("studentFieldsInput").style.display = "block";
+                document.getElementById("studentFullNameInput").value = account.studentRequest.fullName || "";
+                document.getElementById("studentBirthDateInput").value = account.studentRequest.birthDate || "";
+                document.getElementById("studentPhoneNumberInput").value = account.studentRequest.phoneNumber || "";
+                document.getElementById("studentAddressInput").value = account.studentRequest.address || "";
+                document.getElementById("studentGenderInput").value = account.studentRequest.gender || "";
+            } else {
+                document.getElementById("studentFieldsInput").style.display = "none";
+            }
+
+            if (account.role === "teacher" && account.teacherRequest) {
+                document.getElementById("teacherFieldsInput").style.display = "block";
+                document.getElementById("teacherFullName").value = account.teacherRequest.fullName || "";
+                document.getElementById("teacherSpecialization").value = account.teacherRequest.specialization || "";
+                document.getElementById("teacherQualification").value = account.teacherRequest.qualification || "";
+                document.getElementById("teacherPhoneNumber").value = account.teacherRequest.phoneNumber || "";
+                document.getElementById("teacherAddress").value = account.teacherRequest.address || "";
+                document.getElementById("teacherGender").value = account.teacherRequest.gender || "";
+            } else {
+                document.getElementById("teacherFieldsInput").style.display = "none";
+            }
+
+            activeFloatBox("updateAccount");
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin tài khoản:", error);
+            alert("Không thể tải thông tin tài khoản. Vui lòng thử lại.");
+        }
+    }
+    document.getElementById("saveAccountButton").addEventListener("click", async function () {
+        try {
+            const accountData = {
+                username: document.getElementById("usernameInput").value,
+                password: document.getElementById("passwordInput").value,
+                avatar: document.getElementById("avatarInput").value,
+                // role: document.getElementById("roleInput").value,
+                status: document.getElementById("statusInput").value === "true",
+                email: document.getElementById("emailInput").value,
+            };
+
+            // if (accountData.role === "student") {
+            //     accountData.studentRequest = {
+            //         fullName: document.getElementById("studentFullNameInput").value,
+            //         birthDate: document.getElementById("studentBirthDateInput").value,
+            //         phoneNumber: document.getElementById("studentPhoneNumberInput").value,
+            //         address: document.getElementById("studentAddressInput").value,
+            //         gender: document.getElementById("studentGenderInput").value,
+            //     };
+            // }
+
+            // if (accountData.role === "teacher") {
+            //     accountData.teacherRequest = {
+            //         fullName: document.getElementById("teacherFullNameInput").value,
+            //         specialization: document.getElementById("teacherSpecializationInput").value,
+            //         qualification: document.getElementById("teacherQualificationInput").value,
+            //         phoneNumber: document.getElementById("teacherPhoneNumberInput").value,
+            //         address: document.getElementById("teacherAddressInput").value,
+            //         gender: document.getElementById("teacherGenderInput").value,
+            //     };
+            // }
+
+            const accountId = document.getElementById("IDInput").value; // Ensure accountId is available
+            await AccountService.updateAccountPartial(accountId, accountData);
+
+            alert("Cập nhật tài khoản thành công!");
+            inactiveFloatBox("updateAccount");
+            await onLoadDg(); // Reload the datagrid
+        } catch (error) {
+            console.error("Lỗi khi cập nhật tài khoản:", error);
+            alert("Không thể cập nhật tài khoản. Vui lòng thử lại.");
+        }
+    });
+    async function SetAccountDetailData(accountId) {
+        try {
             const account = await AccountService.getAccountById(accountId);
 
-            // Hiển thị thông tin tài khoản
             document.getElementById("accountId").textContent = account.id || "N/A";
             document.getElementById("accountUsername").textContent = account.username || "N/A";
             document.getElementById("accountRole").textContent = account.role || "N/A";
@@ -363,7 +629,6 @@
                 ? new Date(account.updateAt).toLocaleString()
                 : "N/A";
 
-            // Hiển thị thông tin học viên nếu vai trò là "student"
             if (account.role === "student" && account.student) {
                 document.getElementById("studentDetails").style.display = "block";
                 document.getElementById("studentId").textContent = account.student.id || "N/A";
@@ -375,7 +640,6 @@
                 document.getElementById("studentDetails").style.display = "none";
             }
 
-            // Hiển thị thông tin giảng viên nếu vai trò là "teacher"
             if (account.role === "teacher" && account.teacher) {
                 document.getElementById("teacherDetails").style.display = "block";
                 document.getElementById("teacherId").textContent = account.teacher.id || "N/A";
@@ -386,48 +650,13 @@
             } else {
                 document.getElementById("teacherDetails").style.display = "none";
             }
-
-            // Hiển thị modal chi tiết tài khoản
             activeFloatBox("detailAccount");
         } catch (error) {
             console.error("Lỗi khi lấy thông tin tài khoản:", error);
             alert("Không thể tải thông tin tài khoản. Vui lòng thử lại.");
         }
     }
-    // function onLoadDgAccountDetail() {
-    //     var headers = ['Mã tài khoản', 'Tài khoản', 'Email', 'Trạng thái', 'Họ và tên', 'Ngày tạo', 'Ngày cập nhật']
 
-    //     renderDatagridHeader('dgvAccountDetail', headers, false);
-    // }
-    // async function SetdgvAccountDetailData(accountId){
-    //     const response = await AccountService.getAccountById(accountId);
-    //     const data = [
-    //         {
-    //             "Mã tài khoản": response.id,
-    //             "Tài khoản": response.username,
-    //             "Vai trò": response.role || "N/A",
-    //             "Email": response.email || "N/A",
-    //             "Trạng thái": response.status ? "Active" : "Inactive",
-    //             "Họ và tên": response.role === "teacher"
-    //                 ? response.teacher?.fullName
-    //                 : response.role === "student"
-    //                     ? response.student?.fullName
-    //                     : "Quản trị viên",
-    //             "Ngày tạo": response.createdAt
-    //                 ? new Date(response.createdAt).toLocaleDateString()
-    //                 : "N/A",
-    //             "Ngày cập nhật": response.updateAt
-    //                 ? new Date(response.updateAt).toLocaleDateString()
-    //                 : "N/A"
-    //         }
-    //     ];
-
-    //     await fillDatagrid('dgvAccountDetail', data);
-    // }
-    // async function onLoadPag() {
-    //     const response = await AccountService.getAllAccounts("",-1, 10);
-    //     renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
-    // }
     async function onLoadPag() {
         const response = await AccountService.getAllAccounts(currentKeyword, -1, pageSize); 
         const totalRecords = response.length; 
@@ -461,123 +690,4 @@
             }
         });
     }
-    // function getFirstCellValue(row) {
-    //     if (!row || !(row instanceof HTMLTableRowElement)) {
-    //         console.error("Invalid row element provided.");
-    //         return null;
-    //     }
-
-    //     const firstCell = row.querySelector("td");
-    //     return firstCell ? firstCell.textContent.trim() : null;
-    // }
-    // $('#search-box').on('keydown', async function (e) {
-    //     if (e.keyCode === 13) {
-    //         const query = $(this).val().trim();
-    //         const response = await AccountService.getAllAccounts(1, 10); Adjust API to support search if needed
-    //         const filteredData = response.filter(account => account.username.includes(query));
-    //         await fillDatagrid('dgv-container', filteredData);
-    //     }
-    // });
-
-    // $('#create-account-btn').on('click', function () {
-    //     alert("Tạo tài khoản mới");
-    // });
-
-    // onLoadDg();
-    // onLoadPag();
-    // function onLoadDg() {
-    //     var headers = ['Mã tài khoản', 'Tài khoản', 'Vai trò', 'Email', 'Trạng thái']
-    //     var headers = ['Mã tài khoản', 'Tài khoản', 'Avatar', 'Vai trò', 'Trạng thái', 'Email', 'Create_At', 'Update_At']
-    //     renderDatagridHeader('dgv', headers, true);
-    //     var data = [
-    //         {
-    //             "Mã tài khoản": "ACC001",
-    //             "Tài khoản": "nguyenvana",
-    //             "Vai trò": "Học viên",
-    //             "Email": "nguyenvana@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã tài khoản": "ACC002",
-    //             "Tài khoản": "tranthib",
-    //             "Vai trò": "Học viên",
-    //             "Email": "tranthib@example.com",
-    //             "Trạng thái": "inactive"
-    //         },
-    //         {
-    //             "Mã tài khoản": "ACC003",
-    //             "Tài khoản": "phamduc",
-    //             "Vai trò": "Giảng viên",
-    //             "Email": "phamduc@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã tài khoản": "ACC004",
-    //             "Tài khoản": "lethid",
-    //             "Vai trò": "Học viên",
-    //             "Email": "lethid@example.com",
-    //             "Trạng thái": "inactive"
-    //         },
-    //         {
-    //             "Mã tài khoản": "ACC005",
-    //             "Tài khoản": "nguyenvane",
-    //             "Vai trò": "Admin",
-    //             "Email": "nguyenvane@example.com",
-    //             "Trạng thái": "active"
-    //         }
-    //     ];
-    //     fillDatagrid('dgv', data);
-
-    //     fillDatagridAction("dgv", [
-    //         { 
-    //             text: "Chỉnh sửa thông tin", 
-    //             iconClass: "fa-solid fa-pen-to-square", 
-    //             onClick: function() { alert("Clicked Chi tiết"); } 
-    //         },
-    //         { 
-    //             text: "Hủy tài khoản", 
-    //             iconClass: "fa-solid fa-x",
-    //             onClick: function() { alert("Clicked "); } 
-    //         }
-    //     ]);
-
-    //     styleStatusColumn('dgv');
-    // }
-
-    // function onLoadPag() {
-    //     renderPagination('pag', 10, 'ChangePage')
-    // }
-
-    // function styleStatusColumn(containerId) {
-    //     const $container = $('#' + containerId);
-    //     const $table = $container.find('table.datagrid');
-    //     const $tbody = $table.find('tbody');
-
-    //     $tbody.find('tr').each(function () {
-    //         const $tr = $(this);
-    //         Lấy cột thứ 4 (index 3, 0-based)
-    //         const $statusTd = $tr.find('td').eq(4);
-    //         const statusText = $statusTd.text().trim().toLowerCase();
-
-    //         Reset màu mặc định trước
-    //         $statusTd.css({
-    //             'color': '',
-    //             'font-weight': 'bold'
-    //         });
-
-    //         Gán màu theo trạng thái
-    //         switch (statusText) {
-    //             case 'active':
-    //                 $statusTd.css('color', '#1D4ED8'); xanh dương
-    //                 break;
-    //             case 'inactive':
-    //                 $statusTd.css('color', '#DC2626'); đỏ
-    //                 break;
-    //             default:
-    //                 $statusTd.css('color', '#6B7280'); xám cho các trạng thái khác
-    //         }
-    //     });
-    // }
-
-
 </script>

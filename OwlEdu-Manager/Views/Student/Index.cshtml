@@ -56,7 +56,7 @@
                     <button id="username" class="btn-user"><i class="fa-solid fa-user"></i><span id="user-fullname">Full name</span></button>
                     <div class="dropdown">
                         <a href="#" hx-get="/Student/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
-                        <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
+                        <a href="javascript:void(0);" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
                     </div>
                 </div>
             </div>
@@ -274,7 +274,16 @@
 
 </style>
 
+<script>
+    function logoutUser() {
+        document.cookie.split(";").forEach(function (cookie) {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+        });
 
+        window.location.assign("/Authentication/Login");
+    }
+</script>
 <script type="module">
 import {getStudentID} from "../../js/Utils/getCookies.js";
 import StudentService from "../../js/API/StudentService.js";

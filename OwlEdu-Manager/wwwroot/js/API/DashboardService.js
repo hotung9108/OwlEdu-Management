@@ -109,7 +109,33 @@ const DashboardService = {
             throw error;
         }
     },
+    getPaidRevenueByYear: async function (year) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Static/revenue/paid/${year}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching paid revenue by year:", error);
+            throw error;
+        }
+    },
 
+    getPendingRevenueByYear: async function (year) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Static/revenue/pending/${year}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching pending revenue by year:", error);
+            throw error;
+        }
+    }
     // Add more methods as needed for other endpoints in StaticController
 };
 
