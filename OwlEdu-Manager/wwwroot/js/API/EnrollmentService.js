@@ -8,7 +8,7 @@ const EnrollmentService = {
     getAllEnrollments: async function (keyword = "", pageNumber = 1, pageSize = 10) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+                url: `${api_url}/api/Enrollment?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -22,7 +22,7 @@ const EnrollmentService = {
     getEnrollmentById: async function (id) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment/${id}`,
+                url: `${api_url}/api/Enrollment/${id}`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -36,7 +36,7 @@ const EnrollmentService = {
     addEnrollment: async function (enrollmentData) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment`,
+                url: `${api_url}/api/Enrollment`,
                 method: "POST",
                 data: enrollmentData,
                 headers: {
@@ -54,9 +54,26 @@ const EnrollmentService = {
     updateEnrollment: async function (id, enrollmentData) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment/${id}`,
+                url: `${api_url}/api/Enrollment/${id}`,
                 method: "PUT",
                 data: enrollmentData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error updating enrollment:", error);
+            throw error;
+        }
+    },
+
+    updateEnrollmentStatus: async function (id, status) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Enrollment/status/${id}/${status}`,
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -72,7 +89,7 @@ const EnrollmentService = {
     deleteEnrollment: async function (id) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment/${id}`,
+                url: `${api_url}/api/Enrollment/${id}`,
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -85,7 +102,7 @@ const EnrollmentService = {
     getEnrollmentByStudentId: async function (studentId) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment/student/${studentId}`,
+                url: `${api_url}/api/Enrollment/student/${studentId}`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -99,7 +116,7 @@ const EnrollmentService = {
     getEnrollmentByCourseId: async function (courseId) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment/course/${courseId}`,
+                url: `${api_url}/api/Enrollment/course/${courseId}`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -113,7 +130,7 @@ const EnrollmentService = {
     getEnrollmentByStudentIdCourseId: async function (studentId, courseId) {
         try {
             const response = await callApi({
-                url: `${api_url}/Enrollment/student/${studentId}/course/${courseId}`,
+                url: `${api_url}/api/Enrollment/student/${studentId}/course/${courseId}`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });

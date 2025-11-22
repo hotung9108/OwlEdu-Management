@@ -77,6 +77,23 @@ const ScheduleService = {
         }
     },
 
+    async postScheduleForm(scheduleForm) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule/Form`,
+                method: "POST",
+                data: scheduleForm,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${getAuthToken()}`
+                }
+            });
+        } catch (error) {
+            console.error("Error in postScheduleForm:", error);
+            throw error;
+        }
+    },
+
     async deleteSchedule(id) {
         try {
             return await callApi({

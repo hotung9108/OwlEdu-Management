@@ -12,14 +12,218 @@
         </div>
 
         <div>
-            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
-                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo đăng ký mới</button>
+            <div class="col-12 col-md-12 text-md-end" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary" style="display:none;"><i class="fa-solid fa-plus"></i>    Tạo đăng ký mới</button>
             </div>
         </div>
 
         <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+</div>
+
+<div id="details" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết khóa học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã đăng ký</label>
+                        <p id="enrollmentid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã học viên</label>
+                        <p id="studentid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <p id="courseid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày đăng ký</label>
+                        <p id="enroldate-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái</label>
+                        <p id="status-display" class="btl-view">student01</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="create" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Tạo đăng ký học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã lớp học</label>
+                        <p id="classid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên lớp học</label>
+                        <p id="classname-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <p id="courseid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên khóa học</label>
+                        <p id="coursename-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã giáo viên</label>
+                        <p id="teacherid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên giáo viên</label>
+                        <p id="teachername-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái lớp</label>
+                        <p id="classstatus-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái học</label>
+                        <p id="status-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày lớp bắt đầu</label>
+                        <p id="startdate-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày lớp kết thúc</label>
+                        <p id="enddate-display" class="btl-view">student01</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="class-assign" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Gán lớp học có sẵn</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('class-assign')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã đăng ký</label>
+                        <p id="enrollmentid-assign" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã học viên</label>
+                        <p id="studentid-assign" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <p id="courseid-assign" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p id="enrolldate-assign" class="btl-view" style="display: none">student01</p>
+                        <p id="classid-assign" class="btl-view" style="display: none">student01</p>
+                    </div>
+
+                    <div class="col-md-12">
+                        <h5 style="color:var(--primary)">Các lớp phù hợp</h5>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv1"}' hx-trigger="revealed" data-on-load="onLoadDg1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="update" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chỉnh sửa đăng ký</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('update')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã đăng ký</label>
+                        <p id="enrollmentid-update" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã học viên</label>
+                        <p id="studentid-update" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <input id="courseid-update" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày đăng ký</label>
+                        <input type="date" id="enrolldate-update" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái</label>
+                            <select id="status-update" name="Role" class="form-control" required>
+                                <option value="active">Chưa xử lý</option>
+                                <option value="completed">Đã xử lý</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                    </div>
+
+                    <div class="col-md-12 text-md-end" style="margin-bottom: 10px;">
+                        <button id="update-btn" type="button" class="btn btn-primary" onClick="SubmitUpdate()"><i class="fa-solid fa-pen"></i>    Cập nhật</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -52,17 +256,32 @@
 </style>
 
 <script type="module">
+    inactiveFloatBox('details');
+    inactiveFloatBox('create');
+    inactiveFloatBox('update');
+    inactiveFloatBox('class-assign');
     import EnrollmentService from "../../js/API/EnrollmentService.js";
+    import ClassService from "../../js/API/ClassService.js";
+    import ClassAssignmentService from "../../js/API/ClassAssignmentService.js";
     window.onLoadDg = onLoadDg;
     window.onLoadPag = onLoadPag;
     // window.SubmitAccount = SubmitAccount;
     window.OnPageChange = OnPageChange;
     // window.SetAccountDetailData = SetAccountDetailData;
+    window.SetDetails = SetDetails;
+    window.SetUpdate = SetUpdate;
+    window.SetAssign = SetAssign;
+    window.onLoadDg1 = onLoadDg1;
+    window.SubmitUpdate = SubmitUpdate;
+    window.SubmitAssignment = SubmitAssignment;
     document.getElementById('search-box').addEventListener('input', async function () {
         const keyword = this.value.trim();
         currentKeyword = keyword;
-        await onLoadPag();
         await OnPageChange(1);
+        await onLoadPag();
+    });
+    document.getElementById("update-btn").addEventListener("click", async function () {
+        SubmitUpdate();
     });
     let currentKeyword = "";
     let currentPage = 1;
@@ -76,12 +295,28 @@
         currentPage = pageNumber;
         const response = await EnrollmentService.getAllEnrollments(currentKeyword,pageNumber, pageSize);
         const data = await Promise.all(response.map(async (enrollment)=>{
+            var status;
+            switch(enrollment.status) {
+                case 'active':
+                    status = 'Chưa xử lý';
+                    break;
+                case 'completed':
+                    status = 'Đã xử lý';
+                    break;
+                case 'cancelled':
+                    status = 'Đã hủy';
+                    break;
+                default:
+                    status = 'Không rõ';
+                    break;
+            }
+
             return {
                 "Mã đăng ký": enrollment.id,
                 "Mã học viên": enrollment.studentId,
                 "Mã khóa học": enrollment.courseId,
                 "Ngày đăng ký":enrollment.enrollmentDate,
-                "Trạng thái":enrollment.status,
+                "Trạng thái":status,
                 // "Họ và tên": name,
                 // "Tài khoản": account.username,
                 // "Vai trò": account.role || "N/A",
@@ -94,22 +329,43 @@
             {
                 text: "Xem chi tiết",
                 iconClass: "fa-solid fa-info",
-                onClick: function() { alert("Clicked Chi tiết"); }
+                onClick: function(row) { 
+                    SetDetails(row);
+                }
             },
             {
                 text: "Xếp lớp",
                 iconClass: "fa-solid fa-file-signature",
-                onClick: function() { alert("Clicked Chi tiết"); }
+                onClick: async function(row) { 
+                    if (getCellValueByColumnIndex(row, 4) == 'Chưa xử lý') {
+                        SetAssign(row);
+                    }
+                    else if (getCellValueByColumnIndex(row, 4) == 'Đã xử lý') {
+                        ActiveModal("modal", "Thông báo", "Đăng ký đã được xử lý ");
+                    }
+                    else {
+                        ActiveModal("modal", "Thông báo", "Đăng ký đã được hủy ");
+                    }
+                }
             },
             {
                 text: "Chỉnh sửa thông tin",
                 iconClass: "fa-solid fa-pen-to-square",
-                onClick: function() { alert("Clicked Chi tiết"); }
+                onClick: async function(row) {
+                    SetUpdate(row);
+                }
             },
             {
                 text: "Hủy đăng ký",
                 iconClass: "fa-solid fa-x",
-                onClick: function() { alert("Clicked "); }
+                onClick: async function(row) {
+                    const enrollmentId = getFirstCellValue(row);
+                    if (getCellValueByColumnIndex(row, 4) == 'Đã hủy') {
+                        ActiveModal("modal", "Thông báo", "Đăng ký đã được hủy");
+                    }
+                    await EnrollmentService.updateEnrollmentStatus(enrollmentId, 'cancelled');
+                    await OnPageChange(currentPage);
+                }
             }
         ]);
 
@@ -129,7 +385,7 @@
         $tbody.find('tr').each(function () {
             const $tr = $(this);
             const $statusTd = $tr.find('td').eq(index);
-            const statusText = $statusTd.text().trim().toLowerCase();
+            const statusText = $statusTd.text().trim();
 
             $statusTd.css({
                 'color': '',
@@ -137,16 +393,159 @@
             });
 
             switch (statusText) {
-                case 'completed':
-                    $statusTd.css('color', '#1D4ED8');
+                case 'Chưa xử lý':
+                    $statusTd.css('color', '#1D4ED8'); //xanh dương
                     break;
-                case 'active':
-                    $statusTd.css('color', '#DC2626');
+                case 'Đã xử lý':
+                    $statusTd.css('color', '#10B981'); //xanh lá
+                    break;
+                case 'Đã hủy':
+                    $statusTd.css('color', '#DC2626'); //đỏ
                     break;
                 default:
                     $statusTd.css('color', '#6B7280');
             }
         });
+    }
+
+    async function SetDetails(row) {
+        const enrollmentid = getFirstCellValue(row);
+        const studentid = getCellValueByColumnIndex(row, 1);
+        const courseid = getCellValueByColumnIndex(row, 2);
+        const enrolldate = getCellValueByColumnIndex(row, 3);
+        const status = getCellValueByColumnIndex(row, 4);
+
+        $('#enrollmentid-display').text(enrollmentid);
+        $('#studentid-display').text(studentid);
+        $('#courseid-display').text(courseid);
+        $('#enrolldate-display').text(enrolldate);
+        $('#status-display').text(status);
+
+        activeFloatBox('details');
+    }
+
+    async function SetCreate(row) {
+
+    }
+
+    async function SetAssign(row) {
+        const enrollmentid = getFirstCellValue(row);
+        const studentid = getCellValueByColumnIndex(row, 1);
+        const courseid = getCellValueByColumnIndex(row, 2);
+        const enrolldate = getCellValueByColumnIndex(row, 3);
+
+        $('#enrollmentid-assign').text(enrollmentid);
+        $('#studentid-assign').text(studentid);
+        $('#courseid-assign').text(courseid);
+        $('#enrolldate-assign').text(enrolldate);
+
+        activeFloatBox('class-assign');
+
+        SetClassDgv(courseid);
+    }
+
+    async function SetUpdate(row) {
+        const enrollmentid = getFirstCellValue(row);
+        const studentid = getCellValueByColumnIndex(row, 1);
+        const courseid = getCellValueByColumnIndex(row, 2);
+        const enrolldate = getCellValueByColumnIndex(row, 3);
+        console.log(enrolldate);
+        var status = getCellValueByColumnIndex(row, 4);
+
+        $('#enrollmentid-update').text(enrollmentid);
+        $('#studentid-update').text(studentid);
+        $('#courseid-update').val(courseid);
+        $('#enrolldate-update').val(enrolldate);
+        switch(status) {
+            case 'Chưa xử lý':
+                status = 'active';
+                break;
+            case 'Đã xử lý':
+                status = 'completed';
+                break;
+            case 'Đã hủy':
+                status = 'cancelled';
+                break;
+        }
+        $('#status-update').val(status);
+
+        activeFloatBox('update');
+    }
+
+    function onLoadDg1() {
+        var headers = ['Mã lớp', 'Tên lớp', 'Ngày bắt đầu', 'Mã giáo viên']
+
+        renderDatagridHeader('dgv1', headers, true);
+    }
+
+    async function SetClassDgv(courseId) {
+        const response = await ClassService.getAllClasses(courseId , -1, -1);
+
+        const filteredResponse = response.filter(cls => cls.status === true);
+
+        const data = await Promise.all(filteredResponse.map(async (cls) => {
+            return {
+                "Mã lớp": cls.id,
+                "Tên lớp": cls.name,
+                "Ngày bắt đầu": cls.startDate,
+                "Mã giáo viên": cls.teacherId
+            }
+        }));
+
+        await fillDatagrid('dgv1', data, true);
+
+        await fillDatagridAction("dgv1", [
+            {
+                text: "Chọn lớp",
+                iconClass: "fa-solid fa-check", 
+                onClick: async function (row) {
+                    await SubmitAssignment(getFirstCellValue(row));
+                }
+            }
+        ]);
+    }
+
+    async function SubmitUpdate() {
+        const data = {
+            id: $('#enrollmentid-update').text(),
+            studentId: $('#studentid-update').text(),
+            courseId: $('#courseid-update').val(),
+            enrollmentDate: $('#enrolldate-update').val(),
+            status: $('#status-update').val(),
+            createdBy: null,
+        };
+
+        try {
+            await EnrollmentService.updateEnrollment(data.id, data);
+            ActiveModal("modal", "Thông báo", "Cập nhật thành công");
+            OnPageChange(currentPage);
+        }
+        catch(error) {
+            ActiveModal("modal", "Thông báo", "Cập nhật không thành công");
+            console.log(error);
+        }
+    }
+
+    async function SubmitAssignment(classid) {
+        const now = new Date();
+
+        const data = {
+            studentId: $('#studentid-assign').text(),
+            classId: classid,
+            assignedDate: now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
+            status: 'learning'
+        };
+
+        try {
+            await ClassAssignmentService.addClassAssignment(data);
+            await EnrollmentService.updateEnrollmentStatus($('#enrollmentid-assign').text(), 'completed');
+            ActiveModal("modal", "Thông báo", "Gán lớp thành công");
+            OnPageChange(currentPage);
+        }
+        catch (error) {
+            ActiveModal("modal", "Thông báo", "Gán lớp không thành công");
+            console.log(error);
+        }
     }
     // function ChangePage(currentPage) {
 

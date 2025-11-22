@@ -107,7 +107,7 @@ body {
     display: flex;
     justify-content: center !important;
     align-items: center !important;
-    z-index: 9999;
+    z-index: 500;
 }
 
 /* Box chứa bảng */

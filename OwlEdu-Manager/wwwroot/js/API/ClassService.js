@@ -95,6 +95,22 @@ const ClassService = {
             throw error;
         }
     }
+
+    patchClassStatus: async function (id, status) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Class/status/${id}/${status}`,
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default ClassService;
