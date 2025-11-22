@@ -41,6 +41,8 @@
             allSchedules.push(...schedules);
         }));
 
+        console.log(allSchedules[0]);
+
 
         // const response1 = await AttendanceService.getAllAttendances(getStudentID(), -1, 10000);
         // allAttendances.push(...response1.data);
@@ -53,15 +55,20 @@
 
     async function SetSchedule(date) {
         setScheduleWeek(date);
+        console.log(1);
 
         var dayOfWeek = getWeekDates(date);
+        console.log(2);
 
         for (var i = 0; i < 7; i++) {
-            allSchedules.filter(s => s.sessionDate === dayOfWeek[i]).forEach(schedule => {
+            console.log(allSchedules[0].sessionDate);
+            console.log(dayOfWeek[i]);
+            allSchedules.filter(s => s.sessionDate == dayOfWeek[i]).forEach(schedule => {
                 var attendance;
-                if (allAttendances.filter(a => a.scheduleId === schedule.id).length == 0) attendance = null;
-                else attendance = allAttendances.filter(a => a.scheduleId === schedule.id)[0];
-                addEvent(i, schedule.startTime, schedule.endTime, schedule.className + "(" + schedule.classId + ")", schedule.room, attendance); 
+                // if (allAttendances.filter(a => a.scheduleId === schedule.id).length == 0) attendance = null;
+                // else attendance = allAttendances.filter(a => a.scheduleId === schedule.id)[0];
+                console.log(i, schedule.startTime, schedule.endTime, schedule.className + "(" + schedule.classId + ")", schedule.room, attendance);
+                addEvent(i + 1, schedule.startTime, schedule.endTime, schedule.className + "(" + schedule.classId + ")", schedule.room, attendance); 
             });
         }
     }

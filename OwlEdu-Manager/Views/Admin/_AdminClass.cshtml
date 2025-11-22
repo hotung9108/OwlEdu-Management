@@ -13,7 +13,7 @@
 
         <div>
             <div class="col-12 col-md-12" style="margin-bottom: 10px;">
-                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo lớp mới</button>
+                <button type="button" class="btn btn-primary" onClick="ActivateCreate()"><i class="fa-solid fa-plus"></i>    Tạo lớp mới</button>
             </div>
         </div>
 
@@ -21,6 +21,361 @@
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
     </div>
+</div>
+
+<div id="float-box-container" style="display: none;">
+
+<div id="create" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Tạo lớp học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('create')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <select id="courseid-create" name="Role" class="form-control" required>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên lớp</label>
+                        <input type="text" id="classname-create" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Số lượng học viên tối đa</label>
+                        <input type="number" id="maxstudent-create" class="form-control" min="0">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày bắt đầu</label>
+                        <input type="date" id="startdate-create" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã giáo viên</label>
+                            <select id="teacherid-create" name="Role" class="form-control" required>
+                            </select>
+                    </div>
+
+                    <div class="col-md-12 text-md-end" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-primary" onClick="SubmitCreate()"><i class="fa-solid fa-plus"></i>    Tạo mới</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="update" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Cập nhật thông tin lớp học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('update')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã lớp học</label>
+                        <p id="classid-update" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <select id="courseid-update" name="Role" class="form-control" required>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái</label>
+                            <select id="status-update" name="Role" class="form-control" required>
+                                <option value="true">Hoạt động</option>
+                                <option value="false">Không hoạt động</option>
+                            </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên lớp</label>
+                        <input type="text" id="classname-update" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Số lượng học viên tối đa</label>
+                        <input type="number" id="maxstudent-update" class="form-control" min="0">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày bắt đầu</label>
+                        <input type="date" id="startdate-update" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày kết thúc</label>
+                        <input type="date" id="enddate-update" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã giáo viên</label>
+                            <select id="teacherid-update" name="Role" class="form-control" required>
+                            </select>
+                    </div>
+
+                    <div class="col-md-12 text-md-end" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-primary" onClick="SubmitUpdate()"><i class="fa-solid fa-pen"></i>    Cập nhật</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="details" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết lớp học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã lớp học</label>
+                        <p id="classid-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <p id="courseid-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên lớp học</label>
+                        <p id="classname-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Số lượng học viên tối đa</label>
+                        <p id="maxstudent-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày bắt đầu</label>
+                        <p id="startdate-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày kết thúc</label>
+                        <p id="enddate-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã giáo viên</label>
+                        <p id="teacherid-details" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái</label>
+                        <p id="status-details" class="btl-view">student01</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="schedules" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Lịch học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('schedules')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+
+                    <div class="col-md-12 text-md-start" style="margin-bottom: 10px;">
+                        <button id="update-btn" type="button" class="btn btn-primary" onClick="ActiveScheduleCreate()"><i class="fa-solid fa-pen"></i>    Tạo lịch học mới</button>
+                    </div>
+
+                    <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv1"}' hx-trigger="revealed" data-on-load="onLoadDg1"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="schedules-create" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Lịch học mới</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('schedules-create')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã lớp</label>
+                        <p id="classid-schedules-create" class="btl-view"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Phòng học</label>
+                        <input type="text" id="room-schedules-create" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Giờ bắt đầu</label>
+                        <input type="time" id="starttime-schedules-create" class="form-control" min="07:00" max="22:00">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Giờ kết thúc</label>
+                        <input type="time" id="endtime-schedules-create" class="form-control"  min="07:00" max="22:00">
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="btl-label">Hôm học hàng tuần</label>
+                        <div id="daysofweek-schedule-create">
+                            <div class="d-flex flex-wrap gap-3" id="daysofweek-schedule-create">
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-2" value="Monday">
+                                    <label class="form-check-label" for="weekday-2" style="color: var(--text-main)">Thứ 2</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-3" value="Tuesday">
+                                    <label class="form-check-label" for="weekday-3" style="color: var(--text-main)">Thứ 3</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-4" value="Wednesday">
+                                    <label class="form-check-label" for="weekday-4" style="color: var(--text-main)">Thứ 4</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-5" value="Thursday">
+                                    <label class="form-check-label" for="weekday-5" style="color: var(--text-main)">Thứ 5</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-6" value="Friday">
+                                    <label class="form-check-label" for="weekday-6" style="color: var(--text-main)">Thứ 6</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-7" value="Saturday">
+                                    <label class="form-check-label" for="weekday-7" style="color: var(--text-main)">Thứ 7</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weekday-cn" value="Sunday">
+                                    <label class="form-check-label" for="weekday-cn" style="color: var(--text-main)">Chủ nhật</label>
+                                </div>
+
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 text-md-start" style="margin-top: 10px;">
+            <button id="update-btn" type="button" class="btn btn-primary" onClick="SubmitScheduleForm()"><i class="fa-solid fa-plus"></i>    Tạo lịch học mới</button>
+        </div>
+    </div>
+</div>
+
+<div id="schedule-update" class="float-box-overlay">
+    <div class="float-box-box">
+
+        <div class="float-box-header">
+            <h4><i class="fa-solid fa-list-check"></i> Cập nhật buổi học</h4>
+            <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('schedule-update')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="float-box-content">
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="btl-label">Mã lớp</label>
+                    <p id="classid-schedule-update" class="btl-view"></p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Mã buổi học</label>
+                    <p id="scheduleid-schedule-update" class="btl-view"></p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Giờ bắt đầu</label>
+                    <input type="time" id="starttime-schedule-update" class="form-control" min="07:00" max="22:00">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Giờ kết thúc</label>
+                    <input type="time" id="endtime-schedule-update" class="form-control" min="07:00" max="22:00">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Phòng học</label>
+                    <input type="text" id="room-schedule-update" class="form-control">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="btl-label">Ngày học</label>
+                    <input type="date" id="sessiondate-schedule-update" class="form-control">
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12 text-md-start" style="margin-top: 10px;">
+            <button id="update-btn" type="button" class="btn btn-primary" onClick="SubmitScheduleUpdate()"><i class="fa-solid fa-plus"></i> Cập nhật buổi học</button>
+        </div>
+    </div>
+</div>
+
+<div id="students" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Quản lý học viên</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('students')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
 
 <style>
@@ -52,14 +407,38 @@
 </style>
 
 <script type="module">
+    inactiveFloatBox('create');
+    inactiveFloatBox('update');
+    inactiveFloatBox('details');
+    inactiveFloatBox('students');
+    inactiveFloatBox('schedules');
+    inactiveFloatBox('schedules-create');
+    inactiveFloatBox('schedule-update');
+
     import ClassService from "../../js/API/ClassService.js";
     import TeacherService from "../../js/API/TeacherService.js";
     import CourseService from "../../js/API/CourseService.js";
+    import ScheduleService from "../../js/API/ScheduleService.js";
+
     window.onLoadDg = onLoadDg;
     window.onLoadPag = onLoadPag;
-    // window.SubmitAccount = SubmitAccount;
     window.OnPageChange = OnPageChange;
-    // window.SetAccountDetailData = SetAccountDetailData;
+    window.ActivateCreate = ActivateCreate;
+    window.ActivateDetails = ActivateDetails;
+    window.ActivateUpdate = ActivateUpdate;
+    window.ActivateSchedules = ActivateSchedules;
+    window.ActivateStudents = ActivateStudents;
+    window.ActiveScheduleCreate = ActiveScheduleCreate;
+    window.onLoadDg1 = onLoadDg1;
+    window.SetDg1 = SetDg1;
+    window.ActivateScheduleUpdate = ActivateScheduleUpdate;
+    window.LoadCreateAndUpdate = LoadCreateAndUpdate;
+    window.SubmitCreate = SubmitCreate;
+    window.SubmitUpdate = SubmitUpdate;
+    window.getCheckedWeekdays = getCheckedWeekdays;
+    window.SubmitScheduleForm = SubmitScheduleForm;
+    window.SubmitScheduleUpdate = SubmitScheduleUpdate;
+
     document.getElementById('search-box').addEventListener('input', async function () {
         const keyword = this.value.trim();
         currentKeyword = keyword;
@@ -69,7 +448,14 @@
     let currentKeyword = "";
     let currentPage = 1;
     const pageSize = 10;
+    let courseList = [];
+    let teacherList = [];
+    let classList = [];
+
+    await LoadCreateAndUpdate();
+
     async function onLoadDg() {
+        $('#float-box-container').css("display", "");
         var headers = ['Mã lớp học', 'Tên lớp học', 'Mã khóa học','Tên khóa học', 'Giáo viên phụ trách', 'Học viên tối đa', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
         await OnPageChange(1);
@@ -77,6 +463,7 @@
     async function OnPageChange(pageNumber) {
         currentPage = pageNumber;
         const response = await ClassService.getAllClasses(currentKeyword,pageNumber, pageSize);
+        classList = response;
         const data = await Promise.all(response.map(async (classes)=>{
             const teacherDetail = await TeacherService.getTeacherById(classes.teacherId);
             const courseDetail = await CourseService.getCourseById(classes.courseId);
@@ -87,7 +474,7 @@
                 "Tên lớp học": classes.name,
                 "Giáo viên phụ trách": teacherDetail.fullName,
                 "Học viên tối đa":classes.maxStudents,
-                "Trạng thái": classes.status?"Active":"Inactive",
+                "Trạng thái": classes.status?"Hoạt động":"Không hoạt động",
                 // "Thời gian bắt đầu":classes.startDate,
             }
         }));
@@ -95,32 +482,45 @@
         await fillDatagridAction("dgv", [
             {
                 text: "Chi tiết lớp",
-                iconClass: "fa-solid fa-pen-to-square",
+                iconClass: "fa-solid fa-info",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     activeFloatBox('detailAccount');
-                     // await SetdgvAccountDetailData(accountId);
-                }
-            },
-                {
-                text: "Chỉnh sửa lớp",
-                iconClass: "fa-solid fa-pen-to-square",
-                onClick: async function (row) {
-                    // const accountId = getCellValueByColumnIndex(row, 0);
-                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     // activeFloatBox('detailAccount');
-                     // await SetdgvAccountDetailData(accountId);
+                    await ActivateDetails(row);
                 }
             },
             {
-                text: "Xóa lớp",
-                iconClass: "fa-solid fa-trash",
+                text: "Chỉnh sửa lớp",
+                iconClass: "fa-solid fa-pen-to-square",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
-                        // await AccountService.deleteAccount(accountId);
-                        await OnPageChange(1);
+                    await ActivateUpdate(row);
+                }
+            },
+            {
+                text: "Lịch học",
+                iconClass: "fa-solid fa-calendar",
+                onClick: async function (row) {
+                    await ActivateSchedules(row);
+                }
+            },
+            {
+                text: "Học viên",
+                iconClass: "fa-solid fa-graduation-cap",
+                onClick: async function (row) {
+                    await ActivateStudents(row);
+                }
+            },
+            {
+                text: "Đóng lớp",
+                iconClass: "fa-solid fa-x",
+                onClick: async function (row) {
+                    try {
+                        const classid = getFirstCellValue(row);
+                        await ClassService.patchClassStatus(classid, 'false');
+                        await OnPageChange(currentPage);
+                        ActiveModal("modal", 'Thông báo', 'Cập nhật trạng thái lớp học thành công');
+                    }
+                    catch(error) {
+                        ActiveModal("modal", 'Thông báo', 'Cập nhật trạng thái lớp học không thành công');
+                        console.error(error);
                     }
                 }
             }
@@ -140,7 +540,7 @@
         $tbody.find('tr').each(function () {
             const $tr = $(this);
             const $statusTd = $tr.find('td').eq(index);
-            const statusText = $statusTd.text().trim().toLowerCase();
+            const statusText = $statusTd.text().trim();
 
             $statusTd.css({
                 'color': '',
@@ -148,10 +548,10 @@
             });
 
             switch (statusText) {
-                case 'active':
+                case 'Hoạt động':
                     $statusTd.css('color', '#1D4ED8');
                     break;
-                case 'inactive':
+                case 'Không hoạt động':
                     $statusTd.css('color', '#DC2626');
                     break;
                 default:
@@ -159,6 +559,300 @@
             }
         });
     }
+
+    async function ActivateCreate() {
+        activeFloatBox('create');
+    }
+
+    async function ActivateDetails(row) {
+        const classid = getFirstCellValue(row);
+        const response = await ClassService.getClassById(classid);
+        const cls = classList.find(c => c.id == classid);
+        console.log(cls);
+        
+        const name = cls.name;
+        const courseid = cls.courseId;
+        const maxstudents = cls.maxStudents;
+        const startdate = cls.startDate;
+        const enddate = cls.endDate;
+        const teacherid = cls.teacherId;
+        const status = cls.status ? "Hoạt động" : "Không hoạt động";
+
+        $('#classid-details').text(classid);
+        $('#courseid-details').text(courseid);
+        $('#classname-details').text(name);
+        $('#maxstudent-details').text(maxstudents);
+        $('#startdate-details').text(startdate);
+        $('#enddate-details').text(enddate);
+        $('#teacherid-details').text(teacherid);
+        $('#status-details').text(status);
+
+        activeFloatBox('details');
+    }
+
+    async function ActivateUpdate(row) {
+        const classid = getFirstCellValue(row);
+        const response = await ClassService.getClassById(classid);
+        const cls = classList.find(c => c.id == classid);
+
+        const name = cls.name;
+        const courseid = cls.courseId;
+        const maxstudents = cls.maxStudents;
+        const startdate = cls.startDate;
+        const enddate = cls.endDate;
+        const teacherid = cls.teacherId;
+        const status = cls.status ? "true" : "false";
+
+        $('#classid-update').text(classid);
+        $('#courseid-update').val(courseid);
+        $('#classname-update').val(name);
+        $('#maxstudent-update').val(maxstudents);
+        $('#startdate-update').val(startdate);
+        $('#enddate-update').val(enddate);
+        $('#teacherid-update').val(teacherid);
+        $('#status-update').val(status);
+
+        activeFloatBox('update');
+    }
+
+    async function ActivateSchedules(row) {
+        activeFloatBox('schedules');
+        const classId = getFirstCellValue(row);
+
+        $('#classid-schedules-create').text(classId);
+        $('#classid-schedule-update').text(classId);
+
+        await SetDg1(classId);
+    }
+
+    async function ActivateStudents(row) {
+        activeFloatBox('students');
+    }
+
+
+    //create----------------------------------------------
+
+    async function LoadCreateAndUpdate() {
+        courseList = await CourseService.getAllCourses("", -1, -1);
+        teacherList = await TeacherService.getAllTeachers("", -1, -1);
+
+        loadOptions(courseList, "name", "courseid-create");
+        loadOptions(courseList, "name", "courseid-update");
+
+        loadOptions(teacherList, "fullName", "teacherid-create");
+        loadOptions(teacherList, "fullName", "teacherid-update");
+    } 
+
+    async function SubmitCreate() {
+        const courseid = $('#courseid-create').val();
+        const classname = $('#classname-create').val();
+        const maxstudent = $('#maxstudent-create').val();
+        const startdate = $('#startdate-create').val();
+        const teacherid = $('#teacherid-create').val();
+
+        const data = {
+            id: "",
+            courseId: courseid,
+            status: true,
+            name: classname,
+            require: null,
+            target: null,
+            maxStudents: maxstudent,
+            startDate: startdate,
+            endDate: null,
+            teacherId: teacherid
+        };
+
+        try {
+            await ClassService.addClass(data);
+            ActiveModal("modal", 'Thông báo', 'Thêm lớp học thành công');
+            OnPageChange(currentPage);
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Thêm lớp học không thành công');
+            console.error(error);
+        }
+    }
+
+    //create----------------------------------------------
+
+    //update----------------------------------------------
+
+    async function SubmitUpdate() {
+        const classid = $('#classid-update').text();
+        const courseid = $('#courseid-update').val();
+        const statusUpdate = $('#status-update').val() == "true" ? true : false;
+        const classname = $('#classname-update').val();
+        const maxstudent = $('#maxstudent-update').val();
+        const startdate = $('#startdate-update').val();
+        const enddate = $('#enddate-update').val();
+        const teacherid = $('#teacherid-update').val();
+
+        const data = {
+            id: classid,
+            courseId: courseid,
+            status: statusUpdate,
+            name: classname,
+            require: null,
+            target: null,
+            maxStudents: maxstudent,
+            startDate: startdate,
+            endDate: enddate,
+            teacherId: teacherid
+        };
+
+        try {
+            await ClassService.updateClass(classid, data);
+            ActiveModal("modal", 'Thông báo', 'Cập nhật lớp học thành công');
+            OnPageChange(currentPage);
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Cập nhật lớp học không thành công');
+            console.error(error);
+        }
+    }
+
+    //update----------------------------------------------
+
+    //schedule--------------------------------------------
+
+    //dgv1------------------------------------------------
+
+    async function onLoadDg1() {
+        var headers = ['Mã buổi học', 'Ngày học', 'Giờ bắt đầu','Giờ kết thúc', 'Phòng học']
+        renderDatagridHeader('dgv1', headers, true);
+    }
+
+    async function SetDg1(classId) {
+        try {
+            const schedules = await ScheduleService.getScheduleByClassId(classId);
+
+            const data = await Promise.all(schedules.map(async (sc)=>{
+                return {
+                    'Mã buổi học': sc.id,
+                    'Ngày học': sc.sessionDate,
+                    'Giờ bắt đầu':sc.startTime,
+                    'Giờ kết thúc': sc.endTime,
+                    'Phòng học': sc.room
+                }
+            }));
+            await fillDatagrid('dgv1', data);
+
+            await fillDatagridAction("dgv1", [
+                {
+                    text: "Chỉnh sửa buổi học",
+                    iconClass: "fa-solid fa-pen-to-square",
+                    onClick: async function (row) {
+                        await ActivateScheduleUpdate(row);
+                    }
+                },
+            ]);
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Có lỗi xảy ra, không lấy được danh sách buỏi học');
+        }
+    }
+
+    async function ActiveScheduleCreate() {
+        activeFloatBox('schedules-create');
+    } 
+
+    async function SubmitScheduleForm() {
+        //classid
+        //starttime
+        //endtime
+        //days of week
+        //room
+
+        const classid = $('#classid-schedules-create').text();
+        const roomUpdate = $('#room-schedules-create').val();
+        const starttime= $('#starttime-schedules-create').val();
+        const endtime= $('#endtime-schedules-create').val();
+        const dayofweekstr = getCheckedWeekdays();
+
+        const data = {
+            classId: classid,
+            room: roomUpdate,
+            daysOfWeek: dayofweekstr,
+            startTime: starttime + ":00",
+            endTime: endtime + ":00"
+        };
+
+        console.log(data);
+
+        try {
+            await ScheduleService.postScheduleForm(data);
+            await SetDg1(classid);
+            ActiveModal("modal", 'Thông báo', 'Tạo lịch học thành công');
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Tạo lịch học không thành công');
+            console.error(error);
+        }
+    }
+
+    function getCheckedWeekdays() {
+        const map = {
+            "Monday": 1,
+            "Tuesday": 2,
+            "Wednesday": 3,
+            "Thursday": 4,
+            "Friday": 5,
+            "Saturday": 6,
+            "Sunday": 0
+        };
+
+        const checked = Array.from(
+            document.querySelectorAll("#daysofweek-schedule-create input[type='checkbox']:checked")
+        ).map(cb => map[cb.value]); // chuyển sang số
+
+        return checked.sort().join(""); // ghép thành chuỗi, ví dụ "136"
+    }
+
+    async function ActivateScheduleUpdate(row) {
+        $('#scheduleid-schedule-update').text(getFirstCellValue(row));
+        $('#room-schedule-update').val(getCellValueByColumnIndex(row, 4));
+        $('#starttime-schedule-update').val(getCellValueByColumnIndex(row, 2));
+        $('#endtime-schedule-update').val(getCellValueByColumnIndex(row, 3));
+        $('#sessiondate-schedule-update').val(getCellValueByColumnIndex(row, 1));
+        activeFloatBox('schedule-update');
+
+    }
+
+    async function SubmitScheduleUpdate() {
+        const classid = $('#classid-schedule-update').text();
+        const scheduleid = $('#scheduleid-schedule-update').text();
+        const roomUpdate = $('#room-schedule-update').val();
+        const starttime = $('#starttime-schedule-update').val();
+        const endtime = $('#endtime-schedule-update').val();
+        const sessiondate = $('#sessiondate-schedule-update').val();
+        const cls = classList.find(c => c.id == classid);
+        const teacherid = cls.teacherId;
+
+        const data = {
+            classId: classid,
+            sessionDate: sessiondate,
+            startTime: starttime + ":00",
+            endTime: endtime + ":00",
+            room: roomUpdate,
+            teacherId: teacherid,
+        }
+
+        try {
+            await ScheduleService.updateSchedule(scheduleid, data);
+            await SetDg1(classid);
+            ActiveModal("modal", 'Thông báo', 'Cập nhật buổi học thành công');
+        }
+        catch(error) {
+            ActiveModal("modal", 'Thông báo', 'Cập nhật buổi học không thành công');
+            console.error(error);
+        }
+    }
+
+    //dgv1------------------------------------------------
+
+    //schedule--------------------------------------------
+
 
     // function ChangePage(currentPage) {
 
