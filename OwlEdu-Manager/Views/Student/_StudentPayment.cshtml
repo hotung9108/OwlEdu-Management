@@ -1,0 +1,218 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Hóa đơn của bạn</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+
+    <div id="details" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết hóa đơn</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã hóa đơn</label>
+                        <p id="id-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã đăng ký</label>
+                        <p id="enrollmentid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Số tiền</label>
+                        <p id="amount-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày thanh toán</label>
+                        <p id="paymentdate-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã người thu</label>
+                        <p id="feecollectorid-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Phương thức</label>
+                        <p id="method-display" class="btl-view">student01</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái</label>
+                        <p id="status-display" class="btl-view">student01</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    inactiveFloatBox('details');
+
+    import PaymentService from "../../js/API/PaymentService.js";
+    import {getUserID} from "../../js/Utils/getCookies.js";
+
+    window.onLoadDg = onLoadDg;
+    window.styleStatusColumn = styleStatusColumn;
+    window.onLoadPag = onLoadPag;
+    window.OnPageChange = OnPageChange;
+    window.SetDetails = SetDetails;
+
+    let currentPage = 1;
+    const pageSize = 10;
+    let totalPages = 0;
+    let currentKeyword = "";
+
+    async function onLoadDg() {
+        const searchBox = document.getElementById("search-box");
+        searchBox.addEventListener("input", debounce(onSearch, 300));
+
+        var headers = ['Mã hóa đơn', 'Mã đăng ký', 'Số tiền', 'Ngày thanh toán', 'Mã người thu', 'Phương thức', 'Trạng thái']
+
+        renderDatagridHeader('dgv', headers, true);
+
+        await OnPageChange(1);
+    }
+
+    async function OnPageChange(pageNumber, keyword = currentKeyword) {
+        console.log()
+        const response = await PaymentService.getAllPayments(getUserID() + " " + keyword, pageNumber, pageSize);
+
+        const data = await Promise.all(response.map(async (p) => {
+            var status;
+            switch (p.status) {
+                case "paid":
+                    status = "Đã thanh toán";
+                    break;
+                case "pending":
+                    status = "Chưa thanh toán";
+                    break;
+                default:
+                    status = "Hủy";
+                    break;
+            }
+
+            return {
+                "Mã hóa đơn": p.id,
+                "Mã đăng ký": p.enrollmentId,
+                "Số tiền": p.amount,
+                "Ngày thanh toán": p.paymentDate,
+                "Mã người thu": p.feeCollectorId,
+                "Phương thức": p.method,
+                "Trạng thái": status
+            }
+
+        }));
+
+        await fillDatagrid('dgv', data);
+
+        await fillDatagridAction("dgv", [
+            { 
+                text: "Chi tiết hóa đơn", 
+                iconClass: "fa-solid fa-info", 
+                onClick: function(row) { 
+                        activeFloatBox('details');
+                        SetDetails(row);
+                } 
+            },
+            { 
+                text: "In hóa đơn", 
+                iconClass: "fa-solid fa-print",
+                onClick: function(row) 
+                { 
+                    const id = getFirstCellValue(row);
+                    window.open(`/Payment/Invoice?paymentId=${id}`);
+                } 
+            }
+        ]);
+
+        styleStatusColumn('dgv');
+    }
+
+    async function onLoadPag() {
+        const response = await PaymentService.getAllPayments(getUserID() + " " + currentKeyword, -1, pageSize);
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange')
+    }
+
+    function styleStatusColumn(containerId) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            const $statusTd = $tr.find('td').eq(6);
+            const statusText = $statusTd.text().trim();
+
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            switch (statusText) {
+                case 'Đã thanh toán':
+                    $statusTd.css('color', '#10B981'); // xanh dương
+                    break;
+                case 'Chưa thanh toán':
+                    $statusTd.css('color', '#FBBF24'); // vàng
+                    break;
+                case 'Hủy':
+                    $statusTd.css('color', '#DC2626'); // đỏ
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+            }
+        });
+    }
+
+
+    async function onSearch() {
+        const searchBox = document.getElementById("search-box");
+        currentKeyword = searchBox.value.trim();
+        currentPage = 1;
+
+        await onLoadPag();
+
+        await OnPageChange(currentPage, currentKeyword);
+    }
+
+    async function SetDetails(row) {
+        const id = getFirstCellValue(row);
+        const enrollmentid = getCellValueByColumnIndex(row, 1);
+        const amount = getCellValueByColumnIndex(row, 2);
+        const paymentdate = getCellValueByColumnIndex(row, 3);
+        const feecollectorid = getCellValueByColumnIndex(row, 4);  
+        const method = getCellValueByColumnIndex(row, 5);  
+        const status = getCellValueByColumnIndex(row, 6);  
+
+        $('#id-display').text(id);
+        $('#enrollmentid-display').text(enrollmentid);
+        $('#amount-display').text(amount);
+        $('#paymentdate-display').text(paymentdate);
+        $('#feecollectorid-display').text(feecollectorid);
+        $('#method-display').text(method);
+        $('#status-display').text(status);
+    }
+</script>

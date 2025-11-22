@@ -1,0 +1,131 @@
+﻿<div class="container py-4">
+
+    <div class="btl-card">
+
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Lớp học bạn đang dạy</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input id="search-box" class="form-control" placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <!-- Datagrid -->
+        <div class="component-container"
+             hx-get="/Components/Datagrid"
+             hx-vals='{"Id": "dgTeacherClass"}'
+             hx-trigger="revealed"
+             data-on-load="onLoadTeacherClass">
+        </div>
+
+        <!-- Pagination -->
+        <div class="component-container"
+             hx-get="/Components/Pagination"
+             hx-vals='{"Id": "pagTeacherClass"}'
+             hx-trigger="revealed"
+             data-on-load="onLoadTeacherClassPagination">
+        </div>
+    </div>
+</div>
+
+<script type="module">
+
+    import ClassService from "../../js/API/ClassService.js";
+    import CourseService from "../../js/API/CourseService.js";
+    import ClassAssignmentService from "../../js/API/ClassAssignmentService.js";
+    import { getTeacherID } from "../../js/Utils/getCookies.js";
+
+    let currentPage = 1;
+    let currentKeyword = "";
+    const pageSize = 10;
+
+    window.onLoadTeacherClass = onLoadTeacherClass;
+    window.onLoadTeacherClassPagination = onLoadTeacherClassPagination;
+    window.loadTeacherClassPage = loadTeacherClassPage;
+
+    // ---------------------------
+    // 1. KHỞI TẠO DATAGRID
+    // ---------------------------
+    async function onLoadTeacherClass() {
+
+        const headers = ["Mã lớp", "Tên lớp", "Ngày bắt đầu", "Khóa học", "Số học viên"];
+        renderDatagridHeader("dgTeacherClass", headers, true);
+
+        await loadTeacherClassPage(1);
+
+        document.getElementById("search-box").addEventListener("input", debounce(onSearch, 300));
+    }
+
+    // ---------------------------
+    // 2. TẢI DỮ LIỆU MỖI TRANG
+    // ---------------------------
+    async function loadTeacherClassPage(pageNumber) {
+        const teacherId = getTeacherID();
+
+        const response = await ClassService.getAllClasses(
+            teacherId + " " + currentKeyword,
+            pageNumber,
+            pageSize
+        );
+
+        const data = await Promise.all(
+            response.map(async cls => {
+                const course = await CourseService.getCourseById(cls.courseId);
+                const students = await ClassAssignmentService.getClassAssignmentByClassId(cls.id);
+
+                return {
+                    "Mã lớp": cls.id,
+                    "Tên lớp": cls.name,
+                    "Ngày bắt đầu": cls.startDate,
+                    "Khóa học": course.name,
+                    "Số học viên": students.length
+                };
+            })
+        );
+
+        fillDatagrid("dgTeacherClass", data);
+
+        // ACTION: QUẢN LÝ LỚP (KHÔNG FLOATBOX)
+        fillDatagridAction("dgTeacherClass", [
+            {
+                text: "Quản lý lớp",
+                iconClass: "fa-solid fa-arrow-up-right-from-square",
+                onClick: function (row) {
+                    const classId = getFirstCellValue(row);
+
+                    // CHUYỂN SANG GIAO DIỆN CHI TIẾT LỚP
+                    htmx.ajax('GET', `/Teacher/ClassDetail?id=${classId}`, {
+                        target: "#main-panel"
+                    });
+                }
+
+            }
+        ]);
+    }
+
+    // ---------------------------
+    // 3. PHÂN TRANG
+    // ---------------------------
+    async function onLoadTeacherClassPagination() {
+        const teacherId = getTeacherID();
+
+        const totalData = await ClassService.getAllClasses(teacherId, -1, pageSize);
+        const totalPages = Math.ceil(totalData.length / pageSize);
+
+        renderPagination("pagTeacherClass", totalPages, "loadTeacherClassPage");
+    }
+
+    // ---------------------------
+    // 4. TÌM KIẾM
+    // ---------------------------
+    async function onSearch() {
+        currentKeyword = document.getElementById("search-box").value.trim();
+        currentPage = 1;
+
+        await onLoadTeacherClassPagination();
+        await loadTeacherClassPage(1);
+    }
+
+</script>

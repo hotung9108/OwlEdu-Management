@@ -1,0 +1,431 @@
+﻿<div class="container py-4">
+
+    <!-- HEADER THÔNG TIN LỚP -->
+    <div class="btl-card mb-3">
+        <div class="title">
+            <p class="m-0" id="class-title">Thông tin lớp học</p>
+        </div>
+
+        <div class="row g-3 mt-2">
+            <div class="col-md-6">
+                <label class="btl-label">Mã lớp</label>
+                <p id="info-id" class="btl-view"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="btl-label">Tên lớp</label>
+                <p id="info-name" class="btl-view"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="btl-label">Khóa học</label>
+                <p id="info-course" class="btl-view"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="btl-label">Ngày bắt đầu</label>
+                <p id="info-start" class="btl-view"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="btl-label">Ngày kết thúc</label>
+                <p id="info-end" class="btl-view"></p>
+            </div>
+
+            <div class="col-md-6">
+                <label class="btl-label">Số học viên</label>
+                <p id="info-total" class="btl-view"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- TAB MENU -->
+    <ul class="nav nav-tabs" id="teacherClassTab">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab-students">Học viên</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-attendance">Điểm danh</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-score">Bảng điểm</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-schedule">Lịch dạy</a>
+        </li>
+    </ul>
+
+
+    <div class="tab-content mt-3">
+
+        <!-- TAB HỌC VIÊN -->
+        <div class="tab-pane fade show active" id="tab-students">
+
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <input id="search-students" class="form-control" placeholder="Tìm kiếm học viên...">
+                </div>
+            </div>
+
+            <div class="component-container"
+                 hx-get="/Components/Datagrid"
+                 hx-vals='{"Id": "dgStudents"}'
+                 hx-trigger="revealed"
+                 data-on-load="onLoadStudentDgv">
+            </div>
+        </div>
+
+
+        <!-- TAB ĐIỂM DANH -->
+        <div class="tab-pane fade" id="tab-attendance">
+            <div class="row mb-3 mt-2">
+                <div class="col-md-4">
+                    <label>Buổi học</label>
+                    <select id="att-schedule" class="form-control">
+                        <option value="">-- Chọn buổi học --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end">
+                    <button id="btn-load-attendance" class="btn btn-primary w-100">
+                        Tải danh sách điểm danh
+                    </button>
+                </div>
+            </div>
+
+            <div class="component-container"
+                 hx-get="/Components/Datagrid"
+                 hx-vals='{"Id": "dgAttendance"}'
+                 hx-trigger="revealed"
+                 data-on-load="onLoadAttendanceDgv">
+            </div>
+            <div class="mt-3">
+                <button id="btn-save-attendance" class="btn btn-success">
+                    Lưu điểm danh
+                </button>
+            </div>
+        </div>
+
+
+        <!-- TAB BẢNG ĐIỂM -->
+        <div class="tab-pane fade" id="tab-score">
+
+            <div class="component-container"
+                 hx-get="/Components/Datagrid"
+                 hx-vals='{"Id": "dgScore"}'
+                 hx-trigger="revealed"
+                 data-on-load="onLoadScoreDgv">
+            </div>
+            <div class="mb-3">
+                <button id="btn-save-scores" class="btn btn-success">Lưu điểm</button>
+            </div>
+        </div>
+
+
+        <!-- TAB LỊCH DẠY -->
+        <div class="tab-pane fade" id="tab-schedule">
+
+            <div class="component-container"
+                 hx-get="/Components/Datagrid"
+                 hx-vals='{"Id": "dgSchedule"}'
+                 hx-trigger="revealed"
+                 data-on-load="onLoadScheduleDgv">
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<script type="module">
+
+            const classId = "@ViewBag.ClassId";
+
+    import ClassService from "../../js/API/ClassService.js";
+    import CourseService from "../../js/API/CourseService.js";
+    import ClassAssignmentService from "../../js/API/ClassAssignmentService.js";
+    import StudentService from "../../js/API/StudentService.js";
+    import AttendanceService from "../../js/API/AttendanceService.js";
+    import ScheduleService from "../../js/API/ScheduleService.js";
+    import ScoreService from "../../js/API/ScoreService.js";
+
+    LoadTeacherClassDetail(classId);
+
+    let fullStudentList = [];
+    let filteredStudentList = [];
+    let currentScheduleList = [];
+    let currentAttendanceList = [];
+
+    async function LoadTeacherClassDetail(classId) {
+
+        const cls = await ClassService.getClassById(classId);
+        const course = await CourseService.getCourseById(cls.courseId);
+        const assigns = await ClassAssignmentService.getClassAssignmentByClassId(classId);
+
+        document.getElementById("class-title").innerText = `Quản lý lớp học · ${cls.name}`;
+        document.getElementById("info-id").innerText = cls.id;
+        document.getElementById("info-name").innerText = cls.name;
+        document.getElementById("info-course").innerText = course.name;
+        document.getElementById("info-start").innerText = cls.startDate;
+        document.getElementById("info-end").innerText = cls.endDate;
+        document.getElementById("info-total").innerText = assigns.length;
+
+        await loadStudents(classId);
+    }
+    window.onLoadStudentDgv = onLoadStudentDgv;
+
+    async function loadStudents(classId) {
+        const assigns = await ClassAssignmentService.getClassAssignmentByClassId(classId);
+
+        fullStudentList = await Promise.all(assigns.map(async a => {
+            const stu = await StudentService.getStudentById(a.studentId);
+            return {
+                "Mã học viên": stu.id,
+                "Tên học viên": stu.fullName,
+                "Giới tính": stu.gender,
+                "SĐT": stu.phoneNumber
+            };
+        }));
+
+        filteredStudentList = [...fullStudentList];
+        fillDatagrid("dgStudents", filteredStudentList);
+    }
+
+    function filterStudents() {
+        const key = document.getElementById("search-students").value.toLowerCase();
+        filteredStudentList = fullStudentList.filter(s =>
+            s["Tên học viên"].toLowerCase().includes(key) ||
+            s["Mã học viên"].toLowerCase().includes(key)
+        );
+        fillDatagrid("dgStudents", filteredStudentList);
+    }
+
+    function onLoadStudentDgv() {
+        renderDatagridHeader("dgStudents",
+            ["Mã học viên", "Tên học viên", "Giới tính", "SĐT"], false);
+    }
+
+    window.onLoadAttendanceDgv = onLoadAttendanceDgv;
+
+    document.getElementById("btn-load-attendance")
+        .addEventListener("click", loadAttendance);
+
+    async function loadSchedulesForClass(classId) {
+        const schedules = await ScheduleService.getScheduleByClassId(classId);
+
+        currentScheduleList = schedules;
+        const cmb = document.getElementById("att-schedule");
+        cmb.innerHTML = '<option value="">-- Chọn buổi học --</option>';
+
+        schedules.forEach(s => {
+            cmb.innerHTML += `
+                <option value="${s.id}">
+                    ${s.sessionDate} (${s.startTime} - ${s.endTime})
+                </option>
+            `;
+        });
+    }
+
+    document.querySelector('a[href="#tab-attendance"]').addEventListener("click", async () => {
+        const classId = "@ViewBag.ClassId";
+        await loadSchedulesForClass(classId);
+    });
+
+    function onLoadAttendanceDgv() {
+        renderDatagridHeader("dgAttendance",
+            ["Mã học viên", "Tên học viên", "Trạng thái"], false);
+    }
+
+    async function loadAttendance() {
+        const scheduleId = document.getElementById("att-schedule").value;
+        const classId = "@ViewBag.ClassId";
+        const teacherId = currentScheduleList.find(s => s.id === scheduleId)?.teacherId;
+
+        if (!scheduleId) {
+            alert("Vui lòng chọn buổi học!");
+            return;
+        }
+
+        const assigns = await ClassAssignmentService.getClassAssignmentByClassId(classId);
+
+        currentAttendanceList = await Promise.all(assigns.map(async a => {
+            const stu = await StudentService.getStudentById(a.studentId);
+
+            let att = null;
+            try { att = await AttendanceService.getAttendanceById(scheduleId, stu.id); } catch {}
+
+            const status = att?.status ?? "present";
+
+            return {
+                "Mã học viên": stu.id,
+                "Tên học viên": stu.fullName,
+                "Trạng thái": renderStatusRadio(scheduleId, stu.id, status)
+            };
+        }));
+
+        fillDatagrid("dgAttendance", currentAttendanceList);
+    }
+
+    function renderStatusRadio(scheduleId, studentId, status) {
+        const name = `att_${scheduleId}_${studentId}`;
+
+        return `
+            <div class="att-status" data-schedule="${scheduleId}" data-student="${studentId}">
+                <label><input type="radio" name="${name}" value="present"  ${status==="present"?"checked":""}> Có mặt</label>
+                <label><input type="radio" name="${name}" value="absent"   ${status==="absent"?"checked":""}> Vắng</label>
+                <label><input type="radio" name="${name}" value="late"     ${status==="late"?"checked":""}> Đi muộn</label>
+                <label><input type="radio" name="${name}" value="excused"  ${status==="excused"?"checked":""}> Có phép</label>
+            </div>
+        `;
+    }
+
+       document.getElementById("btn-save-attendance")
+        .addEventListener("click", saveAttendance);
+
+    async function saveAttendance() {
+        const rows = document.querySelectorAll(".att-status");
+
+        for (const r of rows) {
+            const scheduleId = r.dataset.schedule;
+            const studentId = r.dataset.student;
+            const status = r.querySelector("input[type=radio]:checked").value;
+
+            // 🔥 LẤY teacherId CỦA BUỔI HỌC
+            const teacherId = currentScheduleList.find(s => s.id === scheduleId)?.teacherId;
+
+            let att = null;
+            try {
+                att = await AttendanceService.getAttendanceById(scheduleId, studentId);
+            } catch {}
+
+            if (att) {
+                // UPDATE
+                await AttendanceService.updateAttendance(scheduleId, studentId, {
+                    scheduleId,
+                    studentId,
+                    teacherId,
+                    status,
+                    note: ""
+                });
+            } else {
+                // CREATE
+                await AttendanceService.addAttendance({
+                    scheduleId,
+                    studentId,
+                    teacherId,
+                    status,
+                    note: ""
+                });
+            }
+        }
+
+        alert("Đã lưu điểm danh thành công!");
+    }
+
+
+
+       window.onLoadScoreDgv = onLoadScoreDgv;
+
+    function onLoadScoreDgv() {
+        renderDatagridHeader("dgScore",
+            ["Mã HV", "Tên học viên", "Listening", "Speaking", "Reading", "Writing", "Loại"], false);
+
+        loadScores();
+    }
+
+        async function loadScores() {
+        const classId = "@ViewBag.ClassId";
+
+        // DS học viên của lớp
+        const assigns = await ClassAssignmentService.getClassAssignmentByClassId(classId);
+
+        // Lấy điểm theo lớp (có thể rỗng)
+        const scoreList = await ScoreService.getScoresByClass(classId);
+
+        const data = await Promise.all(assigns.map(async a => {
+            const stu = await StudentService.getStudentById(a.studentId);
+
+            // tìm xem học viên này có điểm hay chưa
+            const score = scoreList.find(x => x.studentId === stu.id);
+
+            return {
+                "Mã HV": stu.id,
+                "Tên học viên": stu.fullName,
+                "Listening": `<input class="score-input" data-stu="${stu.id}" data-field="listening" type="number" min="0" max="10" value="${score?.lisening ?? ""}">`,
+                "Speaking": `<input class="score-input" data-stu="${stu.id}" data-field="speaking" type="number" min="0" max="10" value="${score?.speaking ?? ""}">`,
+                "Reading": `<input class="score-input" data-stu="${stu.id}" data-field="reading" type="number" min="0" max="10" value="${score?.reading ?? ""}">`,
+                "Writing": `<input class="score-input" data-stu="${stu.id}" data-field="writing" type="number" min="0" max="10" value="${score?.writing ?? ""}">`,
+                "Loại": `<input class="score-input" data-stu="${stu.id}" data-field="type" type="text" value="${score?.type ?? ""}">`
+            };
+        }));
+
+        fillDatagrid("dgScore", data);
+    }
+        document.getElementById("btn-save-scores").addEventListener("click", saveScores);
+
+    async function saveScores() {
+        const rows = document.querySelectorAll("#dgScore tbody tr");
+
+        for (const tr of rows) {
+
+            const studentId = tr.dataset.id;
+            const title = tr.querySelector(".inp-title").value;
+            const listening = parseFloat(tr.querySelector(".inp-listening").value) || 0;
+            const speaking = parseFloat(tr.querySelector(".inp-speaking").value) || 0;
+            const reading = parseFloat(tr.querySelector(".inp-reading").value) || 0;
+            const writing = parseFloat(tr.querySelector(".inp-writing").value) || 0;
+            const type = tr.querySelector(".inp-type").value;
+
+            const classId = "@ViewBag.ClassId";
+            const teacherId = "@ViewBag.TeacherId";
+
+            const scoreData = {
+                studentId,
+                classId,
+                teacherId,
+                title,
+                lisening: listening,
+                speaking,
+                reading,
+                writing,
+                type
+            };
+
+            try {
+                await ScoreService.updateScore(studentId, classId, teacherId, title, scoreData);
+            } catch {
+                await ScoreService.addScore(scoreData);
+            }
+        }
+
+        alert("Đã lưu điểm thành công!");
+    }
+
+
+    window.onLoadScheduleDgv = onLoadScheduleDgv;
+
+    function onLoadScheduleDgv() {
+        renderDatagridHeader("dgSchedule",
+            ["Ngày", "Giờ học", "Phòng"], false);
+
+        loadScheduleList();
+    }
+
+    async function loadScheduleList() {
+        const classId = "@ViewBag.ClassId";
+        const schedules = await ScheduleService.getScheduleByClassId(classId);
+
+        const data = schedules.map(s => ({
+            "Ngày": s.sessionDate,
+            "Giờ học": `${s.startTime} - ${s.endTime}`,
+            "Phòng": s.room
+        }));
+
+        fillDatagrid("dgSchedule", data);
+    }
+
+</script>
+

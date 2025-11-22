@@ -6,7 +6,7 @@
         <div class="col-lg-4">
             <div class="btl-card shadow-sm">
 
-                <h5 class="btl-card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">Tài khoản</h5>
+                <h5 class="btl-card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; color:var(--text-main);">Ảnh đại diện</h5>
 
                 <div class="text-center mt-3">
                     <img id="btl-avatar" src="https://i.pravatar.cc/200"
@@ -38,13 +38,13 @@
             <div class="btl-card shadow-sm" data-section="account">
 
                 <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                    <h5 class="btl-card-title">Thông tin tài khoản</h5>
+                    <h5 class="btl-card-title" style="color:var(--text-main);">Thông tin tài khoản</h5>
                     <div>
                         <button class="btn btn-primary btn-sm btn-edit">
                             <i class="fa-solid fa-pen"></i> Chỉnh sửa
                         </button>
                         <div class="d-inline-block btn-save-cancel d-none">
-                            <button class="btn btn-success btn-sm btn-save">
+                            <button class="btn btn-success btn-sm btn-save" id="btn-save-account">
                                 <i class="fa-solid fa-check"></i> Lưu
                             </button>
                             <button class="btn btn-danger btn-sm btn-cancel">
@@ -55,22 +55,27 @@
                 </div>
 
                 <div class="row mt-3 g-3">
-                    <div class="col-md-12">
-                        <label class="btl-label">Tên tài khoản</label>
-                        <p class="btl-view">student01</p>
-                        <input class="form-control btl-edit d-none" value="student01">
+                    <div class="col-md-6">
+                        <label class="btl-label-display" style="color:var(--text-main);">Mã học viên</label>
+                        <p id="id-display" class="btl-view-display">student01</p>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="btl-label">Email</label>
-                        <p class="btl-view">student@gmail.com</p>
-                        <input type="email" class="form-control btl-edit d-none" value="student@gmail.com">
+                        <label class="btl-label" style="color:var(--text-main);">Tên tài khoản</label>
+                        <p id="username-display" class="btl-view">student01</p>
+                        <input id="username-input" class="form-control btl-edit d-none" value="student01">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="btl-label">Mật khẩu</label>
+                        <label class="btl-label" style="color:var(--text-main);">Email</label>
+                        <p id="email-display" class="btl-view">student@gmail.com</p>
+                        <input id="email-input" type="email" class="form-control btl-edit d-none" value="student@gmail.com">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label" style="color:var(--text-main);">Mật khẩu</label>
                         <p class="btl-view">********</p>
-                        <input type="password" class="form-control btl-edit d-none" value="0987654321">
+                        <input id="password-input" type="password" class="form-control btl-edit d-none" value="">
                     </div>
                 </div>
 
@@ -80,13 +85,13 @@
             <div class="btl-card shadow-sm mt-4" data-section="personal">
 
                 <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                    <h5 class="btl-card-title">Thông tin cá nhân</h5>
+                    <h5 class="btl-card-title" style="color:var(--text-main);">Thông tin cá nhân</h5>
                     <div>
                         <button class="btn btn-primary btn-sm btn-edit">
                             <i class="fa-solid fa-pen"></i> Chỉnh sửa
                         </button>
                         <div class="d-inline-block btn-save-cancel d-none">
-                            <button class="btn btn-success btn-sm btn-save">
+                            <button class="btn btn-success btn-sm btn-save" id="btn-save-profile">
                                 <i class="fa-solid fa-check"></i> Lưu
                             </button>
                             <button class="btn btn-danger btn-sm btn-cancel">
@@ -98,36 +103,36 @@
 
                 <div class="row mt-3 g-3">
                     <div class="col-md-6">
-                        <label class="btl-label">Họ và tên</label>
-                        <p class="btl-view">Nguyen</p>
-                        <input class="form-control btl-edit d-none" value="Nguyen">
+                        <label class="btl-label" style="color:var(--text-main);">Họ và tên</label>
+                        <p id="fullname-display" class="btl-view">Nguyen</p>
+                        <input id="fullname-input" class="form-control btl-edit d-none" value="Nguyen">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="btl-label">Ngày sinh</label>
-                        <p class="btl-view">21/01/2005</p>
-                        <input type="date" class="form-control btl-edit d-none" value="">
+                        <label class="btl-label" style="color:var(--text-main);">Ngày sinh</label>
+                        <p id="birthdate-display" class="btl-view">21/01/2005</p>
+                        <input id="birthdate-input" type="date" class="form-control btl-edit d-none" value="">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="btl-label">Số điện thoại</label>
-                        <p class="btl-view">0987654321</p>
-                        <input type="text" class="form-control btl-edit d-none" value="0987654321">
+                        <label class="btl-label" style="color:var(--text-main);">Số điện thoại</label>
+                        <p id="phonenumber-display" class="btl-view">0987654321</p>
+                        <input id="phonenumber-input" class="form-control btl-edit d-none" value="0987654321">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="btl-label">Giới tính</label>
-                        <p class="btl-view">Nam</p>
-                        <select class="form-control btl-edit d-none">
+                        <label class="btl-label" style="color:var(--text-main);">Giới tính</label>
+                        <p id="gender-display" class="btl-view">Nam</p>
+                        <select id="gender-input" class="form-control btl-edit d-none">
                             <option>Nam</option>
                             <option>Nữ</option>
                         </select>
                     </div>
 
                     <div class="col-md-12">
-                        <label class="btl-label">Địa chỉ</label>
-                        <p class="btl-view">ABC</p>
-                        <input class="form-control btl-edit d-none" value="ABC">
+                        <label class="btl-label" style="color:var(--text-main);">Địa chỉ</label>
+                        <p id="address-display" class="btl-view">ABC</p>
+                        <input id="address-input" class="form-control btl-edit d-none" value="ABC">
                     </div>
                 </div>
 
@@ -138,11 +143,6 @@
 </div>
 
 <style>
-
-body {
-    background: var(--bg);
-    color: var(--text-main);
-}
 
 .btl-card {
     background: var(--surface);
@@ -162,6 +162,17 @@ body {
 }
 
 .btl-view {
+    padding: 8px 0;
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.btl-label-display {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btl-view-display {
     padding: 8px 0;
     margin: 0;
     color: var(--text-muted);
@@ -193,8 +204,47 @@ body {
 
 </style>
 
-<script>
-    $(document).ready(function(){
+<script type="module">
+    import {getStudentID, getUserID} from "../../js/Utils/getCookies.js";
+    import StudentService from "../../js/API/StudentService.js";
+    import AccountService from "../../js/API/AccountService.js";
+
+    window.SetEvents = SetEvents;
+    window.Setup = Setup;
+
+    await Setup();
+
+    async function Setup() {
+        SetEvents();
+
+        console.log(getStudentID());
+        const studentInfor = await StudentService.getStudentById(getStudentID());
+
+        $('#fullname-display').text(studentInfor.fullName);
+        $('#fullname-input').val(studentInfor.fullName);
+
+        $('#birthdate-display').text(studentInfor.birthDate);
+        $('#birthdate-input').val(studentInfor.birthDate);
+
+        $('#phonenumber-display').text(studentInfor.phoneNumber);
+        $('#phonenumber-input').val(studentInfor.phoneNumber);
+
+        $('#gender-display').text(studentInfor.gender);
+        $('#gender-input').val(studentInfor.gender);
+
+        $('#address-display').text(studentInfor.address);
+        $('#address-input').val(studentInfor.address);
+
+        $('#id-display').text(studentInfor.id);
+
+        $('#username-display').text(studentInfor.accountResponse.username);
+        $('#username-input').val(studentInfor.accountResponse.username);
+
+        $('#email-display').text(studentInfor.accountResponse.email);
+        $('#email-input').val(studentInfor.accountResponse.email);
+    }
+
+    function SetEvents() {
         $('.btn-edit').click(function(){
             const $section = $(this).closest('[data-section]');
             $section.find('.btl-view').addClass('d-none');
@@ -211,7 +261,7 @@ body {
             $section.find('.btn-edit').removeClass('d-none');
         });
 
-        $('.btn-save').click(function(){
+        $('btn-save').click(function(){
             const $section = $(this).closest('[data-section]');
             // Lưu dữ liệu: cập nhật view từ input
             $section.find('.btl-edit').each(function(){
@@ -224,5 +274,66 @@ body {
             $section.find('.btn-save-cancel').addClass('d-none');
             $section.find('.btn-edit').removeClass('d-none');
         });
-    });
+
+        $('#btn-save-account').click(function(){
+            const $section = $(this).closest('[data-section]');
+            // Lưu dữ liệu: cập nhật view từ input
+            $section.find('.btl-edit').each(function(){
+                const val = $(this).val();
+                $(this).siblings('.btl-view').text(val);
+            });
+
+            $section.find('.btl-edit').addClass('d-none');
+            $section.find('.btl-view').removeClass('d-none');
+            $section.find('.btn-save-cancel').addClass('d-none');
+            $section.find('.btn-edit').removeClass('d-none');
+
+            const updateAccount = {
+              username: $('#username-input').val(),
+              birthDate: $('#email-input').val(),
+              password: $('#password-input').val()
+            }
+
+            $('#username-display').text($('#username-input').val());
+
+            $('#email-display').text($('#email-input').val());
+
+            // await AccountService.updateAccount(getUserID(), updateAccount);
+        });
+
+        $('#btn-save-profile').click(async function(){
+
+            const $section = $(this).closest('[data-section]');
+            // Lưu dữ liệu: cập nhật view từ input
+            $section.find('.btl-edit').each(function(){
+                const val = $(this).val();
+                $(this).siblings('.btl-view').text(val);
+            });
+
+            $section.find('.btl-edit').addClass('d-none');
+            $section.find('.btl-view').removeClass('d-none');
+            $section.find('.btn-save-cancel').addClass('d-none');
+            $section.find('.btn-edit').removeClass('d-none');
+
+            const updateProfile = {
+              fullName: $('#fullname-input').val(),
+              birthDate: $('#birthdate-input').val(),
+              phoneNumber: $('#phonenumber-input').val(),
+              gender: $('#gender-input').val(),
+              address: $('#address-input').val()
+            }
+
+            $('#fullname-display').text($('#fullname-input').val());
+
+            $('#birthdate-display').text($('#birthdate-input').val());
+
+            $('#phonenumber-display').text($('#phonenumber-input').val());
+
+            $('#gender-display').text($('#gender-input').val());
+
+            $('#address-display').text($('#address-input').val());
+
+            await StudentService.updateStudent(getStudentID(), updateProfile);
+        });
+    }
 </script>

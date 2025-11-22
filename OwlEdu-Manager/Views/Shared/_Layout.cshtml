@@ -3,11 +3,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - OwlEdu_Manager</title>
+    <title>@ViewData["Title"] OwlEdu</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/OwlEdu_Manager.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/invoice.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" asp-append-version="true"/>
+    <link rel="icon" href="~/images/owl.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
 </head>
 <body>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -15,8 +17,79 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/font-awesome/js/all.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+    <script type="module" src="~/js/Utils/getCookies.js"></script>
+    <script type="module" src="~/js/API/CourseService.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="/js/datetimepicker.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    @* <script src="~/js/API/CourseService.js" asp-append-version="true"></script> *@
+    @* <script src="~/js/API/AccountService.js"></script>
+    <script src="~/js/API/AuthService.js"></script> *@
+    @* <script src="~/js/API/AccountService.js"></script>
+    <script src="~/js/API/AccountService.js"></script>
+    <script src="~/js/API/AccountService.js"></script> *@
+
     @await RenderSectionAsync("Scripts", required: false)
 
     @RenderBody()
+
+    <div id="modal" class="btl-modal-backdrop">
+        <div class="btl-modal">
+            <h3 class="btl-modal-title">Modal Title</h3>
+            <p class="btl-modal-content">Modal content goes here.</p>
+            <button class="btl-btn-close d-flex flex-row-reverse">Close</button>
+        </div>
+        <style>
+        .btl-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000; 
+        }
+
+        .btl-modal-active {
+            display: flex;
+        }
+
+        .btl-modal {
+            background-color: var(--surface);
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            width: 400px;
+        }
+        .btl-modal h3 {
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .btl-modal p {
+            margin-bottom: 16px;
+            color: var(--text-muted);
+        }
+        .btl-btn-close {
+            padding: 6px 12px;
+            background-color: var(--primary);
+            color: var(--text-reverse);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btl-btn-close:hover {
+            background-color: var(--primary-hover);
+        }
+        </style>
+
+    </div>
 </body>
 </html>
+
+@* <script type="module">
+    import AuthService from "/js/API/AuthService.js";
+    import { getAuthToken, getUserID, getUserRole, getStudentID, getTeacherID } from "/js/Utils/getCookies.js";
+    import CourseService from "/js/API/CourseService.js";
+    import ClassAssignmentService from "/js/API/ClassAssignmentService.js";
+</script> *@

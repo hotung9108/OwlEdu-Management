@@ -1,5 +1,5 @@
 ﻿<div class="main-container">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <img src="~/images/owl.png" alt="logo"/>
             <span class="sidebar-title">OwlEdu</span>
@@ -7,44 +7,66 @@
 
         <nav class="sidebar-menu">
             <fieldset class="sidebar-catalog">
-                <legend>
-                    Thông tin
-                </legend>
+                <legend>Thông tin</legend>
             </fieldset>
-            <a href="#" class="sidebar-item">
-                <span class="label"><i class="fa-solid fa-bell"></i>    Thông báo</span>
+
+            <a href="#" class="sidebar-item"
+               hx-get="/Teacher/Home"
+               hx-trigger="click"
+               hx-target="#main-panel">
+                <span class="label"><i class="fa-solid fa-house"></i> Trang chủ</span>
             </a>
-            <fieldset class="sidebar-catalog">
-                <legend>
-                    Quản lý
-                </legend>
-            </fieldset>
-            @* <a href="#" class="sidebar-item">
-                <span class="label"><i class="fa-solid fa-book"></i>    Đăng ký khóa học</span>
+
+            @* <a href="#" class="sidebar-item"
+               hx-get="/Teacher/Notification"
+               hx-trigger="click"
+               hx-target="#main-panel">
+                <span class="label"><i class="fa-solid fa-bell"></i> Thông báo</span>
             </a> *@
-            <a href="#" class="sidebar-item">
-                <span class="label"><i class="fa-solid fa-school"></i>  Lớp học của bạn</span>
+
+            <fieldset class="sidebar-catalog">
+                <legend>Quản lý</legend>
+            </fieldset>
+
+            <a href="#" class="sidebar-item"
+               hx-get="/Teacher/Class"
+               hx-trigger="click"
+               hx-target="#main-panel">
+                <span class="label"><i class="fa-solid fa-school"></i> Lớp học của bạn</span>
+            </a>
+
+            <a href="#" class="sidebar-item"
+               hx-get="/Teacher/Schedule"
+               hx-trigger="click"
+               hx-target="#main-panel">
+                <span class="label"><i class="fa-solid fa-calendar"></i> Lịch dạy</span>
             </a>
         </nav>
     </aside>
 
     <div class="main-panel">
         <header class="header">
+            <div style="margin-right: auto;">
+                <a href="#" onClick="ToggleSidebar()" class="toggle-sidebar-btn" style="color: var(--text-main)"><i class="fa-solid fa-bars"></i></a>
+            </div>
             <div class="header-right">
                 <button class="btn-mode" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></button>
 
                 <button class="btn-fullscreen" onclick="toggleFullScreen()"><i class="fa-solid fa-compress"></i></button>
 
                 <div class="user-menu">
-                    <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
+                    <button class="btn-user"><i class="fa-solid fa-user"></i><span class ="user-fullname">Full name</span></button>
+
                     <div class="dropdown">
-                        <a href="#"><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
-                        <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
+                        <a href="#" hx-get="/Teacher/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        <a href="javascript:void(0);" onclick="logoutUser()">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </a>
                     </div>
                 </div>
             </div>
         </header>
-        <main class="main">
+        <main id="main-panel" class="main">
             Teacher
         </main>
     </div>
@@ -84,6 +106,7 @@
     height: fit-content;
     gap: 15px;
     position: sticky;
+    padding-left: 0;
 }
 
 .header-right {
@@ -183,7 +206,9 @@
     flex-direction: column;
     overflow: auto;
     padding: 10px;
+    transform: translateX(0);
 }
+
 
 .sidebar-header {
     display: flex;
@@ -239,6 +264,7 @@
     border: none;
     border-top: 1px groove var(--text-muted);
     padding: 5px 0;
+    margin-top: 10px;
 }
 
 .sidebar-catalog legend {
@@ -250,7 +276,16 @@
 }
 </style>
 
+<script>
+    function logoutUser() {
+        document.cookie.split(";").forEach(function (cookie) {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+        });
 
+        window.location.assign("/Authentication/Login");
+    }
+</script>
 <script>
 $(document).ready(function() {
     $('.btn-mode').click(function() {
@@ -294,4 +329,19 @@ function toggleFullScreen() {
         document.exitFullscreen();
     }
 }
+</script>
+<script type="module">
+    import { getTeacherID } from "../../js/Utils/getCookies.js";
+    import TeacherService from "../../js/API/TeacherService.js";
+
+    // Load thông tin giáo viên
+    (async function() {
+        const teacher = await TeacherService.getTeacherById(getTeacherID());
+        document.querySelector(".user-fullname").innerText = teacher.fullName;
+    })();
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        htmx.ajax('GET', '/Teacher/Home', { target: '#main-panel' });
+    });
 </script>

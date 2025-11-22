@@ -34,7 +34,6 @@
         <div class="text-center mt-3">
             <a href="#" class="text-muted" onClick="toggleTheme()">Quên mật khẩu?</a>
         </div>
-
     </div>
 </div>
 
@@ -120,7 +119,10 @@
 
 </style>
 
-<script>
+<script type="module">
+    import AuthService from "../../js/API/AuthService.js";
+    import AccountService from "../../js/API/AccountService.js";
+    import { getAuthToken, getUserID, getUserRole, getStudentID, getTeacherID } from "../../js/Utils/getCookies.js";
 $(document).ready(function () {
 
     $("#togglePass").click(function(){
@@ -136,8 +138,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#btnLogin").click(function () {
-
+        $("#btnLogin").click(async function () {
         let username = $("#username").val().trim();
         let password = $("#password").val().trim();
 
@@ -146,31 +147,25 @@ $(document).ready(function () {
             return;
         }
 
-        // === AJAX LOGIN ===
-        $.ajax({
-            url: "http://localhost:5284/auth/login",
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                Username: username,
-                Password: password
-            }),
-            success: function (res) {
-                // Nếu BE trả về 200 OK
-                if (res && res.token) {
-                } else {
-                    showError("Dữ liệu phản hồi không hợp lệ từ server.");
-                }
-            },
-            error: function (xhr) {
-                if (xhr.status === 401) {
-                    // BE trả Unauthorized
-                    showError("Sai username hoặc password!");
-                } else {
-                    showError("Lỗi kết nối tới server.");
-                }
+        try {
+            const response = await AuthService.login(username, password);
+
+            if (response.role === "admin") {
+                window.location.href = "/Admin/Index";
+            } else if (response.role === "student") {
+                window.location.href = "/Student/Index";
+            } else if (response.role === "teacher") {
+                window.location.href = "/Teacher/Index";
+            } else {
+                showError("Vai trò không hợp lệ!");
             }
-        });
+        } catch (error) {
+            if (error.status === 401) {
+                showError("Sai username hoặc password!");
+            } else {
+                showError("Lỗi kết nối tới server.");
+            }
+        }
     });
 
     function showError(msg) {
@@ -187,3 +182,8 @@ $(document).ready(function () {
     }
 });
 </script>
+
+@* <script>
+    import CourseService from "../../js/API/AuthService.js";
+
+</script> *@

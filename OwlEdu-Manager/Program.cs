@@ -1,10 +1,10 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 DotNetEnv.Env.Load();
-//Environment.GetEnvironmentVariable("")
+var serverUrl = Environment.GetEnvironmentVariable("SERVER_URL");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +24,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Student}/{action=Index}/{id?}");
+    pattern: "{controller=Authentication}/{action=Login}/{id?}");
 
 app.Run();

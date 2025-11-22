@@ -1,0 +1,200 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Các khóa bạn đã đăng ký</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+</div>
+
+<style>
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+</style>
+
+<script type="module">
+    import CourseService from "../../js/API/CourseService.js";
+    import EnrollmentService from "../../js/API/EnrollmentService.js";
+    import {getStudentID} from "../../js/Utils/getCookies.js";
+
+    window.onLoadDg = onLoadDg;
+    window.styleStatusColumn = styleStatusColumn;
+    window.onLoadPag = onLoadPag;
+    window.OnPageChange = OnPageChange;
+    window.CancelEnrollment = CancelEnrollment;
+
+    let currentPage = 1;
+    const pageSize = 10;
+    let totalPages = 0;
+    let currentKeyword = "";
+
+    async function onLoadDg() {
+        const searchBox = document.getElementById("search-box");
+        searchBox.addEventListener("input", debounce(onSearch, 300));
+
+        var headers = ['Mã đăng ký', 'Mã khóa học', 'Tên khóa học', 'Ngày đăng ký', 'Trạng thái']
+
+        renderDatagridHeader('dgv', headers);
+
+        await OnPageChange(1);
+    }
+
+    async function onLoadPag() {
+        const response = await EnrollmentService.getAllEnrollments(getStudentID() + " " + currentKeyword, -1, 10000);
+
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange')
+    }
+
+    async function OnPageChange(newPage, keyword = currentKeyword) {
+        currentPage = newPage;
+        const response = await EnrollmentService.getAllEnrollments(getStudentID() + " " + keyword, newPage, pageSize);
+
+        const data = await Promise.all(response.map(async (enr) => {
+            const course = await CourseService.getCourseById(enr.courseId);
+
+            var status;
+            switch (enr.status) {
+                case "active":
+                    status = "Đang xử lý";
+                    break;
+                case "completed":
+                    status = "Đã xác nhận";
+                    break;
+                default:
+                    status = "Hủy";
+                    break;
+            }
+
+            return {
+                "Mã đăng ký": enr.id,
+                "Mã khóa học": enr.courseId,
+                "Tên khóa học": course.name,
+                "Ngày đăng ký": enr.enrollmentDate,
+                "Trạng thái": status
+            }
+        }));
+
+        await fillDatagrid('dgv', data, true);
+
+        await fillDatagridAction("dgv", [
+            // { 
+            //     text: "Chi tiết", 
+            //     iconClass: "fa-solid fa-info", 
+            //     onClick: function() { alert("Clicked Chi tiết"); } 
+            // },
+            { 
+                text: "Hủy đăng ký", 
+                iconClass: "fa-solid fa-x", 
+                onClick: async function (row) {
+                    var status = getCellValueByColumnIndex(row, 4);
+                    if (status == "Hủy") {
+                            ActiveModal("modal", "Thông báo", "Đăng ký đã được hủy");
+                            return;
+                    }
+                    if (status == "Đã xác nhận") {
+                            ActiveModal("modal", "Thông báo", "Đăng ký đã được xác nhận");
+                            return;
+                    }
+                    const updateEnrollment = {
+                        id: getFirstCellValue(row),
+                        studentId: getStudentID(),
+                        courseId: getCellValueByColumnIndex(row, 1),
+                        enrollmentDate: getCellValueByColumnIndex(row, 3),
+                        status: "cancelled",
+                        createdBy: ""
+                    }
+                    await CancelEnrollment(updateEnrollment);
+                } 
+            }
+        ]);
+
+        await styleStatusColumn('dgv');
+    }
+
+    async function styleStatusColumn(containerId) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            // Lấy cột thứ 4 (index 3, 0-based)
+            const $statusTd = $tr.find('td').eq(4);
+            const statusText = $statusTd.text().trim();
+
+            // Reset màu mặc định trước
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            // Gán màu theo trạng thái
+            switch (statusText) {
+                case 'Đang xử lý':
+                    $statusTd.css('color', '#1D4ED8'); // xanh dương
+                    break;
+                case 'Đã xác nhận':
+                    $statusTd.css('color', '#16A34A'); // xanh lá
+                    break;
+                case 'Hủy':
+                    $statusTd.css('color', '#DC2626'); // đỏ
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280'); // xám cho các trạng thái khác
+            }
+        });
+    }
+
+    async function onSearch() {
+        const searchBox = document.getElementById("search-box");
+        currentKeyword = searchBox.value.trim();
+        currentPage = 1;
+
+        await onLoadPag();
+
+        await OnPageChange(currentPage, currentKeyword);
+    }
+
+
+    async function CancelEnrollment(updateEnrollment) {
+        console.log(updateEnrollment);
+
+        await EnrollmentService.updateEnrollment(updateEnrollment.id, updateEnrollment);
+
+        await OnPageChange(currentPage);
+    }
+
+</script>

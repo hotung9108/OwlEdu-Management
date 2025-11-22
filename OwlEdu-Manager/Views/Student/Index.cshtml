@@ -1,5 +1,5 @@
 ﻿<div class="main-container">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <img src="~/images/owl.png" alt="logo"/>
             <span class="sidebar-title">OwlEdu</span>
@@ -20,13 +20,16 @@
                 </legend>
             </fieldset>
             <a href="#" class="sidebar-item" hx-get="/Student/Enrollment" hx-trigger="click" hx-target="#main-panel">
-                <span class="label"><i class="fa-solid fa-book"></i>    Đăng ký khóa học</span>
+                <span class="label"><i class="fa-solid fa-book"></i>    Khóa đã đăng ký</span>
             </a>
             <a href="#" class="sidebar-item" hx-get="/Student/Course" hx-trigger="click" hx-target="#main-panel">
-                <span class="label"><i class="fa-solid fa-book"></i>    Khóa học</span>
+                <span class="label"><i class="fa-solid fa-file-contract"></i>    Đăng ký khóa học</span>
             </a>
             <a href="#" class="sidebar-item" hx-get="/Student/Class" hx-trigger="click" hx-target="#main-panel">
-                <span class="label"><i class="fa-solid fa-school"></i>  Lớp học</span>
+                <span class="label"><i class="fa-solid fa-school"></i>  Lớp học của bạn</span>
+            </a>
+            <a href="#" class="sidebar-item" hx-get="/Student/Schedule" hx-trigger="click" hx-target="#main-panel">
+                <span class="label"><i class="fa-solid fa-calendar"></i> Lịch học của bạn</span>
             </a>
             <fieldset class="sidebar-catalog">
                 <legend>
@@ -41,22 +44,26 @@
 
     <div class="main-panel">
         <header class="header">
+            <div style="margin-right: auto;">
+                <a href="#" onClick="ToggleSidebar()" class="toggle-sidebar-btn" style="color: var(--text-main)"><i class="fa-solid fa-bars"></i></a>
+            </div>
             <div class="header-right">
                 <button class="btn-mode" onclick="toggleTheme()"><i class="fa-solid fa-sun"></i></button>
 
                 <button class="btn-fullscreen" onclick="toggleFullScreen()"><i class="fa-solid fa-compress"></i></button>
 
                 <div class="user-menu">
-                    <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
+                    <button id="username" class="btn-user"><i class="fa-solid fa-user"></i><span id="user-fullname">Full name</span></button>
                     <div class="dropdown">
-                        <a href="#" hx-get="/Student/Profile" hx-trigger="click" hx-target="#main-panel"><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
-                        <a href="#"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
+                        <a href="#" hx-get="/Student/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        <a href="javascript:void(0);" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
                     </div>
                 </div>
             </div>
         </header>
         <main id="main-panel" class="main">
             Student
+            @* <button id="log-courses-btn" class="btn btn-primary mt-3">Log Tất Cả Khóa Học</button> *@
         </main>
     </div>
 </div>
@@ -96,6 +103,7 @@
     gap: 15px;
     position: sticky;
     z-index: 100;
+    padding-left: 0;
 }
 
 .header-right {
@@ -195,7 +203,9 @@
     flex-direction: column;
     overflow: auto;
     padding: 10px;
+    transform: translateX(0);
 }
+
 
 .sidebar-header {
     display: flex;
@@ -251,6 +261,7 @@
     border: none;
     border-top: 1px solid var(--border);
     padding: 5px 0;
+    margin-top: 10px;
 }
 
 .sidebar-catalog legend {
@@ -263,8 +274,31 @@
 
 </style>
 
-
 <script>
+    function logoutUser() {
+        document.cookie.split(";").forEach(function (cookie) {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+        });
+
+        window.location.assign("/Authentication/Login");
+    }
+</script>
+<script type="module">
+import {getStudentID} from "../../js/Utils/getCookies.js";
+import StudentService from "../../js/API/StudentService.js";
+
+window.toggleFullScreen = toggleFullScreen;
+window.Setup = Setup;
+
+await Setup();
+
+async function Setup() {
+    console.log(getStudentID());
+    const studentInfor = await StudentService.getStudentById(getStudentID());
+    $('#user-fullname').text(studentInfor.fullName);
+}
+
 $(document).ready(function() {
     $('.btn-mode').click(function() {
         $('.btn-mode').toggleClass('dark');

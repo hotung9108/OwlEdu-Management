@@ -1,0 +1,312 @@
+﻿<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="studentCount">0</h3>
+                    <p>Số học viên</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="courseCount">0</h3>
+                    <p>Số khóa học</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="classCount">0</h3>
+                    <p>Số lớp học</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-chalkboard"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="info-box bg-primary text-white">
+                <div class="info-box-content">
+                    <h3 id="teacherCount">0</h3>
+                    <p>Số giáo viên</p>
+                </div>
+                <div class="info-box-icon">
+                    <i class="fa-solid fa-chalkboard-teacher"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4">
+        <!-- Total Donut Chart -->
+        <div class="col-12 col-lg-8">
+            <div class="btl-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="m-0" style="color:var(--primary)">Biểu đồ tổng doanh thu theo năm</h5>
+                    <div class="col-3">
+                        <input type="number" id="revenueYearInput" class="form-control" placeholder="Nhập năm" min="2000" max="2100" />
+                    </div>
+                </div>
+                <div id="revenueChartTotalRevenue" style="height: 400px;"></div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="btl-card mb-4">
+                <h5 class="m-0 mb-3" style="color:var(--primary)">Doanh thu đang chờ xử lý</h5>
+                <div id="revenueChartPendingRevenue" style="height: 200px;"></div>
+            </div>
+
+            <div class="btl-card">
+                <h5 class="m-0 mb-3" style="color:var(--primary)">Doanh thu đã thanh toán</h5>
+                <div id="revenueChartPaidRevenue" style="height: 200px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@* <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+</script> *@
+<script type="text/javascript">
+    // google.charts.load('current', {'packages':['corechart']});
+    // google.charts.setOnLoadCallback(drawChart);
+
+    // function drawChart() {
+
+    //   var data = google.visualization.arrayToDataTable([
+    //     ['Effort', 'Amount given'],
+    //     ['My all',     100],
+    //   ]);
+
+    //   var options = {
+    //     pieHole: 0.5,
+    //     pieSliceTextStyle: {
+    //       color: 'black',
+    //     },
+    //     legend: 'none'
+    //   };
+
+    //   var chart = new google.visualization.PieChart(document.getElementById('revenueChartTotalRevenue'));
+    //   chart.draw(data, options);
+    // }
+</script>
+
+<script type="module">
+    import DashboardService from "../../js/API/DashboardService.js";
+
+    google.charts.setOnLoadCallback(() => {
+        initDashboardCharts();
+    });
+
+    async function initDashboardCharts() {
+        const yearInput = document.getElementById("revenueYearInput");
+
+        yearInput.addEventListener("change", () => {
+            const year = yearInput.value;
+            if (year >= 2000) loadAllCharts(year);
+        });
+
+        const currentYear = new Date().getFullYear();
+        yearInput.value = currentYear;
+        loadAllCharts(currentYear);
+    }
+
+    async function loadAllCharts(year) {
+        try {
+            const [total, paid, pending] = await Promise.all([
+                DashboardService.getTotalRevenueByYear(year),
+                DashboardService.getPaidRevenueByYear(year),
+                DashboardService.getPendingRevenueByYear(year)
+            ]);
+
+            drawTotalRevenueChart(total);
+            drawPaidRevenueChart(paid.paidRevenue);
+            drawPendingRevenueChart(pending.pendingRevenue);
+
+        } catch (err) {
+            console.error("Lỗi load biểu đồ:", err);
+        }
+    }
+
+
+    function drawTotalRevenueChart(totalRevenue) {
+        const data = google.visualization.arrayToDataTable([
+            ["Loại", "Doanh thu"],
+            ["Tổng doanh thu", totalRevenue]
+        ]);
+        const styles = getComputedStyle(document.documentElement);
+        const options = {
+            pieHole: 0.5,
+            legend: "none",
+            pieSliceText: "value",
+            pieSliceTextStyle: {
+            color: styles.getPropertyValue("--text-main").trim(),
+                fontSize: 16,
+                bold: true
+            },
+        };
+
+        const chart = new google.visualization.PieChart(
+            document.getElementById("revenueChartTotalRevenue")
+        );
+
+        chart.draw(data, options);
+    }
+
+
+    function drawPendingRevenueChart(pendingRevenue) {
+        const data = google.visualization.arrayToDataTable([
+            ["Loại", "Doanh thu"],
+            ["Pending", pendingRevenue]
+        ]);
+        const styles = getComputedStyle(document.documentElement);
+        const options = {
+            pieHole: 0.6,
+            legend: "none",
+            pieSliceText: "value",
+            pieSliceTextStyle: {
+            color: styles.getPropertyValue("--text-main").trim(),
+                fontSize: 16,
+                bold: true
+            },
+            slices: {
+                0: { color: styles.getPropertyValue("--secondary").trim() },
+                1: { color: styles.getPropertyValue("--error").trim() }
+                }
+            };
+
+        const chart = new google.visualization.PieChart(
+            document.getElementById("revenueChartPendingRevenue")
+        );
+
+        chart.draw(data, options);
+    }
+
+
+    function drawPaidRevenueChart(paidRevenue) {
+        const data = google.visualization.arrayToDataTable([
+            ["Loại", "Doanh thu"],
+            ["Paid", paidRevenue]
+        ]);
+        const styles = getComputedStyle(document.documentElement);
+        const options = {
+            pieHole: 0.6,
+            legend: "none",
+            pieSliceText: "value",
+            pieSliceTextStyle: {
+            color: styles.getPropertyValue("--text-main").trim(),
+                fontSize: 16,
+                bold: true
+            },
+            slices: {
+                0: { color: styles.getPropertyValue("--secondary").trim() },
+                1: { color: styles.getPropertyValue("--error").trim() }
+                }
+            };
+
+        const chart = new google.visualization.PieChart(
+            document.getElementById("revenueChartPaidRevenue")
+        );
+
+        chart.draw(data, options);
+    }
+
+    $(document).ready(async function () {
+        try {
+            const studentCount = await DashboardService.getTotalStudents();
+            const courseCount = await DashboardService.getTotalCourses();
+            const classCount = await DashboardService.getTotalClasses();
+            const teacherCount = await DashboardService.getTotalTeachers();
+
+            $("#studentCount").text(studentCount);
+            $("#courseCount").text(courseCount);
+            $("#classCount").text(classCount);
+            $("#teacherCount").text(teacherCount);
+        } catch (error) {
+            console.error("Error loading dashboard data:", error);
+        }
+    });
+</script>
+<style>
+    .circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
+        font-weight: bold;
+    }
+    .btl-card {
+        background: var(--surface);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-top: 20px; 
+    }
+    .info-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        border-radius: 20px; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-box-content {
+        text-align: left;
+    }
+
+        .info-box-content h3 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .info-box-content p {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+    .info-box-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+</style>
+<script type="text/javascript">
+    google.charts.load('current', { packages: ['corechart'] });
+</script>
+
+<script type="module">
+    import DashboardService from "../../js/API/DashboardService.js";
+
+    $(document).ready(async function () {
+        try {
+            const studentCount = await DashboardService.getTotalStudents();
+            const courseCount = await DashboardService.getTotalCourses();
+            const classCount = await DashboardService.getTotalClasses();
+            const teacherCount = await DashboardService.getTotalTeachers();
+            window.studentCount = studentCount;
+            window.courseCount = courseCount;
+            window.classCount = classCount;
+            window.teacherCount = teacherCount;
+            $("#studentCount").text(studentCount);
+            $("#courseCount").text(courseCount);
+            $("#classCount").text(classCount);
+            $("#teacherCount").text(teacherCount);
+
+        } catch (error) {
+            console.error("Error loading dashboard data:", error);
+        }
+    });
+</script>

@@ -1,0 +1,403 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Danh sách hóa đơn</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo hóa đơn mới</button>
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+
+    <div id="method-box" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết hóa đơn</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('method-box')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Phương thức thanh toán</label>
+                            <select id="method" name="Role" class="form-control" required>
+                                <option value="cash">Tiền mặt</option>
+                                <option value="bank-transfer">Chuyển khoản</option>
+                                <option value="credit-card">Thẻ tín dụng</option>
+                                <option value="momo">Ví điện tử Momo</option>
+                            </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 text-md-start" style="margin-top: 10px;">
+                <button id="update-btn" type="button" class="btn btn-primary" onClick="Paid()"><i class="fa-solid fa-plus"></i> Thanh toán</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    inactiveFloatBox('method-box');
+
+    import PaymentService from "../../js/API/PaymentService.js";
+    import AccountService from "../../js/API/AccountService.js";
+    import {getUserID} from "../../js/Utils/getCookies.js";
+    window.onLoadDg = onLoadDg;
+    window.onLoadPag = onLoadPag;
+    // window.SubmitAccount = SubmitAccount;
+    window.OnPageChange = OnPageChange;
+    // window.SetAccountDetailData = SetAccountDetailData;
+    window.Paid = Paid;
+    window.Cancel = Cancel;
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
+    let currentRow;
+    async function onLoadDg() {
+        var headers = ['Mã thanh toán', 'Mã đăng ký', 'Trạng thái', 'Phương thức', 'Thời gian giao dịch', 'Học phí', 'Người thu', 'Người đăng ký']
+        // var headers = ['Mã giáo viên', 'Mã tài khoản', 'Tên giáo viên', 'Chuyên môn', 'Trình độ', 'Số điện thoại', 'Giới tính', 'Trạng thái']
+        renderDatagridHeader('dgv', headers, true);
+        await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        currentPage = pageNumber;
+        const response = await PaymentService.getAllPayments(currentKeyword,pageNumber, pageSize);
+        const data = await Promise.all(response.map(async (payment)=>{
+            // const teacherDetail = await PaymentService.getPaymentById(teacher.id);
+             let payer;
+              let feeCollector;
+            if (payment.payerId != null) payer = await AccountService.getAccountById(payment.payerId);
+            if (payment.feeCollectorId != null) feeCollector = await AccountService.getAccountById(payment.feeCollectorId);
+
+            let status;
+            switch (payment.status) {
+                case 'pending':
+                    status = 'Chưa thanh toán';
+                    break;
+                case 'paid':
+                    status = 'Đã thanh toán';
+                    break;
+                case 'failed':
+                    status = 'Đã hủy';
+                    break;
+            }
+
+            return {
+                "Mã thanh toán": payment.id,
+                "Mã đăng ký": payment.enrollmentId,
+                "Trạng thái": status,
+                'Phương thức': payment.method,
+                "Thời gian giao dịch":payment.paymentDate,
+                "Học phí":payment.amount,
+                "Người thu":payment.feeCollectorId,
+                "Người đăng ký": payment.payerId,
+                // "Tài khoản": teacherDetail.accountResponse.username,
+                // "Chuyên môn":teacher.specialization,
+                // "Trình độ": teacher.qualification,
+                // "Giới tính": teacher.gender? "Nam": "Nữ",
+                // "Vai trò": teacherDetail.accountResponse.role || "N/A",
+                // "Email": teacherDetail.accountResponse.email || "N/A",
+                // "Trạng thái": teacherDetail.accountResponse.status ? "Active" : "Inactive",
+            }
+        }));
+        // console.log(data);
+        await fillDatagrid('dgv', data);
+        await fillDatagridAction("dgv", [
+            { 
+                text: "In hóa đơn", 
+                iconClass: "fa-solid fa-print",
+                onClick: function(row) 
+                { 
+                    const id = getFirstCellValue(row);
+                    const status = getCellValueByColumnIndex(row, 2);
+                    if (status != 'Đã thanh toán') {
+                        ActiveModal("modal", 'Thông báo', 'Không thể in hóa đơn chưa thanh toán');
+                        return;
+                    }
+                    window.open(`/Payment/Invoice?paymentId=${id}`);
+                } 
+            },
+            {
+                text: "Thanh toán",
+                iconClass: "fa-solid fa-money-bill",
+                onClick: async function (row) {
+                    const status = getCellValueByColumnIndex(row, 2);
+                    if (status != 'Chưa thanh toán') {
+                        ActiveModal("modal", 'Thông báo', 'Chỉ có thể thanh toán hóa đơn chưa thanh toán');
+                        return;
+                    }
+                    activeFloatBox('method-box');
+                    currentRow = row;
+
+                }
+            },
+                {
+                text: "Hủy hóa đơn",
+                iconClass: "fa-solid fa-x",
+                onClick: async function (row) {
+                    currentRow = row;
+                    const status = getCellValueByColumnIndex(row, 2);
+                    if (status != 'Chưa thanh toán') {
+                        ActiveModal("modal", 'Thông báo', 'Chỉ có thể hủy hóa đơn chưa thanh toán');
+                        return;
+                    }
+                    Cancel();
+                }
+            }
+        ]);
+
+        await styleStatusColumn('dgv', 2);
+    }
+     async function onLoadPag() {
+        const response = await PaymentService.getAllPayments(currentKeyword,-1, 10);
+        renderPagination('pag', Math.ceil(response.length / 10), 'OnPageChange');
+    }
+    function styleStatusColumn(containerId, index) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            const $statusTd = $tr.find('td').eq(index);
+            const statusText = $statusTd.text().trim();
+
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+            switch (statusText) {
+                case 'Đã thanh toán':
+                    $statusTd.css('color', '#10B981');
+                    break;
+                case 'Chưa thanh toán':
+                    $statusTd.css('color', '#1D4ED8');
+                    break;
+                case 'Đã hủy':
+                    $statusTd.css('color', '#DC2626');
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280');
+            }
+        });
+    }
+
+    async function Paid() {
+
+        const id = getFirstCellValue(currentRow);
+        const enrollmentid = getCellValueByColumnIndex(currentRow, 1);
+        const status = 'paid';
+        const paymentDate = getCellValueByColumnIndex(currentRow, 4);
+        const amount = getCellValueByColumnIndex(currentRow, 5);
+        const fcid = getUserID();
+        const pid = getCellValueByColumnIndex(currentRow, 7);
+        const method = $('#method').val();
+
+        const data = {
+            id: id,
+            enrollmentId: enrollmentid,
+            amount: amount,
+            paymentDate: paymentDate,
+            feeCollectorId: fcid,
+            payerId: pid,
+            method: method,
+            status: status
+        };
+
+        try {
+            await PaymentService.updatePayment(id, data);
+            await OnPageChange(currentPage);
+            ActiveModal("modal", 'Thông báo', 'Thanh toán thành công');
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Thanh toán không thành công');
+            console.error(error);
+        }
+    }
+
+    async function Cancel() {
+
+        const id = getFirstCellValue(currentRow);
+        const enrollmentid = getCellValueByColumnIndex(currentRow, 1);
+        const status = 'failed';
+        const paymentDate = getCellValueByColumnIndex(currentRow, 4);
+        const amount = getCellValueByColumnIndex(currentRow, 5);
+        const fcid = getUserID();
+        const pid = getCellValueByColumnIndex(currentRow, 7);
+        const method = null;
+
+        const data = {
+            id: id,
+            enrollmentId: enrollmentid,
+            amount: amount,
+            paymentDate: paymentDate,
+            feeCollectorId: fcid,
+            payerId: pid,
+            method: method,
+            status: status
+        };
+
+        try {
+            await PaymentService.updatePayment(id, data);
+            await OnPageChange(currentPage);
+            ActiveModal("modal", 'Thông báo', 'Hủy thành công');
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Hủy không thành công');
+            console.error(error);
+        }
+    }
+    // function ChangePage(currentPage) {
+
+    // }
+
+    // function onLoadDg() {
+    //     var headers = ['Mã hóa đơn', 'Mã đăng ký', 'Số tiền', 'Ngày đóng học phí', 'Mã người thu', 'Mã người trả', 'Phương thức', 'Trạng thái']
+
+    //     renderDatagridHeader('dgv', headers, true);
+
+    //     var data = [
+    //         {
+    //             "Mã hóa đơn": "HD001",
+    //             "Mã đăng ký": "DK001",
+    //             "Số tiền": "5.000.000đ",
+    //             "Ngày đóng học phí": "2025-01-12",
+    //             "Mã người thu": "NV001",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Tiền mặt",
+    //             "Trạng thái": "paid"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD002",
+    //             "Mã đăng ký": "DK002",
+    //             "Số tiền": "3.500.000đ",
+    //             "Ngày đóng học phí": "2025-01-20",
+    //             "Mã người thu": "NV002",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Chuyển khoản",
+    //             "Trạng thái": "failed"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD003",
+    //             "Mã đăng ký": "DK003",
+    //             "Số tiền": "7.200.000đ",
+    //             "Ngày đóng học phí": "2025-02-01",
+    //             "Mã người thu": "NV001",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Tiền mặt",
+    //             "Trạng thái": "paid"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD004",
+    //             "Mã đăng ký": "DK004",
+    //             "Số tiền": "4.500.000đ",
+    //             "Ngày đóng học phí": "2025-02-10",
+    //             "Mã người thu": "NV003",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Chuyển khoản",
+    //             "Trạng thái": "pending"
+    //         },
+    //         {
+    //             "Mã hóa đơn": "HD005",
+    //             "Mã đăng ký": "DK005",
+    //             "Số tiền": "6.000.000đ",
+    //             "Ngày đóng học phí": "2025-03-01",
+    //             "Mã người thu": "NV002",
+    //             "Mã người trả": "NV001",
+    //             "Phương thức": "Tiền mặt",
+    //             "Trạng thái": "pending"
+    //         }
+    //     ];
+
+
+    //     fillDatagrid('dgv', data);
+
+    //     fillDatagridAction("dgv", [
+    //         { 
+    //             text: "Xem chi tiết", 
+    //             iconClass: "fa-solid fa-info", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "In hóa đơn", 
+    //             iconClass: "fa-solid fa-print",
+    //             onClick: function() { alert("Clicked "); } 
+    //         },
+    //         { 
+    //             text: "Thanh toán hóa đơn", 
+    //             iconClass: "fa-solid fa-credit-card",
+    //             onClick: function() { alert("Clicked "); } 
+    //         },
+    //         { 
+    //             text: "Chỉnh sửa thông tin", 
+    //             iconClass: "fa-solid fa-pen-to-square", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Hủy hóa đơn", 
+    //             iconClass: "fa-solid fa-x", 
+    //             onClick: function() { alert("Clicked Đăng ký"); } 
+    //         }
+    //     ]);
+
+    //     styleStatusColumn('dgv');
+    // }
+
+    // function onLoadPag() {
+    //     renderPagination('pag', 10, 'ChangePage')
+    // }
+
+    // function styleStatusColumn(containerId) {
+    //     const $container = $('#' + containerId);
+    //     const $table = $container.find('table.datagrid');
+    //     const $tbody = $table.find('tbody');
+
+    //     $tbody.find('tr').each(function () {
+    //         const $tr = $(this);
+    //         const $statusTd = $tr.find('td').eq(7);
+    //         const statusText = $statusTd.text().trim().toLowerCase();
+
+    //         $statusTd.css({
+    //             'color': '',
+    //             'font-weight': 'bold'
+    //         });
+
+    //         switch (statusText) {
+    //             case 'paid':
+    //                 $statusTd.css('color', '#10B981'); xanh dương
+    //                 break;
+    //             case 'pending':
+    //                 $statusTd.css('color', '#FBBF24'); vàng
+    //                 break;
+    //             case 'failed':
+    //                 $statusTd.css('color', '#DC2626'); đỏ
+    //                 break;
+    //             default:
+    //                 $statusTd.css('color', '#6B7280'); xám cho các trạng thái khác
+    //         }
+    //     });
+    // }
+</script>

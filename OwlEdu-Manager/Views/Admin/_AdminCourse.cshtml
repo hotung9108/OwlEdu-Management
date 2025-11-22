@@ -1,0 +1,556 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Danh sách khóa học</p>
+            </div>
+
+            <div class="col-12 col-md-4 text-md-end">
+                <input type="text" id="search-box" class="form-control"
+                    placeholder="Tìm kiếm..." />
+            </div>
+        </div>
+
+        <div>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary" onclick="activeFloatBox('createCourse')"><i class="fa-solid fa-plus"></i>    Tạo khóa học mới</button>
+            </div>
+        </div>
+
+        <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgCourse"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
+
+        <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pagDgCourse"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+    <div id="createCourse" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Tạo khóa học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('createCourse')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <form id="createCourseForm">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="courseName"><strong>Tên khóa học:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="courseName" class="form-control" placeholder="Tên khóa học" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="courseDescription"><strong>Mô tả:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <textarea id="courseDescription" class="form-control" placeholder="Mô tả khóa học" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="courseStatus"><strong>Trạng thái:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="courseStatus" class="form-select" required>
+                                <option value="true">Kích hoạt</option>
+                                <option value="false">Vô hiệu hóa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="courseNumberOfLessons"><strong>Số buổi học:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="number" id="courseNumberOfLessons" class="form-control" placeholder="Số buổi học" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="courseFee"><strong>Học phí:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="number" id="courseFee" class="form-control" placeholder="Học phí" required />
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="createCourseButton">Tạo khóa học</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="detailCourse" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Thông tin chi tiết khóa học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('detailCourse')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <div style="color: var(--text-main);" class="row mb-3">
+                    <div class="col-4"><strong>Mã khóa học:</strong></div>
+                    <div class="col-8"><span id="courseId"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Tên khóa học:</strong></div>
+                    <div class="col-8"><span id="courseNameDetail"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Mô tả:</strong></div>
+                    <div class="col-8"><span id="courseDescriptionDetail"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Trạng thái:</strong></div>
+                    <div class="col-8"><span id="courseStatusDetail"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Số buổi học:</strong></div>
+                    <div class="col-8"><span id="courseNumberOfLessonsDetail"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Học phí:</strong></div>
+                    <div class="col-8"><span id="courseFeeDetail"></span></div>
+                </div>
+            </div>
+            <div id="classListContainer" class="row mt-4">
+                <h5 style="color: var(--text-main);">Danh sách lớp học</h5>
+                <div id="classCards" class="row g-3">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="updateCourse" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Cập nhật thông tin khóa học</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('updateCourse')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <form id="updateCourseForm">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="updateCourseName"><strong>Tên khóa học:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="updateCourseName" class="form-control" placeholder="Tên khóa học" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="updateCourseDescription"><strong>Mô tả:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <textarea id="updateCourseDescription" class="form-control" placeholder="Mô tả khóa học" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="updateCourseStatus"><strong>Trạng thái:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="updateCourseStatus" class="form-select" required>
+                                <option value="true">Kích hoạt</option>
+                                <option value="false">Vô hiệu hóa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="updateCourseNumberOfLessons"><strong>Số buổi học:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="number" id="updateCourseNumberOfLessons" class="form-control" placeholder="Số buổi học" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="updateCourseFee"><strong>Học phí:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="number" id="updateCourseFee" class="form-control" placeholder="Học phí" required />
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="updateCourseButton">Cập nhật khóa học</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+.title {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.title p {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+}
+
+#search-box:focus {
+    box-shadow: none;
+    border: 1px solid var(--primary-hover);
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+    color: #FFFFFF;
+}
+
+</style>
+
+<script type="module">
+    import CourseService from "../../js/API/CourseService.js";
+    import ClassService from "../../js/API/ClassService.js";
+
+    window.onLoadDg = onLoadDg;
+    window.OnPageChange = OnPageChange;
+    window.onLoadPag = onLoadPag
+    inactiveFloatBox('createCourse');
+    inactiveFloatBox('updateCourse');
+    inactiveFloatBox('detailCourse');
+    document.getElementById('search-box').addEventListener('input', async function () {
+        const keyword = this.value.trim();
+        currentKeyword = keyword;
+        await onLoadPag();
+        await OnPageChange(1);
+    });
+    let currentKeyword = "";
+    let currentPage = 1;
+    const pageSize = 10;
+    async function onLoadDg() {
+        const headers = [
+            "Mã khóa học",
+            "Tên khóa học",
+            "Mô tả",
+            "Số buổi học",
+            "Học phí",
+            "Trạng thái"
+        ];
+        renderDatagridHeader('dgCourse', headers, true);
+        await OnPageChange(1);
+    }
+    async function OnPageChange(pageNumber) {
+        currentPage = pageNumber;
+        const response = await CourseService.getAllCourses(currentKeyword,pageNumber, pageSize);
+        const data = await Promise.all(response.map(async (course)=>{
+            return {
+                "Mã khóa học": course.id,
+                "Tên khóa học": course.name,
+                "Mô tả": course.description,
+                "Số buổi học": course.numberOfLessons,
+                "Học phí": course.fee,
+                "Trạng thái": course.status? "Active":"Inactive",
+ 
+            }
+        }));
+        await fillDatagrid('dgCourse', data);
+        await fillDatagridAction("dgCourse", [
+            {
+                text: "Chi tiết khóa học",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    const courseId = getCellValueByColumnIndex(row, 0);
+                    await setCourseDetailData(courseId);
+                     activeFloatBox('detailAccount');
+                }
+            },
+                {
+                text: "Chỉnh sửa khóa học",
+                iconClass: "fa-solid fa-pen-to-square",
+                onClick: async function (row) {
+                    const courseId = getCellValueByColumnIndex(row, 0);
+                    await setUpdateCourseData(courseId);
+                }
+            },
+            {
+                text: "Xóa khóa học",
+                iconClass: "fa-solid fa-trash",
+                onClick: async function (row) {
+                    const courseId = getCellValueByColumnIndex(row, 0);
+                    try {
+                        if (confirm(`Bạn có chắc chắn muốn hủy khóa học ${courseId}?`)) {
+                            await CourseService.updateCourseStatus(courseId, { status: false });
+
+                            alert("Hủy khóa học thành công!");
+                            await OnPageChange(currentPage);
+                        }
+                    } catch (error) {
+                        console.error("Lỗi khi hủy khóa học:", error);
+                        alert("Không thể hủy khóa học. Vui lòng thử lại.");
+                    }
+                    // if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
+                    //     await OnPageChange(1);
+                    // }
+                }
+            }
+        ]);
+
+        await styleStatusColumn('dgCourse', 5);
+    }
+    async function onLoadPag() {
+        const response = await CourseService.getAllCourses(currentKeyword,-1, 10);
+        renderPagination('pagDgCourse', Math.ceil(response.length / 10), 'OnPageChange');
+    }
+    function styleStatusColumn(containerId, index) {
+        const $container = $('#' + containerId);
+        const $table = $container.find('table.datagrid');
+        const $tbody = $table.find('tbody');
+
+        $tbody.find('tr').each(function () {
+            const $tr = $(this);
+            const $statusTd = $tr.find('td').eq(index);
+            const statusText = $statusTd.text().trim().toLowerCase();
+
+            $statusTd.css({
+                'color': '',
+                'font-weight': 'bold'
+            });
+
+            switch (statusText) {
+                case 'completed':
+                    $statusTd.css('color', '#1D4ED8');
+                    break;
+                case 'active':
+                    $statusTd.css('color', '#DC2626');
+                    break;
+                default:
+                    $statusTd.css('color', '#6B7280');
+            }
+        });
+    }
+        async function setCourseDetailData(courseId) {
+        try {
+            const course = await CourseService.getCourseById(courseId);
+
+            document.getElementById("courseId").textContent = course.id || "N/A";
+            document.getElementById("courseNameDetail").textContent = course.name || "N/A";
+            document.getElementById("courseDescriptionDetail").textContent = course.description || "N/A";
+            document.getElementById("courseStatusDetail").textContent = course.status ? "Kích hoạt" : "Vô hiệu hóa";
+            document.getElementById("courseNumberOfLessonsDetail").textContent = course.numberOfLessons || "N/A";
+            document.getElementById("courseFeeDetail").textContent = course.fee.toLocaleString("vi-VN") + " VND" || "N/A";
+            const classes = await ClassService.getClassesByCourseId(courseId);
+
+            // Hiển thị danh sách lớp học dưới dạng card box
+            const classCardsContainer = document.getElementById("classCards");
+            classCardsContainer.innerHTML = ""; // Xóa nội dung cũ
+
+            if (classes.length === 0) {
+            // Hiển thị thông báo "Chưa có lớp"
+            const noClassMessage = document.createElement("div");
+            noClassMessage.className = "alert alert-warning text-center w-100";
+            noClassMessage.textContent = "Chưa có lớp học nào.";
+            classCardsContainer.appendChild(noClassMessage);
+            } else {
+                // Hiển thị danh sách lớp học
+                classes.forEach(cls => {
+                    const card = document.createElement("div");
+                    card.className = "col-md-4 mb-4"; 
+
+                     card.innerHTML = `
+                    <div class="card shadow-sm h-100 border ${cls.status ? 'border-success' : 'border-secondary'}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary fw-bold">${cls.name}</h5>
+                            <p class="card-text text-muted">Số lượng học viên: <strong>${cls.id}</strong></p>
+                            <p class="card-text text-muted">Yêu cầu: <strong>${cls.require}</strong></p>
+                            <p class="card-text text-muted">Mục tiêu: <strong>${cls.target}</strong></p>
+                            <p class="card-text text-muted">Giáo viên phụ trách: <strong>${cls.teacherId}</strong></p>
+                            <p class="card-text text-muted">Số lượng học viên tối đa: <strong>${cls.maxStudents}</strong></p>
+                            <p class="card-text text-muted">Trạng thái:
+                                <span>
+                                    ${cls.status ? "Đang hoạt động" : "Đã kết thúc"}
+                                </span>
+                            </p>
+                            <div class="mt-auto">
+                                <button class="btn btn-primary w-100" onclick="viewClassDetail('${cls.id}')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                classCardsContainer.appendChild(card);
+                });
+            }
+            activeFloatBox("detailCourse");
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin khóa học:", error);
+            alert("Không thể tải thông tin khóa học. Vui lòng thử lại.");
+        }
+    }
+    document.getElementById("createCourseButton").addEventListener("click", async function () {
+        try {
+            const courseData = {
+                id : "0",
+                name: document.getElementById("courseName").value,
+                description: document.getElementById("courseDescription").value,
+                status: document.getElementById("courseStatus").value === "true",
+                numberOfLessons: parseInt(document.getElementById("courseNumberOfLessons").value, 10),
+                fee: parseFloat(document.getElementById("courseFee").value)
+            };
+
+            if (!courseData.name || !courseData.description || isNaN(courseData.numberOfLessons) || isNaN(courseData.fee)) {
+                alert("Vui lòng điền đầy đủ thông tin khóa học.");
+                return;
+            }
+            await CourseService.addCourse(courseData);
+            alert("Tạo khóa học thành công!");
+            inactiveFloatBox("createCourse"); 
+            await onLoadDg(); 
+        } catch (error) {
+            console.error("Lỗi khi tạo khóa học:", error);
+            alert("Không thể tạo khóa học. Vui lòng thử lại.");
+        }
+    });
+    document.getElementById("updateCourseButton").addEventListener("click", async function () {
+        try {
+            const courseId = document.getElementById("updateCourseForm").dataset.courseId; // Lấy ID khóa học từ dataset
+            const courseData = {
+                id: courseId,
+                name: document.getElementById("updateCourseName").value,
+                description: document.getElementById("updateCourseDescription").value,
+                status: document.getElementById("updateCourseStatus").value === "true",
+                numberOfLessons: parseInt(document.getElementById("updateCourseNumberOfLessons").value, 10),
+                fee: parseFloat(document.getElementById("updateCourseFee").value)
+            };
+
+            if (!courseData.name || !courseData.description || isNaN(courseData.numberOfLessons) || isNaN(courseData.fee)) {
+                alert("Vui lòng điền đầy đủ thông tin khóa học.");
+                return;
+            }
+
+            await CourseService.updateCourse(courseId, courseData);
+
+            alert("Cập nhật khóa học thành công!");
+            inactiveFloatBox("updateCourse"); // Đóng modal
+            await onLoadDg(); // Tải lại danh sách khóa học
+        } catch (error) {
+            console.error("Lỗi khi cập nhật khóa học:", error);
+            alert("Không thể cập nhật khóa học. Vui lòng thử lại.");
+        }
+    });
+
+    async function setUpdateCourseData(courseId) {
+        try {
+            const course = await CourseService.getCourseById(courseId);
+
+            document.getElementById("updateCourseForm").dataset.courseId = course.id;
+            document.getElementById("updateCourseName").value = course.name;
+            document.getElementById("updateCourseDescription").value = course.description;
+            document.getElementById("updateCourseStatus").value = course.status;
+            document.getElementById("updateCourseNumberOfLessons").value = course.numberOfLessons;
+            document.getElementById("updateCourseFee").value = course.fee;
+
+            activeFloatBox("updateCourse"); 
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin khóa học:", error);
+            alert("Không thể tải thông tin khóa học. Vui lòng thử lại.");
+        }
+    }
+    // function Test(currentPage) {
+    //     ActiveModal('modal', 'Thông báo', 'Trang hiện tại là: ' + currentPage);
+    // }
+
+    // function onLoadCoursePagination() {
+    //     renderPagination("pagDgCourse", 21, "Test");
+    // }
+
+    // function onLoadDgCourse() {
+    //     const headers = [
+    //         "Mã khóa học",
+    //         "Tên khóa học",
+    //         "Mô tả",
+    //         "Số buổi học",
+    //         "Học phí",
+    //         "Trạng thái"
+    //     ];
+
+    //     renderDatagridHeader("dgCourse", headers, true);
+
+    //     var data = [
+    //         {
+    //             "Mã khóa học": "1",
+    //             "Tên khóa học": "IELTS Foundation",
+    //             "Mô tả": "Mô tả",
+    //             "Số buổi học": 10,
+    //             "Học phí": 1000000,
+    //             "Trạng thái": "active"
+    //         },
+    //         {
+    //             "Mã khóa học": "2",
+    //             "Tên khóa học": "TOEIC Intensive",
+    //             "Mô tả": "Mô tả",
+    //             "Số buổi học": 10,
+    //             "Học phí": 1000000,
+    //             "Trạng thái": "inactive"
+    //         }
+    //     ];
+
+    //     fillDatagrid("dgCourse", data, true);
+
+    //     fillDatagridAction("dgCourse", [
+    //         { 
+    //             text: "Xem chi tiết", 
+    //             iconClass: "fa-solid fa-info", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Chỉnh sửa thông tin", 
+    //             iconClass: "fa-solid fa-pen-to-square", 
+    //             onClick: function() { alert("Clicked Chi tiết"); } 
+    //         },
+    //         { 
+    //             text: "Đóng khóa học", 
+    //             iconClass: "fa-solid fa-x", 
+    //             onClick: function() { alert("Clicked Đăng ký"); } 
+    //         }
+    //     ]);
+
+    //     styleStatusColumn("dgCourse");
+    // }
+
+    // function styleStatusColumn(containerId) {
+    //     const $container = $('#' + containerId);
+    //     const $table = $container.find('table.datagrid');
+    //     const $tbody = $table.find('tbody');
+
+    //     $tbody.find('tr').each(function () {
+    //         const $tr = $(this);
+    //         Lấy cột thứ 4 (index 3, 0-based)
+    //         const $statusTd = $tr.find('td').eq(5);
+    //         const statusText = $statusTd.text().trim().toLowerCase();
+
+    //         Reset màu mặc định trước
+    //         $statusTd.css({
+    //             'color': '',
+    //             'font-weight': 'bold'
+    //         });
+
+    //         Gán màu theo trạng thái
+    //         switch (statusText) {
+    //             case 'active':
+    //                 $statusTd.css('color', '#1D4ED8'); xanh dương
+    //                 break;
+    //             case 'inactive':
+    //                 $statusTd.css('color', '#DC2626'); đỏ
+    //                 break;
+    //             default:
+    //                 $statusTd.css('color', '#6B7280'); xám cho các trạng thái khác
+    //         }
+    //     });
+    // }
+</script>
