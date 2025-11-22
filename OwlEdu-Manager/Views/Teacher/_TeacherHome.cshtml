@@ -1,0 +1,122 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+
+        <div class="title">
+            <p class="m-0">Trang chủ · Giáo viên</p>
+        </div>
+
+        <!-- Khối thông tin nhanh -->
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <div class="btl-info-box">
+                    <h5 class="btl-info-title">Tổng số lớp đang dạy</h5>
+                    <p id="total-classes" class="btl-info-value">0</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="btl-info-box">
+                    <h5 class="btl-info-title">Buổi dạy trong tuần</h5>
+                    <p id="total-schedule" class="btl-info-value">0</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="btl-info-box">
+                    <h5 class="btl-info-title">Thông báo mới</h5>
+                    <p id="total-noti" class="btl-info-value">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lịch dạy hôm nay -->
+        <div class="btl-card mt-4">
+            <div class="title">
+                <p>Buổi dạy hôm nay</p>
+            </div>
+
+            <div class="component-container"
+                 hx-get="/Components/Datagrid"
+                 hx-vals='{"Id": "dgvToday"}'
+                 hx-trigger="revealed"
+                 data-on-load="onLoadTodaySchedule">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .btl-info-box {
+        background: var(--surface);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        text-align: center;
+    }
+
+    .btl-info-title {
+        color: var(--text-muted);
+        font-size: 15px;
+        margin-bottom: 6px;
+    }
+
+    .btl-info-value {
+        color: var(--primary);
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0;
+    }
+</style>
+
+<script type="module">
+    import ScheduleService from "../../js/API/ScheduleService.js";
+    import { getTeacherID } from "../../js/Utils/getCookies.js";
+
+    window.onLoadTodaySchedule = onLoadTodaySchedule;
+
+    await setupTeacherHome();
+
+    async function setupTeacherHome() {
+        const teacherId = getTeacherID();
+
+        // Lấy toàn bộ lịch dạy theo giáo viên
+        const schedules = await ScheduleService.getScheduleByTeacherId(teacherId);
+
+        // Tổng số lớp đang dạy → unique classId
+        const uniqueClasses = [...new Set(schedules.map(s => s.classId))];
+        document.getElementById("total-classes").innerText = uniqueClasses.length;
+
+        // Tổng số buổi dạy trong tuần
+        document.getElementById("total-schedule").innerText = schedules.length;
+
+        // Thông báo (tạm thời random)
+        document.getElementById("total-noti").innerText = Math.floor(Math.random() * 5 + 1);
+    }
+
+    // Load buổi dạy hôm nay
+    async function onLoadTodaySchedule() {
+        const teacherId = getTeacherID();
+        const today = new Date();
+
+        // Lấy lịch theo teacher
+        const schedules = await ScheduleService.getScheduleByTeacherId(teacherId);
+
+        // Lọc lịch hôm nay
+        const todayList = schedules.filter(s => {
+            return new Date(s.sessionDate).toDateString() === today.toDateString();
+        });
+
+        const headers = ["Lớp học", "Giờ học", "Phòng"];
+        renderDatagridHeader("dgvToday", headers, false);
+
+        const data = todayList.map(s => ({
+            "Lớp học": s.className,
+            "Giờ học": `${s.startTime} - ${s.endTime}`,
+            "Phòng": s.room
+        }));
+
+        fillDatagrid("dgvToday", data);
+    }
+</script>

@@ -335,7 +335,7 @@ function fillDatagrid(containerId, data) {
         return;
     }
 
-    // Danh sách header theo đúng thứ tự
+    // Lấy danh sách header
     const headers = [];
     $thead.find('th').each(function () {
         headers.push($(this).text().trim());
@@ -344,29 +344,32 @@ function fillDatagrid(containerId, data) {
     const colCount = headers.length;
     const hasAction = headers[headers.length - 1] === "Hành động";
 
-    // Xóa tbody hiện tại
     const $tbody = $table.find('tbody');
     $tbody.empty();
 
-    // Đổ dữ liệu
     data.forEach(rowObj => {
         const $tr = $('<tr>');
 
-        // Duyệt theo đúng order header
         for (let i = 0; i < colCount; i++) {
             const colName = headers[i];
 
-            // Nếu là cột Action: bỏ qua, sẽ xử lý phía dưới
             if (colName === "Hành động") continue;
 
-            let cellValue = rowObj[colName] !== undefined ? rowObj[colName] : "";
-            const $td = $('<td>').text(cellValue);
+            let cellValue = rowObj[colName] ?? "";
+
+            // ⬅⬅⬅ Nếu cell là HTML select → dùng html()
+            const $td = $('<td>');
+            if (typeof cellValue === "string" && cellValue.trim().startsWith("<")) {
+                $td.html(cellValue);
+            } else {
+                $td.text(cellValue);
+            }
+
             $tr.append($td);
         }
 
-        // Nếu có cột Hành động thì thêm 1 <td>
         if (hasAction) {
-            $tr.append($('<td>')); // để FillDatagridAction xử lý
+            $tr.append($('<td>'));
         }
 
         $tbody.append($tr);
