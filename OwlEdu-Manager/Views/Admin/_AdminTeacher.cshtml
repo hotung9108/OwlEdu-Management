@@ -13,13 +13,236 @@
 
         <div>
             <div class="col-12 col-md-12" style="margin-bottom: 10px;">
-                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus"></i>    Tạo giáo viên mới</button>
+                <button type="button" class="btn btn-primary" onClick="activeFloatBox('createTeacher')"><i class="fa-solid fa-plus"></i>    Tạo giáo viên mới</button>
             </div>
         </div>
 
         <div class="component-container" hx-get="/Components/Datagrid" hx-vals='{"Id": "dgv"}' hx-trigger="revealed" data-on-load="onLoadDg"></div>
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
+    </div>
+    <div id="createTeacher" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Tạo giáo viên</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('createTeacher')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <form id="createTeacherForm">
+                    <div class="row mb-3">
+                        <div style="color: var(--text-main);" class="col-4">
+                            <label for="teacherFullName"><strong>Họ và tên:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherFullName" class="form-control" placeholder="Họ và tên" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div style="color: var(--text-main);" class="col-4">
+                            <label for="teacherSpecialization"><strong>Chuyên môn:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherSpecialization" class="form-control" placeholder="Chuyên môn" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div style="color: var(--text-main);" class="col-4">
+                            <label for="teacherQualification"><strong>Trình độ:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherQualification" class="form-control" placeholder="Trình độ" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div style="color: var(--text-main);" class="col-4">
+                            <label for="teacherPhoneNumber"><strong>Số điện thoại:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherPhoneNumber" class="form-control" placeholder="Số điện thoại" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div style="color: var(--text-main);" class="col-4">
+                            <label for="teacherAddress"><strong>Địa chỉ:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <textarea id="teacherAddress" class="form-control" placeholder="Địa chỉ" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div style="color: var(--text-main);" class="col-4">
+                            <label for="teacherGender"><strong>Giới tính:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="teacherGender" class="form-control" required>
+                                <option value="male">Nam</option>
+                                <option value="female">Nữ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="createTeacherButton">Tạo giáo viên</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="detailTeacher" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Thông tin chi tiết giáo viên</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('detailTeacher')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Mã giáo viên:</strong></div>
+                    <div class="col-8"><span id="teacherId"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Họ và tên:</strong></div>
+                    <div class="col-8"><span id="teacherFullName"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Chuyên môn:</strong></div>
+                    <div class="col-8"><span id="teacherSpecialization"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Trình độ:</strong></div>
+                    <div class="col-8"><span id="teacherQualification"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Số điện thoại:</strong></div>
+                    <div class="col-8"><span id="teacherPhoneNumber"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Địa chỉ:</strong></div>
+                    <div class="col-8"><span id="teacherAddress"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Giới tính:</strong></div>
+                    <div class="col-8"><span id="teacherGender"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Mã tài khoản:</strong></div>
+                    <div class="col-8"><span id="accountId"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Tên tài khoản:</strong></div>
+                    <div class="col-8"><span id="accountUsername"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Vai trò:</strong></div>
+                    <div class="col-8"><span id="accountRole"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Trạng thái:</strong></div>
+                    <div class="col-8"><span id="accountStatus"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Email:</strong></div>
+                    <div class="col-8"><span id="accountEmail"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Ngày tạo:</strong></div>
+                    <div class="col-8"><span id="accountCreatedAt"></span></div>
+                </div>
+                <div class="row mb-3" style="color: var(--text-main);">
+                    <div class="col-4"><strong>Ngày cập nhật:</strong></div>
+                    <div class="col-8"><span id="accountUpdatedAt"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="updateTeacher" class="float-box-overlay">
+        <div class="float-box-box">
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Cập nhật giáo viên</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('updateTeacher')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="float-box-content">
+                <form id="updateTeacherForm">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherIdInput"><strong>Mã học viên:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherIdInput" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherFullNameInput"><strong>Họ và tên:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherFullNameInput" class="form-control" placeholder="Họ và tên" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherSpecializationInput"><strong>Chuyên môn:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherSpecializationInput" class="form-control" placeholder="Chuyên môn" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherQualificationInput"><strong>Trình độ:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherQualificationInput" class="form-control" placeholder="Trình độ" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherPhoneNumberInput"><strong>Số điện thoại:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <input type="text" id="teacherPhoneNumberInput" class="form-control" placeholder="Số điện thoại" required />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherAddressInput"><strong>Địa chỉ:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <textarea id="teacherAddressInput" class="form-control" placeholder="Địa chỉ" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="teacherGenderInput"><strong>Giới tính:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="teacherGenderInput" class="form-control" required>
+                                <option value="male">Nam</option>
+                                <option value="female">Nữ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label style="color: var(--text-main);" for="accountStatusInput"><strong>Trạng thái tài khoản:</strong></label>
+                        </div>
+                        <div class="col-8">
+                            <select id="accountStatusInput" class="form-control">
+                                <option value="active">Kích hoạt</option>
+                                <option value="inactive">Vô hiệu hóa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-primary" id="saveTeacherButton">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -53,11 +276,13 @@
 
 <script type="module">
     import TeacherService from "../../js/API/TeacherService.js";
+    import AccountService from "../../js/API/AccountService.js";
     window.onLoadDg = onLoadDg;
     window.onLoadPag = onLoadPag;
-    // window.SubmitAccount = SubmitAccount;
     window.OnPageChange = OnPageChange;
-    // window.SetAccountDetailData = SetAccountDetailData;
+    inactiveFloatBox('detailTeacher');
+    inactiveFloatBox('updateTeacher');
+    inactiveFloatBox('createTeacher');
     document.getElementById('search-box').addEventListener('input', async function () {
         const keyword = this.value.trim();
         currentKeyword = keyword;
@@ -76,19 +301,7 @@
         currentPage = pageNumber;
         const response = await TeacherService.getAllTeachers(currentKeyword,pageNumber, pageSize);
         const data = await Promise.all(response.map(async (teacher)=>{
-            const teacherDetail = await TeacherService.getTeacherById(teacher.id);
-            // const accountdetail = await AccountService.getAccountById(account.id);
-            // var name;
-            // if(account.role == "teacher"){
-            //     name = accountdetail.teacher.fullName;
-            // }
-            // else if (account.role == "student"){
-            //     name = accountdetail.student.fullName;
-            // }
-            // else{
-            //     name = "Quản trị viên";
-            // }
-            // console.log(accountdetail.student);
+        const teacherDetail = await TeacherService.getTeacherById(teacher.id);
             return {
                 "Mã giáo viên": teacher.id,
                 "Mã tài khoản": teacherDetail.accountResponse.id,
@@ -97,43 +310,48 @@
                 "Tài khoản": teacherDetail.accountResponse.username,
                 "Chuyên môn":teacher.specialization,
                 "Trình độ": teacher.qualification,
-                "Giới tính": teacher.gender? "Nam": "Nữ",
-                // "Vai trò": teacherDetail.accountResponse.role || "N/A",
+                "Giới tính": teacher.gender,
                 "Email": teacherDetail.accountResponse.email || "N/A",
                 "Trạng thái": teacherDetail.accountResponse.status ? "Active" : "Inactive",
             }
         }));
-        // console.log(data);
         await fillDatagrid('dgv', data);
         await fillDatagridAction("dgv", [
             {
-                text: "Chi tiết tài khoản",
+                text: "Chi tiết",
                 iconClass: "fa-solid fa-pen-to-square",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     activeFloatBox('detailAccount');
-                     // await SetdgvAccountDetailData(accountId);
+                    const teacherId = getCellValueByColumnIndex(row, 0);
+                    activeFloatBox('detailTeacher');
+                    await SetTeacherDetailData(teacherId);
                 }
             },
                 {
-                text: "Chỉnh sửa tài khoản",
+                text: "Chỉnh sửa",
                 iconClass: "fa-solid fa-pen-to-square",
                 onClick: async function (row) {
-                    // const accountId = getCellValueByColumnIndex(row, 0);
-                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     // activeFloatBox('detailAccount');
-                     // await SetdgvAccountDetailData(accountId);
+                    const teacherId = getCellValueByColumnIndex(row, 0);
+                    activeFloatBox('updateTeacher');
+                    await SetUpdateTeacherForm(teacherId);
                 }
             },
             {
-                text: "Xóa",
+                text: "Hủy giáo viên",
                 iconClass: "fa-solid fa-trash",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
-                        // await AccountService.deleteAccount(accountId);
-                        await OnPageChange(1);
+                    const teacherId = getCellValueByColumnIndex(row, 0);
+                    try {
+                        const teacherDetail = await TeacherService.getTeacherById(teacherId);
+                        const accountId = teacherDetail.accountResponse.id;
+                        if (confirm(`Bạn có chắc chắn muốn hủy giáo viên với tài khoản ${accountId}?`)) {
+                            await AccountService.updateAccountStatus(accountId, { status: false });
+
+                            alert("Hủy giáo viên thành công!");
+                            await OnPageChange(currentPage);
+                        }
+                    } catch (error) {
+                        console.error("Lỗi khi hủy học viên:", error);
+                        alert("Không thể hủy học viên. Vui lòng thử lại.");
                     }
                 }
             }
@@ -172,131 +390,91 @@
             }
         });
     }
-    // function ChangePage(currentPage) {
+    async function SetTeacherDetailData(teacherId) {
+        try {
+            const teacher = await TeacherService.getTeacherById(teacherId);
+            document.getElementById("teacherId").textContent = teacher.id;
+            document.getElementById("teacherFullName").textContent = teacher.fullName;
+            document.getElementById("teacherSpecialization").textContent = teacher.specialization;
+            document.getElementById("teacherQualification").textContent = teacher.qualification;
+            document.getElementById("teacherPhoneNumber").textContent = teacher.phoneNumber;
+            document.getElementById("teacherAddress").textContent = teacher.address;
+            document.getElementById("teacherGender").textContent = teacher.gender;
+            const account = teacher.accountResponse;
+            document.getElementById("accountId").textContent = account.id;
+            document.getElementById("accountUsername").textContent = account.username;
+            document.getElementById("accountRole").textContent = account.role;
+            document.getElementById("accountStatus").textContent = account.status ? "Kích hoạt" : "Vô hiệu hóa";
+            document.getElementById("accountEmail").textContent = account.email || "N/A";
+            document.getElementById("accountCreatedAt").textContent = account.createdAt;
+            document.getElementById("accountUpdatedAt").textContent = account.updateAt;
+            activeFloatBox("detailTeacher");
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin giáo viên:", error);
+            alert("Không thể tải thông tin giáo viên. Vui lòng thử lại.");
+        }
+    }
+    async function SetUpdateTeacherForm(teacherId) {
+        try {
+            const teacher = await TeacherService.getTeacherById(teacherId);
+            document.getElementById("teacherIdInput").value = teacher.id;
+            document.getElementById("teacherFullNameInput").value = teacher.fullName;
+            document.getElementById("teacherSpecializationInput").value = teacher.specialization;
+            document.getElementById("teacherQualificationInput").value = teacher.qualification;
+            document.getElementById("teacherPhoneNumberInput").value = teacher.phoneNumber;
+            document.getElementById("teacherAddressInput").value = teacher.address;
+            document.getElementById("teacherGenderInput").value = teacher.gender ? "male" : "female";
+            const account = teacher.accountResponse;
+            document.getElementById("accountStatusInput").value = account.status ? "active" : "inactive";
+            activeFloatBox("updateTeacher");
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin giáo viên:", error);
+            alert("Không thể tải thông tin giáo viên. Vui lòng thử lại.");
+        }
+    }
+    document.getElementById("saveTeacherButton").addEventListener("click", async function () {
+        try {
+            const teacherId = document.getElementById("teacherIdInput").value;
+            const teacherDetail = await TeacherService.getTeacherById(teacherId);
+            const accountId = teacherDetail.accountResponse.id;
+            const teacherData = {
+                fullName: document.getElementById("teacherFullNameInput").value,
+                specialization: document.getElementById("teacherSpecializationInput").value,
+                qualification: document.getElementById("teacherQualificationInput").value,
+                phoneNumber: document.getElementById("teacherPhoneNumberInput").value,
+                address: document.getElementById("teacherAddressInput").value,
+                gender: document.getElementById("teacherGenderInput").value
+            };
 
-    // }
+            await TeacherService.updateTeacher(teacherId, teacherData);
 
-    // function onLoadDg() {
-    //     var headers = ['Mã giáo viên', 'Mã tài khoản', 'Tên giáo viên', 'Chuyên môn', 'Trình độ', 'Số điện thoại', 'Giới tính', 'Email', 'Trạng thái']
+            await AccountService.updateAccountStatus(accountId, { status: document.getElementById("accountStatusInput").value==='active'?true:false });
+            alert("Cập nhật thành công!");
+            inactiveFloatBox("updateTeacher");
+            await OnPageChange(currentPage);
+        } catch (error) {
+            console.error("Lỗi khi cập nhật dữ liệu:", error);
+            alert("Cập nhật thất bại. Vui lòng thử lại.");
+        }
+    });
+    document.getElementById("createTeacherButton").addEventListener("click", async function () {
+        try {
+            const teacherData = {
+                fullName: document.getElementById("teacherFullName").value,
+                specialization: document.getElementById("teacherSpecialization").value,
+                qualification: document.getElementById("teacherQualification").value,
+                phoneNumber: document.getElementById("teacherPhoneNumber").value,
+                address: document.getElementById("teacherAddress").value,
+                gender: document.getElementById("teacherGender").value
+            };
+            await TeacherService.addTeacher(teacherData);
 
-    //     renderDatagridHeader('dgv', headers, true);
-
-    //     var data = [
-    //         {
-    //             "Mã giáo viên": "TCH001",
-    //             "Mã tài khoản": "ACC101",
-    //             "Tên giáo viên": "Nguyễn Thị Minh",
-    //             "Chuyên môn": "Tiếng Anh",
-    //             "Trình độ": "Thạc sĩ",
-    //             "Số điện thoại": "0901122334",
-    //             "Giới tính": "Nữ",
-    //             "Email": "minh.nguyen@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã giáo viên": "TCH002",
-    //             "Mã tài khoản": "ACC102",
-    //             "Tên giáo viên": "Trần Văn Hoàng",
-    //             "Chuyên môn": "Toán",
-    //             "Trình độ": "Tiến sĩ",
-    //             "Số điện thoại": "0912233445",
-    //             "Giới tính": "Nam",
-    //             "Email": "hoang.tran@example.com",
-    //             "Trạng thái": "inactive"
-    //         },
-    //         {
-    //             "Mã giáo viên": "TCH003",
-    //             "Mã tài khoản": "ACC103",
-    //             "Tên giáo viên": "Lê Thị Thu",
-    //             "Chuyên môn": "Vật lý",
-    //             "Trình độ": "Thạc sĩ",
-    //             "Số điện thoại": "0923344556",
-    //             "Giới tính": "Nữ",
-    //             "Email": "thu.le@example.com",
-    //             "Trạng thái": "active"
-    //         },
-    //         {
-    //             "Mã giáo viên": "TCH004",
-    //             "Mã tài khoản": "ACC104",
-    //             "Tên giáo viên": "Phạm Quốc Huy",
-    //             "Chuyên môn": "Lập trình",
-    //             "Trình độ": "Cử nhân",
-    //             "Số điện thoại": "0934455667",
-    //             "Giới tính": "Nam",
-    //             "Email": "huy.pham@example.com",
-    //             "Trạng thái": "inactive"
-    //         },
-    //         {
-    //             "Mã giáo viên": "TCH005",
-    //             "Mã tài khoản": "ACC105",
-    //             "Tên giáo viên": "Đỗ Thị Mai",
-    //             "Chuyên môn": "Kinh tế",
-    //             "Trình độ": "Tiến sĩ",
-    //             "Số điện thoại": "0945566778",
-    //             "Giới tính": "Nữ",
-    //             "Email": "mai.do@example.com",
-    //             "Trạng thái": "active"
-    //         }
-    //     ];
-
-
-    //     fillDatagrid('dgv', data);
-
-    //     fillDatagridAction("dgv", [
-    //         { 
-    //             text: "Xem chi tiết", 
-    //             iconClass: "fa-solid fa-info", 
-    //             onClick: function() { alert("Clicked Chi tiết"); } 
-    //         },
-    //         { 
-    //             text: "Chỉnh sửa thông tin", 
-    //             iconClass: "fa-solid fa-pen-to-square", 
-    //             onClick: function() { alert("Clicked Chi tiết"); } 
-    //         },
-    //         { 
-    //             text: "Hủy giáo viên", 
-    //             iconClass: "fa-solid fa-x",
-    //             onClick: function() { alert("Clicked "); } 
-    //         }
-    //     ]);
-
-    //     styleStatusColumn('dgv');
-    // }
-
-    // function onLoadPag() {
-    //     renderPagination('pag', 10, 'ChangePage')
-    // }
-
-    // function styleStatusColumn(containerId) {
-    //     const $container = $('#' + containerId);
-    //     const $table = $container.find('table.datagrid');
-    //     const $tbody = $table.find('tbody');
-
-    //     $tbody.find('tr').each(function () {
-    //         const $tr = $(this);
-    //         Lấy cột thứ 4 (index 3, 0-based)
-    //         const $statusTd = $tr.find('td').eq(8);
-    //         const statusText = $statusTd.text().trim().toLowerCase();
-
-    //         Reset màu mặc định trước
-    //         $statusTd.css({
-    //             'color': '',
-    //             'font-weight': 'bold'
-    //         });
-
-    //         Gán màu theo trạng thái
-    //         switch (statusText) {
-    //             case 'active':
-    //                 $statusTd.css('color', '#1D4ED8'); xanh dương
-    //                 break;
-    //             case 'inactive':
-    //                 $statusTd.css('color', '#DC2626'); đỏ
-    //                 break;
-    //             default:
-    //                 $statusTd.css('color', '#6B7280'); xám cho các trạng thái khác
-    //         }
-    //     });
-    // }
-
-
+            alert("Tạo giáo viên thành công!");
+            inactiveFloatBox("createTeacher"); 
+            await onLoadDg(); 
+        } catch (error) {
+            console.error("Lỗi khi tạo giáo viên:", error);
+            alert("Không thể tạo giáo viên. Vui lòng thử lại.");
+        }
+    });
 </script>

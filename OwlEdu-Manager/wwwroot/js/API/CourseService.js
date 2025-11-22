@@ -87,6 +87,23 @@ const CourseService = {
             console.error("Error deleting course:", error);
             throw error;
         }
+    },
+    updateCourseStatus: async function (id, statusData) {
+        try {
+            const response = await callApi({
+                url: `${api_url}/api/Course/${id}/status`,
+                method: "PATCH",
+                data: statusData,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            return response;
+        } catch (error) {
+            console.error("Error updating course status:", error);
+            throw error;
+        }
     }
 };
 
