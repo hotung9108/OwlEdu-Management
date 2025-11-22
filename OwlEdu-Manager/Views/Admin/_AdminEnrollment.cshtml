@@ -12,8 +12,8 @@
         </div>
 
         <div>
-            <div class="col-12 col-md-12 text-md-end" style="margin-bottom: 10px;">
-                <button type="button" class="btn btn-primary" style="display:none;"><i class="fa-solid fa-plus"></i>    Tạo đăng ký mới</button>
+            <div class="col-12 col-md-12" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-primary" onClick="activeFloatBox('create')"><i class="fa-solid fa-plus"></i>    Tạo đăng ký mới</button>
             </div>
         </div>
 
@@ -52,79 +52,12 @@
 
                     <div class="col-md-6">
                         <label class="btl-label">Ngày đăng ký</label>
-                        <p id="enroldate-display" class="btl-view">student01</p>
+                        <p id="enrolldate-display" class="btl-view">student01</p>
                     </div>
 
                     <div class="col-md-6">
                         <label class="btl-label">Trạng thái</label>
                         <p id="status-display" class="btl-view">student01</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="create" class="float-box-overlay">
-        <div class="float-box-box">
-
-            <div class="float-box-header">
-                <h4><i class="fa-solid fa-list-check"></i> Tạo đăng ký học</h4>
-                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('details')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div class="float-box-content">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="btl-label">Mã lớp học</label>
-                        <p id="classid-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Tên lớp học</label>
-                        <p id="classname-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Mã khóa học</label>
-                        <p id="courseid-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Tên khóa học</label>
-                        <p id="coursename-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Mã giáo viên</label>
-                        <p id="teacherid-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Tên giáo viên</label>
-                        <p id="teachername-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Trạng thái lớp</label>
-                        <p id="classstatus-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Trạng thái học</label>
-                        <p id="status-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Ngày lớp bắt đầu</label>
-                        <p id="startdate-display" class="btl-view">student01</p>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="btl-label">Ngày lớp kết thúc</label>
-                        <p id="enddate-display" class="btl-view">student01</p>
                     </div>
                 </div>
             </div>
@@ -227,6 +160,56 @@
     </div>
 </div>
 
+<div id="create" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Tạo mới đăng ký</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('create')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã khóa học</label>
+                        <select id="courseid-create" name="Role" class="form-control" required>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mã học viên</label>
+                        <select id="studentid-create" name="Role" class="form-control" required>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Ngày đăng ký</label>
+                        <input type="date" id="enrolldate-create" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trạng thái</label>
+                            <select id="status-create" name="Role" class="form-control" required>
+                                <option value="active">Chưa xử lý</option>
+                                <option value="completed">Đã xử lý</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                    </div>
+
+                    <div class="col-md-12 text-md-end" style="margin-bottom: 10px;">
+                        <button id="create-btn" type="button" class="btn btn-primary" onClick="SubmitCreate()"><i class="fa-solid fa-plus"></i>    Tạo mới</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 
 .title {
@@ -260,9 +243,12 @@
     inactiveFloatBox('create');
     inactiveFloatBox('update');
     inactiveFloatBox('class-assign');
+    inactiveFloatBox('create')
     import EnrollmentService from "../../js/API/EnrollmentService.js";
     import ClassService from "../../js/API/ClassService.js";
     import ClassAssignmentService from "../../js/API/ClassAssignmentService.js";
+    import StudentService from "../../js/API/StudentService.js";
+    import CourseService from "../../js/API/CourseService.js";
     window.onLoadDg = onLoadDg;
     window.onLoadPag = onLoadPag;
     // window.SubmitAccount = SubmitAccount;
@@ -274,6 +260,8 @@
     window.onLoadDg1 = onLoadDg1;
     window.SubmitUpdate = SubmitUpdate;
     window.SubmitAssignment = SubmitAssignment;
+    window.SubmitCreate = SubmitCreate;
+    window.SetupStudentAndCourse = SetupStudentAndCourse;
     document.getElementById('search-box').addEventListener('input', async function () {
         const keyword = this.value.trim();
         currentKeyword = keyword;
@@ -286,6 +274,20 @@
     let currentKeyword = "";
     let currentPage = 1;
     const pageSize = 10;
+
+    await SetupStudentAndCourse();
+
+    async function SetupStudentAndCourse() {
+        const students = await StudentService.getAllStudents("", -1, -1);
+        const courses = await CourseService.getAllCourses("", -1, -1);
+
+        console.log(students);
+        console.log(courses);
+
+        loadOptions(students, 'fullName', 'studentid-create');
+        loadOptions(courses, 'name', 'courseid-create'); 
+    }
+
     async function onLoadDg() {
         var headers = ['Mã đăng ký', 'Mã học viên', 'Mã khóa học', 'Ngày đăng ký', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
@@ -544,6 +546,27 @@
         }
         catch (error) {
             ActiveModal("modal", "Thông báo", "Gán lớp không thành công");
+            console.log(error);
+        }
+    }
+
+    async function SubmitCreate() {
+        const data = {
+            id: "",
+            studentId: $('#studentid-create').val(),
+            courseId: $('#courseid-create').val(),
+            enrollmentDate: $('#enrolldate-create').val(),
+            status: $('#status-create').val(),
+            createdBy: null,
+        };
+
+        try {
+            await EnrollmentService.addEnrollment(data);
+            ActiveModal("modal", "Thông báo", "Tạo mới thành công");
+            OnPageChange(currentPage);
+        }
+        catch(error) {
+            ActiveModal("modal", "Thông báo", "Tạo mới không thành công");
             console.log(error);
         }
     }
