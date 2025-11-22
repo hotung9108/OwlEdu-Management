@@ -69,7 +69,6 @@ function OpenProfile() {
 }
 
 //On get components
-const datagridList = new Set();
 document.addEventListener('DOMContentLoaded', async function () {
     htmx.onLoad(async function (el) {
 
@@ -434,17 +433,20 @@ function fillDatagridAction(containerId, actions) {
 //Schedule
 function getWeekDates(inputDate) {
     const date = new Date(inputDate); // nhận Date hoặc chuỗi ngày
-    const dayOfWeek = date.getDay();  // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
+    const jsDay = date.getDay();      // 0 = Chủ Nhật, 1 = Thứ Hai, ..., 6 = Thứ Bảy
 
-    // Tính ngày Chủ Nhật của tuần
-    const sunday = new Date(date);
-    sunday.setDate(date.getDate() - dayOfWeek);
+    // Chuyển sang thứ: Thứ Hai = 1, ..., Chủ Nhật = 7
+    const dayOfWeek = jsDay === 0 ? 7 : jsDay;
+
+    // Tính ngày Thứ Hai của tuần
+    const monday = new Date(date);
+    monday.setDate(date.getDate() - dayOfWeek + 1);
 
     const weekDates = [];
 
     for (let i = 0; i < 7; i++) {
-        const d = new Date(sunday);
-        d.setDate(sunday.getDate() + i);
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
 
         // Định dạng yyyy-MM-dd
         const yyyy = d.getFullYear();
@@ -456,6 +458,7 @@ function getWeekDates(inputDate) {
 
     return weekDates;
 }
+
 
 function setScheduleWeek(currentDate) {
     const date = new Date(currentDate);
@@ -481,7 +484,7 @@ function setScheduleWeek(currentDate) {
         $(this).html(`${dayName}<br><small>${dayStr}</small>`);
     });
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 1; i <= 7; i++) {
         $(`.schedule-column[data-day="${i}"]`).empty();
     }
 }
@@ -559,3 +562,25 @@ function debounce(func, wait) {
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
 }
+
+function loadOptions(list, displayProp, selectId) {
+    const select = document.getElementById(selectId);
+    if (!select) {
+        console.error("Select not found:", selectId);
+        return;
+    }
+
+    // Xóa option cũ
+    select.innerHTML = "";
+
+    // Thêm option mặc định (tùy bạn)
+
+    // Duyệt list
+    list.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.id;                         // value = id
+        option.textContent = (item.id + "-" + item[displayProp]) || "";   // hiển thị theo prop
+        select.appendChild(option);
+    });
+}
+

@@ -21,16 +21,51 @@
 
         <div class="component-container" hx-get="/Components/Pagination" hx-vals='{"Id": "pag"}' hx-trigger="revealed" data-on-load="onLoadPag"></div>
     </div>
+
+    <div id="method-box" class="float-box-overlay">
+        <div class="float-box-box">
+
+            <div class="float-box-header">
+                <h4><i class="fa-solid fa-list-check"></i> Chi tiết hóa đơn</h4>
+                <button id="close-float-box" class="close-btn" onClick="inactiveFloatBox('method-box')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="float-box-content">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="btl-label">Phương thức thanh toán</label>
+                            <select id="method" name="Role" class="form-control" required>
+                                <option value="cash">Tiền mặt</option>
+                                <option value="bank-transfer">Chuyển khoản</option>
+                                <option value="credit-card">Thẻ tín dụng</option>
+                                <option value="momo">Ví điện tử Momo</option>
+                            </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 text-md-start" style="margin-top: 10px;">
+                <button id="update-btn" type="button" class="btn btn-primary" onClick="Paid()"><i class="fa-solid fa-plus"></i> Thanh toán</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="module">
+    inactiveFloatBox('method-box');
+
     import PaymentService from "../../js/API/PaymentService.js";
     import AccountService from "../../js/API/AccountService.js";
+    import {getUserID} from "../../js/Utils/getCookies.js";
     window.onLoadDg = onLoadDg;
     window.onLoadPag = onLoadPag;
     // window.SubmitAccount = SubmitAccount;
     window.OnPageChange = OnPageChange;
     // window.SetAccountDetailData = SetAccountDetailData;
+    window.Paid = Paid;
+    window.Cancel = Cancel;
     document.getElementById('search-box').addEventListener('input', async function () {
         const keyword = this.value.trim();
         currentKeyword = keyword;
@@ -40,8 +75,9 @@
     let currentKeyword = "";
     let currentPage = 1;
     const pageSize = 10;
+    let currentRow;
     async function onLoadDg() {
-        var headers = ['Mã thanh toán', 'Mã đăng ký', 'Trạng thái', 'Thời gian giao dịch', 'Học phí', 'Người thu', 'Người đăng ký']
+        var headers = ['Mã thanh toán', 'Mã đăng ký', 'Trạng thái', 'Phương thức', 'Thời gian giao dịch', 'Học phí', 'Người thu', 'Người đăng ký']
         // var headers = ['Mã giáo viên', 'Mã tài khoản', 'Tên giáo viên', 'Chuyên môn', 'Trình độ', 'Số điện thoại', 'Giới tính', 'Trạng thái']
         renderDatagridHeader('dgv', headers, true);
         await OnPageChange(1);
@@ -51,16 +87,33 @@
         const response = await PaymentService.getAllPayments(currentKeyword,pageNumber, pageSize);
         const data = await Promise.all(response.map(async (payment)=>{
             // const teacherDetail = await PaymentService.getPaymentById(teacher.id);
-            const payer = await AccountService.getAccountById(payment.payerId);
-            const feeCollector = await AccountService.getAccountById(payment.feeCollectorId);
+             let payer;
+              let feeCollector;
+            if (payment.payerId != null) payer = await AccountService.getAccountById(payment.payerId);
+            if (payment.feeCollectorId != null) feeCollector = await AccountService.getAccountById(payment.feeCollectorId);
+
+            let status;
+            switch (payment.status) {
+                case 'pending':
+                    status = 'Chưa thanh toán';
+                    break;
+                case 'paid':
+                    status = 'Đã thanh toán';
+                    break;
+                case 'failed':
+                    status = 'Đã hủy';
+                    break;
+            }
+
             return {
                 "Mã thanh toán": payment.id,
                 "Mã đăng ký": payment.enrollmentId,
-                "Trạng thái": payment.status,
+                "Trạng thái": status,
+                'Phương thức': payment.method,
                 "Thời gian giao dịch":payment.paymentDate,
                 "Học phí":payment.amount,
-                "Người thu":payer.username,
-                "Người đăng ký": feeCollector.username,
+                "Người thu":payment.feeCollectorId,
+                "Người đăng ký": payment.payerId,
                 // "Tài khoản": teacherDetail.accountResponse.username,
                 // "Chuyên môn":teacher.specialization,
                 // "Trình độ": teacher.qualification,
@@ -73,35 +126,45 @@
         // console.log(data);
         await fillDatagrid('dgv', data);
         await fillDatagridAction("dgv", [
+            { 
+                text: "In hóa đơn", 
+                iconClass: "fa-solid fa-print",
+                onClick: function(row) 
+                { 
+                    const id = getFirstCellValue(row);
+                    const status = getCellValueByColumnIndex(row, 2);
+                    if (status != 'Đã thanh toán') {
+                        ActiveModal("modal", 'Thông báo', 'Không thể in hóa đơn chưa thanh toán');
+                        return;
+                    }
+                    window.open(`/Payment/Invoice?paymentId=${id}`);
+                } 
+            },
             {
-                text: "Chi tiết tài khoản",
-                iconClass: "fa-solid fa-pen-to-square",
+                text: "Thanh toán",
+                iconClass: "fa-solid fa-money-bill",
                 onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    // alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     activeFloatBox('detailAccount');
-                     // await SetdgvAccountDetailData(accountId);
+                    const status = getCellValueByColumnIndex(row, 2);
+                    if (status != 'Chưa thanh toán') {
+                        ActiveModal("modal", 'Thông báo', 'Chỉ có thể thanh toán hóa đơn chưa thanh toán');
+                        return;
+                    }
+                    activeFloatBox('method-box');
+                    currentRow = row;
+
                 }
             },
                 {
-                text: "Chỉnh sửa tài khoản",
-                iconClass: "fa-solid fa-pen-to-square",
+                text: "Hủy hóa đơn",
+                iconClass: "fa-solid fa-x",
                 onClick: async function (row) {
-                    // const accountId = getCellValueByColumnIndex(row, 0);
-                    alert(`Chỉnh sửa tài khoản: ${accountId}`);
-                     // activeFloatBox('detailAccount');
-                     // await SetdgvAccountDetailData(accountId);
-                }
-            },
-            {
-                text: "Xóa",
-                iconClass: "fa-solid fa-trash",
-                onClick: async function (row) {
-                    const accountId = getCellValueByColumnIndex(row, 0);
-                    if (confirm(`Bạn có chắc chắn muốn xóa tài khoản ${accountId}?`)) {
-                        // await AccountService.deleteAccount(accountId);
-                        await OnPageChange(1);
+                    currentRow = row;
+                    const status = getCellValueByColumnIndex(row, 2);
+                    if (status != 'Chưa thanh toán') {
+                        ActiveModal("modal", 'Thông báo', 'Chỉ có thể hủy hóa đơn chưa thanh toán');
+                        return;
                     }
+                    Cancel();
                 }
             }
         ]);
@@ -120,24 +183,92 @@
         $tbody.find('tr').each(function () {
             const $tr = $(this);
             const $statusTd = $tr.find('td').eq(index);
-            const statusText = $statusTd.text().trim().toLowerCase();
+            const statusText = $statusTd.text().trim();
 
             $statusTd.css({
                 'color': '',
                 'font-weight': 'bold'
             });
-
             switch (statusText) {
-                case 'paid':
+                case 'Đã thanh toán':
+                    $statusTd.css('color', '#10B981');
+                    break;
+                case 'Chưa thanh toán':
                     $statusTd.css('color', '#1D4ED8');
                     break;
-                case 'failed':
+                case 'Đã hủy':
                     $statusTd.css('color', '#DC2626');
                     break;
                 default:
                     $statusTd.css('color', '#6B7280');
             }
         });
+    }
+
+    async function Paid() {
+
+        const id = getFirstCellValue(currentRow);
+        const enrollmentid = getCellValueByColumnIndex(currentRow, 1);
+        const status = 'paid';
+        const paymentDate = getCellValueByColumnIndex(currentRow, 4);
+        const amount = getCellValueByColumnIndex(currentRow, 5);
+        const fcid = getUserID();
+        const pid = getCellValueByColumnIndex(currentRow, 7);
+        const method = $('#method').val();
+
+        const data = {
+            id: id,
+            enrollmentId: enrollmentid,
+            amount: amount,
+            paymentDate: paymentDate,
+            feeCollectorId: fcid,
+            payerId: pid,
+            method: method,
+            status: status
+        };
+
+        try {
+            await PaymentService.updatePayment(id, data);
+            await OnPageChange(currentPage);
+            ActiveModal("modal", 'Thông báo', 'Thanh toán thành công');
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Thanh toán không thành công');
+            console.error(error);
+        }
+    }
+
+    async function Cancel() {
+
+        const id = getFirstCellValue(currentRow);
+        const enrollmentid = getCellValueByColumnIndex(currentRow, 1);
+        const status = 'failed';
+        const paymentDate = getCellValueByColumnIndex(currentRow, 4);
+        const amount = getCellValueByColumnIndex(currentRow, 5);
+        const fcid = getUserID();
+        const pid = getCellValueByColumnIndex(currentRow, 7);
+        const method = null;
+
+        const data = {
+            id: id,
+            enrollmentId: enrollmentid,
+            amount: amount,
+            paymentDate: paymentDate,
+            feeCollectorId: fcid,
+            payerId: pid,
+            method: method,
+            status: status
+        };
+
+        try {
+            await PaymentService.updatePayment(id, data);
+            await OnPageChange(currentPage);
+            ActiveModal("modal", 'Thông báo', 'Hủy thành công');
+        }
+        catch (error) {
+            ActiveModal("modal", 'Thông báo', 'Hủy không thành công');
+            console.error(error);
+        }
     }
     // function ChangePage(currentPage) {
 
