@@ -42,6 +42,18 @@ const ScheduleService = {
             throw error;
         }
     },
+    async getScheduleByTeacherId(teacherId) {
+        try {
+            return await callApi({
+                url: `${api_url}/api/Schedule/Teacher/${teacherId}`,
+                method: "GET",
+                headers: { "Authorization": `Bearer ${getAuthToken()}` }
+            });
+        } catch (error) {
+            console.error("Error getScheduleByTeacherId:", error);
+            throw error;
+        }
+    },
 
     async addSchedule(scheduleData) {
         try {

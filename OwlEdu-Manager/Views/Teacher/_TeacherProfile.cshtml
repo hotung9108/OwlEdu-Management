@@ -1,0 +1,269 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container py-4">
+
+    <div class="row g-4">
+
+        <!-- LEFT: AVATAR -->
+        <div class="col-lg-4">
+            <div class="btl-card shadow-sm">
+
+                <h5 class="btl-card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; color:var(--text-main);">Ảnh đại diện</h5>
+                <div class="text-center mt-3">
+                    <img id="tch-avatar"
+                         src="https://i.pravatar.cc/200"
+                         class="btl-avatar-preview rounded-circle">
+
+                    <div class="mt-2">
+                        <a href="#" id="tch-delete-avatar" class="text-danger me-3">Xóa ảnh</a>
+                        <a href="#" id="tch-update-avatar" class="text-primary">Cập nhật ảnh</a>
+                    </div>
+
+                    <div id="tch-upload-area" class="btl-upload-box mt-4">
+                        <i class="fa-solid fa-upload btl-upload-icon"></i>
+                        <p class="fw-bold text-primary">Nhấn để tải ảnh lên</p>
+                        <p class="text-muted small">hoặc kéo thả</p>
+
+                        <input type="file" id="tch-file-input" class="d-none" accept="image/*">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-lg-8">
+
+            <!-- ACCOUNT -->
+            <div class="btl-card shadow-sm" data-section="account">
+
+                <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                    <h5 class="btl-card-title" style="color:var(--text-main);">Thông tin tài khoản</h5>
+
+                    <div>
+                        <button class="btn btn-primary btn-sm btn-edit">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                        </button>
+
+                        <div class="btn-save-cancel d-none">
+                            <button id="btn-save-account" class="btn btn-success btn-sm btn-save">Lưu</button>
+                            <button class="btn btn-danger btn-sm btn-cancel">Hủy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3 g-3">
+                    @* <div class="col-md-6">
+                        <label class="btl-label">Mã giảng viên</label>
+                        <p id="tch-id-display" class="btl-view-display"></p>
+                    </div> *@
+                    <div class="col-md-6">
+                        <label class="btl-label-display" style="color:var(--text-main);">Mã giảng viên</label>
+                        <p id="tch-id-display" class="btl-view-display"></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Tên tài khoản</label>
+                        <p id="tch-username-display" class="btl-view"></p>
+                        <input id="tch-username-input" class="form-control btl-edit d-none">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Email</label>
+                        <p id="tch-email-display" class="btl-view"></p>
+                        <input id="tch-email-input" type="email" class="form-control btl-edit d-none">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Mật khẩu</label>
+                        <p class="btl-view">********</p>
+                        <input id="tch-password-input" type="password" class="form-control btl-edit d-none">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PERSONAL -->
+            <div class="btl-card shadow-sm mt-4" data-section="personal">
+
+                <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                    <h5 class="btl-card-title" style="color:var(--text-main);">Thông tin cá nhân</h5>
+
+
+                    <div>
+                        <button class="btn btn-primary btn-sm btn-edit">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                        </button>
+
+                        <div class="btn-save-cancel d-none">
+                            <button id="btn-save-profile" class="btn btn-success btn-sm btn-save">Lưu</button>
+                            <button class="btn btn-danger btn-sm btn-cancel">Hủy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3 g-3">
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Họ và tên</label>
+                        <p id="tch-fullname-display" class="btl-view"></p>
+                        <input id="tch-fullname-input" class="form-control btl-edit d-none">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Chuyên môn</label>
+                        <p id="tch-special-display" class="btl-view"></p>
+                        <input id="tch-special-input" class="form-control btl-edit d-none">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Trình độ</label>
+                        <p id="tch-qual-display" class="btl-view"></p>
+                        <input id="tch-qual-input" class="form-control btl-edit d-none">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Số điện thoại</label>
+                        <p id="tch-phone-display" class="btl-view"></p>
+                        <input id="tch-phone-input" class="form-control btl-edit d-none">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label">Giới tính</label>
+                        <p id="tch-gender-display" class="btl-view"></p>
+                        <select id="tch-gender-input" class="form-control btl-edit d-none">
+                            <option>Nam</option>
+                            <option>Nữ</option>
+                            <option>Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="btl-label">Địa chỉ</label>
+                        <p id="tch-address-display" class="btl-view"></p>
+                        <input id="tch-address-input" class="form-control btl-edit d-none">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="module">
+    import { getTeacherID, getUserID } from "../../js/Utils/getCookies.js";
+    import TeacherService from "../../js/API/TeacherService.js";
+    import AccountService from "../../js/API/AccountService.js";
+
+    window.Setup = Setup;
+    window.SetEvents = SetEvents;
+
+    await Setup();
+
+    async function Setup() {
+
+        SetEvents();
+
+        const teacher = await TeacherService.getTeacherById(getTeacherID());
+
+        // ========== ACCOUNT ==========
+        $('#tch-id-display').text(teacher.id);
+
+        $('#tch-username-display').text(teacher.accountResponse.username);
+        $('#tch-username-input').val(teacher.accountResponse.username);
+
+        $('#tch-email-display').text(teacher.accountResponse.email);
+        $('#tch-email-input').val(teacher.accountResponse.email);
+
+        if (teacher.accountResponse.avatar)
+            $('#tch-avatar').attr("src", teacher.accountResponse.avatar);
+
+
+        // ========== PERSON ==========
+        $('#tch-fullname-display').text(teacher.fullName);
+        $('#tch-fullname-input').val(teacher.fullName);
+
+        $('#tch-special-display').text(teacher.specialization);
+        $('#tch-special-input').val(teacher.specialization);
+
+        $('#tch-qual-display').text(teacher.qualification);
+        $('#tch-qual-input').val(teacher.qualification);
+
+        $('#tch-phone-display').text(teacher.phoneNumber);
+        $('#tch-phone-input').val(teacher.phoneNumber);
+
+        $('#tch-gender-display').text(teacher.gender);
+        $('#tch-gender-input').val(teacher.gender);
+
+        $('#tch-address-display').text(teacher.address);
+        $('#tch-address-input').val(teacher.address);
+    }
+
+
+    function SetEvents() {
+
+        // --- Nút Edit ---
+        $('.btn-edit').click(function () {
+            const sec = $(this).closest('[data-section]');
+            sec.find('.btl-view').addClass('d-none');
+            sec.find('.btl-edit').removeClass('d-none');
+            $(this).addClass('d-none');
+            sec.find('.btn-save-cancel').removeClass('d-none');
+        });
+
+        // --- Cancel ---
+        $('.btn-cancel').click(function () {
+            const sec = $(this).closest('[data-section]');
+            sec.find('.btl-edit').addClass('d-none');
+            sec.find('.btl-view').removeClass('d-none');
+            sec.find('.btn-save-cancel').addClass('d-none');
+            sec.find('.btn-edit').removeClass('d-none');
+        });
+
+        // --- SAVE ACCOUNT ---
+        $('#btn-save-account').click(async function () {
+
+            const update = {
+                username: $('#tch-username-input').val(),
+                email: $('#tch-email-input').val(),
+                password: $('#tch-password-input').val()
+            };
+
+            await AccountService.updateAccount(getUserID(), update);
+
+            $('#tch-username-display').text(update.username);
+            $('#tch-email-display').text(update.email);
+
+            $('.btn-cancel').click();
+        });
+
+        // --- SAVE PERSONAL ---
+        $('#btn-save-profile').click(async function () {
+
+            const update = {
+                fullName: $('#tch-fullname-input').val(),
+                specialization: $('#tch-special-input').val(),
+                qualification: $('#tch-qual-input').val(),
+                phoneNumber: $('#tch-phone-input').val(),
+                gender: $('#tch-gender-input').val(),
+                address: $('#tch-address-input').val()
+            };
+
+            await TeacherService.updateTeacher(getTeacherID(), update);
+
+            $('#tch-fullname-display').text(update.fullName);
+            $('#tch-special-display').text(update.specialization);
+            $('#tch-qual-display').text(update.qualification);
+            $('#tch-phone-display').text(update.phoneNumber);
+            $('#tch-gender-display').text(update.gender);
+            $('#tch-address-display').text(update.address);
+
+            $('.btn-cancel').click();
+        });
+
+    }
+</script>

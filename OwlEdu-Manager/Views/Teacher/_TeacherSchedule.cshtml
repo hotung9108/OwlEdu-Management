@@ -1,0 +1,93 @@
+﻿<div class="container py-4">
+    <div class="btl-card">
+
+        <div class="title row align-items-center g-2">
+            <div class="col-12 col-md-8">
+                <p class="m-0">Lịch dạy</p>
+            </div>
+        </div>
+
+        <!-- Bộ chọn ngày -->
+        <div class="col-12 col-md-6 d-flex align-items-center mb-3">
+            <label for="date-picker" class="me-2 mb-0" style="width: 80px; color: var(--text-main)">Ngày</label>
+            <input type="date" id="date-picker" class="form-control" />
+        </div>
+
+        <!-- Component Schedule -->
+        <div class="component-container"
+             hx-get="/Components/Schedule"
+             hx-vals='{"Id": "schedule"}'
+             hx-trigger="revealed"
+             data-on-load="onLoadSchedule">
+        </div>
+
+    </div>
+</div>
+
+<script type="module">
+
+    import ScheduleService from "../../js/API/ScheduleService.js";
+    import { getTeacherID } from "../../js/Utils/getCookies.js";
+
+    window.onLoadSchedule = onLoadSchedule;
+
+    let allSchedules = [];
+
+    async function onLoadSchedule() {
+
+        const teacherId = getTeacherID();
+        if (!teacherId) {
+            console.error("❌ Không tìm thấy TeacherID trong cookie");
+            return;
+        }
+
+        // Lấy toàn bộ lịch dạy theo giáo viên
+        allSchedules = await ScheduleService.getScheduleByTeacherId(teacherId);
+
+        // Ngày hôm nay
+        const today = new Date();
+        const formatted =
+            today.getFullYear() + "-" +
+            String(today.getMonth() + 1).padStart(2, "0") + "-" +
+            String(today.getDate()).padStart(2, "0");
+
+        document.getElementById("date-picker").value = formatted;
+
+        await renderSchedule(formatted);
+    }
+
+    // Khi chọn ngày → cập nhật lịch tuần
+    document.addEventListener("change", async e => {
+        if (e.target.id === "date-picker") {
+            await renderSchedule(e.target.value);
+        }
+    });
+
+    async function renderSchedule(date) {
+
+        // Reset toàn bộ cột ngày
+        setScheduleWeek(date);
+
+        const weekDays = getWeekDates(date); // list 7 ngày [yyyy-MM-dd]
+
+        // Duyệt từng ngày trong tuần
+        for (let i = 0; i < 7; i++) {
+            const day = weekDays[i];
+
+            // Chỉ lấy lịch đúng ngày
+            const schedulesInDay = allSchedules.filter(s => s.sessionDate === day);
+
+            schedulesInDay.forEach(schedule => {
+                addEvent(
+                    i,
+                    schedule.startTime,
+                    schedule.endTime,
+                    schedule.className + " (" + schedule.classId + ")",
+                    schedule.room,
+                    null
+                );
+            });
+        }
+    }
+
+</script>
