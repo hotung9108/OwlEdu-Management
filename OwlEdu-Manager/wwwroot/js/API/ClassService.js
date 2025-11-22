@@ -94,7 +94,7 @@ const ClassService = {
             console.error("Error fetching classes by Course ID:", error);
             throw error;
         }
-    }
+    },
 
     patchClassStatus: async function (id, status) {
         try {

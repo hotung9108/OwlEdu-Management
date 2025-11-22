@@ -67,14 +67,10 @@
                 <button class="btn-fullscreen" onclick="toggleFullScreen()"><i class="fa-solid fa-compress"></i></button>
 
                 <div class="user-menu">
-                    <button class="btn-user"><i class="fa-solid fa-user"></i><span>Full name</span></button>
+                    <button id="username" class="btn-user"><i class="fa-solid fa-user"></i><span id="user-fullname">Full name</span></button>
                     <div class="dropdown">
-                        <a href="#" hx-get="/Admin/Pr.ofile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
-                        @* <a href="/Authentication/Login"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a> *@
-                        <a href="javascript:void(0);" onclick="logoutUser()">
-                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                        </a>
-                        @* <button onclick="logoutUser()">TƯEQ</button> *@
+                        <a href="#" hx-get="/Admin/Profile" hx-trigger="click" hx-target="#main-panel" onClick='OpenProfile()'><i class="fa-solid fa-address-card"></i>    Xem thông tin</a>
+                        <a href="javascript:void(0);" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i>  Đăng xuất</a>
                     </div>
                 </div>
             </div>
@@ -119,6 +115,7 @@
     height: fit-content;
     gap: 15px;
     position: sticky;
+    z-index: 100;
     padding-left: 0;
 }
 
@@ -222,6 +219,7 @@
     transform: translateX(0);
 }
 
+
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -271,9 +269,10 @@
     background: #466be5;
     color: var(--text-reverse);
 }
+
 .sidebar-catalog {
     border: none;
-    border-top: 1px groove var(--text-muted);
+    border-top: 1px solid var(--border);
     padding: 5px 0;
     margin-top: 10px;
 }
@@ -282,9 +281,10 @@
     float: none;
     margin: 0 10px;
     width: auto;
-    font-size: 16px;
+    font-size: 14px;
     color: var(--text-muted);
 }
+
 </style>
 
 <script>
@@ -297,8 +297,21 @@
         window.location.assign("/Authentication/Login");
     }
 </script>
+<script type="module">
+import {getUserID} from "../../js/Utils/getCookies.js";
+import AccountService from "../../js/API/AccountService.js";
 
-<script>
+window.toggleFullScreen = toggleFullScreen;
+window.Setup = Setup;
+
+await Setup();
+
+async function Setup() {
+    console.log(getUserID());
+    const infor = await AccountService.getAccountById(getUserID());
+    $('#user-fullname').text(infor.username);
+}
+
 $(document).ready(function() {
     $('.btn-mode').click(function() {
         $('.btn-mode').toggleClass('dark');

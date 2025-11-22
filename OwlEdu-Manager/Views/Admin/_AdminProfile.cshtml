@@ -1,5 +1,197 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿<div class="container py-4">
+
+    <div class="row g-4">
+
+        <!-- LEFT: AVATAR -->
+        <div class="col-lg-4">
+            <div class="btl-card shadow-sm">
+
+                <h5 class="btl-card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; color:var(--text-main);">Ảnh đại diện</h5>
+
+                <div class="text-center mt-3">
+                    <img id="btl-avatar" src="https://i.pravatar.cc/200"
+                         class="btl-avatar-preview rounded-circle" style="width:120px;height:120px;object-fit:cover;">
+
+                    <div class="mt-2">
+                        <a href="#" id="btl-delete-avatar" class="text-danger me-3">Xóa ảnh</a>
+                        <a href="#" id="btl-update-avatar" class="text-primary">Cập nhật ảnh</a>
+                    </div>
+
+                    <div id="btl-upload-area" class="btl-upload-box mt-4">
+                        <i class="fa-solid fa-upload btl-upload-icon"></i>
+                        <p class="m-0 fw-bold text-primary">Nhấn để tải ảnh lên</p>
+                        <p class="text-muted small">hoặc kéo thả ảnh vào đây</p>
+                        <p class="text-muted small">JPG hoặc PNG</p>
+
+                        <input type="file" id="btl-file-input" class="d-none" accept="image/*">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RIGHT: ACCOUNT INFO -->
+        <div class="col-lg-8">
+
+            <div class="btl-card shadow-sm" data-section="account">
+
+                <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                    <h5 class="btl-card-title" style="color:var(--text-main);">Thông tin tài khoản (Admin)</h5>
+                    <div>
+                        <button class="btn btn-primary btn-sm btn-edit">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                        </button>
+                        <div class="d-inline-block btn-save-cancel d-none">
+                            <button class="btn btn-success btn-sm btn-save" id="btn-save-account">
+                                <i class="fa-solid fa-check"></i> Lưu
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-cancel">
+                                <i class="fa-solid fa-xmark"></i> Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3 g-3">
+
+                    <div class="col-md-6">
+                        <label class="btl-label-display" style="color:var(--text-main);">Mã admin</label>
+                        <p id="id-display" class="btl-view-display">admin001</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label" style="color:var(--text-main);">Tên tài khoản</label>
+                        <p id="username-display" class="btl-view">admin</p>
+                        <input id="username-input" class="form-control btl-edit d-none" value="">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label" style="color:var(--text-main);">Email</label>
+                        <p id="email-display" class="btl-view">admin@gmail.com</p>
+                        <input id="email-input" type="email" class="form-control btl-edit d-none" value="">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="btl-label" style="color:var(--text-main);">Mật khẩu</label>
+                        <p class="btl-view">********</p>
+                        <input id="password-input" type="password" class="form-control btl-edit d-none" value="">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+
+.btl-card {
+    background: var(--surface);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
 }
+
+.btl-card-title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.btl-label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btl-view {
+    padding: 8px 0;
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.btl-avatar-preview {
+    width: 140px;
+    height: 140px;
+    border-radius: 100px;
+    object-fit: cover;
+}
+
+.btl-upload-box {
+    border: 2px dashed var(--border);
+    padding: 25px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.btl-upload-box:hover {
+    border-color: var(--primary);
+    background: #4e46e547;
+}
+
+.btl-upload-icon {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+</style>
+
+<script type="module">
+    import {getUserID} from "../../js/Utils/getCookies.js";
+    import AccountService from "../../js/API/AccountService.js";
+
+    window.SetEvents = SetEvents;
+    window.Setup = Setup;
+
+    await Setup();
+
+    async function Setup() {
+        SetEvents();
+
+        const acc = await AccountService.getAccountById(getUserID());
+
+        $('#id-display').text(acc.id);
+        $('#username-display').text(acc.username);
+        $('#username-input').val(acc.username);
+
+        $('#email-display').text(acc.email);
+        $('#email-input').val(acc.email);
+    }
+
+    function SetEvents() {
+        $('.btn-edit').click(function(){
+            const $section = $(this).closest('[data-section]');
+            $section.find('.btl-view').addClass('d-none');
+            $section.find('.btl-edit').removeClass('d-none');
+            $(this).addClass('d-none');
+            $section.find('.btn-save-cancel').removeClass('d-none');
+        });
+
+        $('.btn-cancel').click(function(){
+            const $section = $(this).closest('[data-section]');
+            $section.find('.btl-edit').addClass('d-none');
+            $section.find('.btl-view').removeClass('d-none');
+            $section.find('.btn-save-cancel').addClass('d-none');
+            $section.find('.btn-edit').removeClass('d-none');
+        });
+
+        $('#btn-save-account').click(async function(){
+            const updateAccount = {
+                username: $('#username-input').val(),
+                email: $('#email-input').val(),
+                password: $('#password-input').val()
+            };
+
+            $('#username-display').text(updateAccount.username);
+            $('#email-display').text(updateAccount.email);
+
+            await AccountService.updateAccount(getUserID(), updateAccount);
+
+            const $section = $(this).closest('[data-section]');
+            $section.find('.btl-edit').addClass('d-none');
+            $section.find('.btl-view').removeClass('d-none');
+            $section.find('.btn-save-cancel').addClass('d-none');
+            $section.find('.btn-edit').removeClass('d-none');
+        });
+    }
+</script>
